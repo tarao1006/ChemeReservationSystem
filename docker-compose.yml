@@ -22,5 +22,13 @@ services:
       - node_modules-volume:/app/node_modules
     working_dir: /app
 
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - datavolume:/var/lib/mysql
+
 volumes:
   node_modules-volume:
+  datavolume:
