@@ -32,6 +32,14 @@ services:
     volumes:
       - datavolume:/var/lib/mysql
 
+  skeema:
+    build:
+      context: ./skeema
+    depends_on:
+      - db
+    volumes:
+      - ./skeema:/go/skeema
+
 volumes:
   node_modules-volume:
   datavolume:
