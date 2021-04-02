@@ -12,15 +12,15 @@ services:
     working_dir: /app
 
   frontend:
-      build:
-        context: ./frontend
-      command: yarn start
-      ports:
-        - 8080:8080
-      volumes:
-        - ./frontend:/app
-        - node_modules-volume:/app/node_modules
-      working_dir: /app
+    build:
+      context: ./frontend
+    command: yarn start
+    ports:
+      - 8080:8080
+    volumes:
+      - ./frontend:/app
+      - node_modules-volume:/app/node_modules
+    working_dir: /app
 
 volumes:
   node_modules-volume:
