@@ -20,6 +20,7 @@ module.exports = {
   },
   devServer: {
     contentBase: path.relative(__dirname, 'dist'),
+    host: '0.0.0.0',
     port: 8080,
     historyApiFallback: true,
   },
