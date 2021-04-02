@@ -11,3 +11,5 @@ COPY go.mod .
 RUN go mod download
 
 COPY . .
+
+EXPOSE 8000
