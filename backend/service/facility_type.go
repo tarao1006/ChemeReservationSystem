@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/db"
 	"github.com/tarao1006/ChemeReservationSystem/model"
@@ -26,56 +24,51 @@ func (FacilityTypeService) GetAll() ([]model.FacilityType, error) {
 
 func (FacilityTypeService) Create(c *gin.Context) (model.FacilityType, error) {
 	db := db.GetDB()
-	var u model.FacilityType
+	var ft model.FacilityType
 
-	if err := c.BindJSON(&u); err != nil {
-		return u, nil
+	if err := c.BindJSON(&ft); err != nil {
+		return ft, nil
 	}
 
-	if err := db.Create(&u).Error; err != nil {
-		return u, err
+	if err := db.Create(&ft).Error; err != nil {
+		return ft, err
 	}
 
-	return u, nil
+	return ft, nil
 }
 
 func (FacilityTypeService) GetByID(id string) (model.FacilityType, error) {
 	db := db.GetDB()
-	var u model.FacilityType
+	var ft model.FacilityType
 
-	if err := db.Where("id = ?", id).First(&u).Error; err != nil {
-		return u, err
+	if err := db.Where("id = ?", id).First(&ft).Error; err != nil {
+		return ft, err
 	}
 
-	return u, nil
+	return ft, nil
 }
 
 func (FacilityTypeService) UpdateByID(id string, c *gin.Context) (model.FacilityType, error) {
 	db := db.GetDB()
-	var u model.FacilityType
+	var ft model.FacilityType
 
-	if err := db.Where("id = ?", id).First(&u).Error; err != nil {
-		return u, err
+	if err := db.Where("id = ?", id).First(&ft).Error; err != nil {
+		return ft, err
 	}
 
-	if err := c.BindJSON(&u); err != nil {
-		return u, nil
+	if err := c.BindJSON(&ft); err != nil {
+		return ft, nil
 	}
 
-	db.Save(&u)
+	db.Save(&ft)
 
-	return u, nil
+	return ft, nil
 }
 
 func (FacilityTypeService) DeleteByID(id string) error {
 	db := db.GetDB()
-	res := db.Where("id = ?", id)
-
-	fmt.Println(res.Error)
-
 	if err := db.Where("id = ?", id).Delete(&model.FacilityType{}).Error; err != nil {
 		return err
 	}
-
 	return nil
 }
