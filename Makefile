@@ -14,5 +14,8 @@ SKEEMA_CMDS:= \
 	skeema/diff \
 	skeema/pull
 
+skeema/init:
+	${DOCKER_COMPOSE} run --rm ${MIGRATION_SERVICE} skeema init -h ${DB_SERVICE} -uroot -ppassword -d db
+
 ${SKEEMA_CMDS}:
 	${DOCKER_COMPOSE} run --rm ${MIGRATION_SERVICE} skeema -ppassword ${@F} development
