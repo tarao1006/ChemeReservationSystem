@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/db"
 	"github.com/tarao1006/ChemeReservationSystem/model"
@@ -69,13 +67,8 @@ func (UserService) UpdateByID(id string, c *gin.Context) (model.User, error) {
 
 func (UserService) DeleteByID(id string) error {
 	db := db.GetDB()
-	res := db.Where("id = ?", id)
-
-	fmt.Println(res.Error)
-
 	if err := db.Where("id = ?", id).Delete(&model.User{}).Error; err != nil {
 		return err
 	}
-
 	return nil
 }
