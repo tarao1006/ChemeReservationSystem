@@ -73,7 +73,7 @@ func (FacilityTypeService) DeleteByID(id string) error {
 
 	fmt.Println(res.Error)
 
-	if err := db.Where("id = ?", id).Delete(&model.UserType{}).Error; err != nil {
+	if err := db.Where("id = ?", id).Delete(&model.FacilityType{}).Error; err != nil {
 		return err
 	}
 
