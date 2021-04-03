@@ -44,7 +44,7 @@ func router() *gin.Engine {
 
 	f := r.Group("/facility")
 	{
-		c := controller.NewUserController()
+		c := controller.NewFacilityController()
 		f.GET("", c.Index)
 		f.GET("/:id", c.Show)
 		f.POST("", c.Create)

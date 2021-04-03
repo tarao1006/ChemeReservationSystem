@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/db"
 	"github.com/tarao1006/ChemeReservationSystem/model"
 )
@@ -23,12 +24,18 @@ func (us *UserService) GetAll() ([]model.User, error) {
 	return users, nil
 }
 
-func (us *UserService) Create(u model.User) (model.User, error) {
+func (us *UserService) Create(c *gin.Context) (model.User, error) {
 	db := db.GetDB()
+	var u model.User
+
+	if err := c.BindJSON(&u); err != nil {
+		return u, nil
+	}
 
 	if err := db.Create(&u).Error; err != nil {
 		return u, err
 	}
+
 	return u, nil
 }
 
@@ -43,11 +50,16 @@ func (us *UserService) GetByID(id string) (model.User, error) {
 	return u, nil
 }
 
-func (us *UserService) UpdateByID(id string, u model.User) (model.User, error) {
+func (us *UserService) UpdateByID(id string, c *gin.Context) (model.User, error) {
 	db := db.GetDB()
+	var u model.User
 
 	if err := db.Where("id = ?", id).First(&model.User{}).Error; err != nil {
 		return u, err
+	}
+
+	if err := c.BindJSON(&u); err != nil {
+		return u, nil
 	}
 
 	db.Save(&u)

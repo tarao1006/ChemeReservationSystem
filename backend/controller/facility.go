@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
 
@@ -31,14 +30,7 @@ func (FacilityController) Index(c *gin.Context) {
 func (FacilityController) Create(c *gin.Context) {
 	s := service.NewFacilityService()
 
-	var f model.Facility
-
-	if err := c.ShouldBindJSON(&f); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	f, err := s.Create(f)
+	f, err := s.Create(c)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -66,14 +58,7 @@ func (FacilityController) Update(c *gin.Context) {
 	s := service.NewFacilityService()
 	id := c.Params.ByName("id")
 
-	var f model.Facility
-
-	if err := c.ShouldBindJSON(&f); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	f, err := s.UpdateByID(id, f)
+	f, err := s.UpdateByID(id, c)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

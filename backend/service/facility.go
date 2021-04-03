@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/db"
 	"github.com/tarao1006/ChemeReservationSystem/model"
 )
@@ -23,12 +24,18 @@ func (FacilityService) GetAll() ([]model.Facility, error) {
 	return facilities, nil
 }
 
-func (FacilityService) Create(f model.Facility) (model.Facility, error) {
+func (FacilityService) Create(c *gin.Context) (model.Facility, error) {
 	db := db.GetDB()
+	var f model.Facility
+
+	if err := c.BindJSON(&f); err != nil {
+		return f, err
+	}
 
 	if err := db.Create(&f).Error; err != nil {
 		return f, err
 	}
+
 	return f, nil
 }
 
@@ -43,10 +50,15 @@ func (FacilityService) GetByID(id string) (model.Facility, error) {
 	return f, nil
 }
 
-func (FacilityService) UpdateByID(id string, f model.Facility) (model.Facility, error) {
+func (FacilityService) UpdateByID(id string, c *gin.Context) (model.Facility, error) {
 	db := db.GetDB()
+	var f model.Facility
 
-	if err := db.Where("id = ?", id).First(&model.Facility{}).Error; err != nil {
+	if err := db.Where("id = ?", id).First(&f).Error; err != nil {
+		return f, err
+	}
+
+	if err := c.BindJSON(&f); err != nil {
 		return f, err
 	}
 
