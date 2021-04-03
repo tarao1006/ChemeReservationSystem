@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/db"
@@ -26,6 +27,12 @@ func (s *Server) Init(dsn string) error {
 	s.db = db
 	s.router = s.Route()
 	return nil
+}
+
+func (s *Server) Run(port int) {
+	if err := s.router.Run(":" + strconv.Itoa(port)); err != nil {
+		panic(err)
+	}
 }
 
 func (s *Server) Route() *gin.Engine {

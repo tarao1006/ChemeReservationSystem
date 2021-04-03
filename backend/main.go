@@ -2,21 +2,19 @@ package main
 
 import (
 	"log"
-	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/tarao1006/ChemeReservationSystem/server"
 )
 
 func main() {
-	r := gin.Default()
+	var (
+		dsn  = "root:password@tcp(db:3306)/cheme_reservation_system"
+		port = 8000
+	)
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-
-	if err := r.Run(":8000"); err != nil {
+	s := server.NewServer()
+	if err := s.Init(dsn); err != nil {
 		log.Fatal(err)
 	}
+	s.Run(port)
 }
