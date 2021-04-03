@@ -1,7 +1,7 @@
 CREATE TABLE `reservation_facility` (
-  `id` INT NOT NULL,
-  `reservation_id` INT NOT NULL,
-  `facility_id` INT NOT NULL,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `reservation_id` INT UNSIGNED NOT NULL,
+  `facility_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY (`reservation_id`, `facility_id`),
   FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`),

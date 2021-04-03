@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS `reservation` (
-  `id` INT NOT NULL,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` VARCHAR(255) NOT NULL,
   `start_at` DATETIME NOT NULL,
   `end_at` DATETIME NOT NULL,

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS `facility_type` (
-  `id` INT NOT NULL,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY (`name`)
