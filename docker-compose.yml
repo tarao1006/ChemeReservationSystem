@@ -36,6 +36,8 @@ services:
       - SYS_NICE
     volumes:
       - datavolume:/var/lib/mysql
+      - ./db/reset.sql:/reset.sql
+      - ./db/reset.sh:/reset.sh
       - ./docker/db/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
 
   skeema:

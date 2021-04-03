@@ -9,6 +9,9 @@ ping:
 mysql/client:
 	${DOCKER_COMPOSE} exec ${DB_SERVICE} mysql -uroot -ppassword ${DATABASE_NAME}
 
+mysql/bash:
+	${DOCKER_COMPOSE} exec ${DB_SERVICE} /bin/bash
+
 SKEEMA_CMDS:= \
 	skeema/push \
 	skeema/diff \
