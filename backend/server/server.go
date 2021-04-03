@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/tarao1006/ChemeReservationSystem/controller"
 	"github.com/tarao1006/ChemeReservationSystem/db"
 )
 
@@ -30,6 +31,12 @@ func (s *Server) Run(port int) {
 
 func router() *gin.Engine {
 	r := gin.Default()
+
+	u := r.Group("/user")
+	{
+		c := controller.NewUserController()
+		u.GET("", c.Index)
+	}
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
