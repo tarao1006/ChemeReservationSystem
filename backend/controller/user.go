@@ -14,7 +14,7 @@ func NewUserController() *UserController {
 	return &UserController{}
 }
 
-func (uc *UserController) Index(c *gin.Context) {
+func (UserController) Index(c *gin.Context) {
 	s := service.NewUserService()
 
 	users, err := s.GetAll()
@@ -27,7 +27,7 @@ func (uc *UserController) Index(c *gin.Context) {
 	}
 }
 
-func (uc *UserController) Create(c *gin.Context) {
+func (UserController) Create(c *gin.Context) {
 	s := service.NewUserService()
 	u, err := s.Create(c)
 
@@ -39,7 +39,7 @@ func (uc *UserController) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, u)
 }
 
-func (uc *UserController) Show(c *gin.Context) {
+func (UserController) Show(c *gin.Context) {
 	s := service.NewUserService()
 	id := c.Params.ByName("id")
 
@@ -53,7 +53,7 @@ func (uc *UserController) Show(c *gin.Context) {
 	c.JSON(http.StatusOK, u)
 }
 
-func (uc *UserController) Update(c *gin.Context) {
+func (UserController) Update(c *gin.Context) {
 	s := service.NewUserService()
 	id := c.Params.ByName("id")
 	u, err := s.UpdateByID(id, c)
@@ -66,7 +66,7 @@ func (uc *UserController) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, u)
 }
 
-func (uc *UserController) Delete(c *gin.Context) {
+func (UserController) Delete(c *gin.Context) {
 	s := service.NewUserService()
 	id := c.Params.ByName("id")
 
