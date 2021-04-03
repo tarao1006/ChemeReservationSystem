@@ -63,3 +63,24 @@ func (uc *UserController) Show(c *gin.Context) {
 
 	c.JSON(http.StatusOK, u)
 }
+
+func (uc *UserController) Update(c *gin.Context) {
+	s := service.NewUserService()
+	id := c.Params.ByName("id")
+
+	var u model.User
+
+	if err := c.ShouldBindJSON(&u); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	u, err := s.UpdateByID(id, u)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, u)
+}

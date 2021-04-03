@@ -40,3 +40,15 @@ func (us *UserService) GetByID(id string) (model.User, error) {
 
 	return u, nil
 }
+
+func (us *UserService) UpdateByID(id string, u model.User) (model.User, error) {
+	db := db.GetDB()
+
+	if err := db.Where("id = ?", id).First(&model.User{}).Error; err != nil {
+		return u, err
+	}
+
+	db.Save(&u)
+
+	return u, nil
+}
