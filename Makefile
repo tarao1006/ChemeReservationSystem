@@ -3,6 +3,9 @@ DB_SERVICE:=db
 MIGRATION_SERVICE:=skeema
 DATABASE_NAME:=cheme_reservation_system
 
+ping:
+	curl http://localhost:8000/ping
+
 mysql/client:
 	${DOCKER_COMPOSE} exec ${DB_SERVICE} mysql -uroot -ppassword ${DATABASE_NAME}
 
