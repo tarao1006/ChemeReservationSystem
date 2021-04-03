@@ -42,6 +42,16 @@ func router() *gin.Engine {
 		u.DELETE("/:id", c.Delete)
 	}
 
+	f := r.Group("/facility")
+	{
+		c := controller.NewUserController()
+		f.GET("", c.Index)
+		f.GET("/:id", c.Show)
+		f.POST("", c.Create)
+		f.PUT("/:id", c.Update)
+		f.DELETE("/:id", c.Delete)
+	}
+
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
