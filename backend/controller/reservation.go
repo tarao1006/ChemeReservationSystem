@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,54 +15,48 @@ func NewReservationController() *ReservationController {
 
 func (ReservationController) Index(c *gin.Context) {
 	s := service.NewReservationService()
-
-	users, err := s.GetAll()
+	reservations, err := s.GetAll()
 
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
-		fmt.Println(err)
-	} else {
-		c.JSON(http.StatusOK, users)
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
 	}
+	c.JSON(http.StatusOK, reservations)
 }
 
 func (ReservationController) Create(c *gin.Context) {
 	s := service.NewReservationService()
-	u, err := s.Create(c)
+	r, err := s.Create(c)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, u)
+	c.JSON(http.StatusOK, r)
 }
 
 func (ReservationController) Show(c *gin.Context) {
 	s := service.NewReservationService()
 	id := c.Params.ByName("id")
-
-	u, err := s.GetByID(id)
+	r, err := s.GetByID(id)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, u)
+	c.JSON(http.StatusOK, r)
 }
 
 func (ReservationController) Update(c *gin.Context) {
 	s := service.NewReservationService()
 	id := c.Params.ByName("id")
-	u, err := s.UpdateByID(id, c)
+	r, err := s.UpdateByID(id, c)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, u)
+	c.JSON(http.StatusOK, r)
 }
 
 func (ReservationController) Delete(c *gin.Context) {
@@ -74,6 +67,5 @@ func (ReservationController) Delete(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
