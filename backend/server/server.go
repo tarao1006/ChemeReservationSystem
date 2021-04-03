@@ -62,6 +62,16 @@ func router() *gin.Engine {
 		f.DELETE("/:id", c.Delete)
 	}
 
+	ft := r.Group("/facility_type")
+	{
+		c := controller.NewFacilityTypeController()
+		ft.GET("", c.Index)
+		ft.GET("/:id", c.Show)
+		ft.POST("", c.Create)
+		ft.PUT("/:id", c.Update)
+		ft.DELETE("/:id", c.Delete)
+	}
+
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
