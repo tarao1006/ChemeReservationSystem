@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,15 +15,13 @@ func NewUserController() *UserController {
 
 func (UserController) Index(c *gin.Context) {
 	s := service.NewUserService()
-
 	users, err := s.GetAll()
 
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
-		fmt.Println(err)
-	} else {
-		c.JSON(http.StatusOK, users)
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
 	}
+	c.JSON(http.StatusOK, users)
 }
 
 func (UserController) Create(c *gin.Context) {
@@ -35,21 +32,18 @@ func (UserController) Create(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, u)
 }
 
 func (UserController) Show(c *gin.Context) {
 	s := service.NewUserService()
 	id := c.Params.ByName("id")
-
 	u, err := s.GetByID(id)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, u)
 }
 
@@ -62,7 +56,6 @@ func (UserController) Update(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, u)
 }
 
@@ -74,6 +67,5 @@ func (UserController) Delete(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
