@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,54 +15,48 @@ func NewUserTypeController() *UserTypeController {
 
 func (UserTypeController) Index(c *gin.Context) {
 	s := service.NewUserTypeService()
-
-	users, err := s.GetAll()
+	userTypes, err := s.GetAll()
 
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
-		fmt.Println(err)
-	} else {
-		c.JSON(http.StatusOK, users)
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
 	}
+	c.JSON(http.StatusOK, userTypes)
 }
 
 func (UserTypeController) Create(c *gin.Context) {
 	s := service.NewUserTypeService()
-	u, err := s.Create(c)
+	ut, err := s.Create(c)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, u)
+	c.JSON(http.StatusOK, ut)
 }
 
 func (UserTypeController) Show(c *gin.Context) {
 	s := service.NewUserTypeService()
 	id := c.Params.ByName("id")
-
-	u, err := s.GetByID(id)
+	ut, err := s.GetByID(id)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, u)
+	c.JSON(http.StatusOK, ut)
 }
 
 func (UserTypeController) Update(c *gin.Context) {
 	s := service.NewUserTypeService()
 	id := c.Params.ByName("id")
-	u, err := s.UpdateByID(id, c)
+	ut, err := s.UpdateByID(id, c)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, u)
+	c.JSON(http.StatusOK, ut)
 }
 
 func (UserTypeController) Delete(c *gin.Context) {
@@ -74,6 +67,5 @@ func (UserTypeController) Delete(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
