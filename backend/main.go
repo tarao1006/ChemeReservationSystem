@@ -8,7 +8,7 @@ import (
 
 func main() {
 	var (
-		dsn  = "root:password@tcp(db:3306)/cheme_reservation_system"
+		dsn  = "root:password@tcp(db:3306)/cheme_reservation_system?parseTime=true&loc=Asia%2FTokyo"
 		port = 8000
 	)
 
