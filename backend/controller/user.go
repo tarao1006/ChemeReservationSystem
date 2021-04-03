@@ -84,3 +84,15 @@ func (uc *UserController) Update(c *gin.Context) {
 
 	c.JSON(http.StatusOK, u)
 }
+
+func (uc *UserController) Delete(c *gin.Context) {
+	s := service.NewUserService()
+	id := c.Params.ByName("id")
+
+	if err := s.DeleteByID(id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
+}

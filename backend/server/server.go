@@ -39,6 +39,7 @@ func router() *gin.Engine {
 		u.GET("/:id", c.Show)
 		u.POST("", c.Create)
 		u.PUT("/:id", c.Update)
+		u.DELETE("/:id", c.Delete)
 	}
 
 	r.GET("/ping", func(c *gin.Context) {

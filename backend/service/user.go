@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/tarao1006/ChemeReservationSystem/db"
 	"github.com/tarao1006/ChemeReservationSystem/model"
 )
@@ -51,4 +53,17 @@ func (us *UserService) UpdateByID(id string, u model.User) (model.User, error) {
 	db.Save(&u)
 
 	return u, nil
+}
+
+func (us *UserService) DeleteByID(id string) error {
+	db := db.GetDB()
+	res := db.Where("id = ?", id)
+
+	fmt.Println(res.Error)
+
+	if err := db.Where("id = ?", id).Delete(&model.User{}).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
