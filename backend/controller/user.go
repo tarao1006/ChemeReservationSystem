@@ -20,8 +20,6 @@ func (uc *UserController) Index(c *gin.Context) {
 
 	users, err := s.GetAll()
 
-	fmt.Println(users)
-
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 		fmt.Println(err)
