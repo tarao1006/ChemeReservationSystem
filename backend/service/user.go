@@ -54,7 +54,7 @@ func (us *UserService) UpdateByID(id string, c *gin.Context) (model.User, error)
 	db := db.GetDB()
 	var u model.User
 
-	if err := db.Where("id = ?", id).First(&model.User{}).Error; err != nil {
+	if err := db.Where("id = ?", id).First(&u).Error; err != nil {
 		return u, err
 	}
 
