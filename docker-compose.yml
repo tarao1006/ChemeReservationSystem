@@ -4,6 +4,7 @@ services:
   backend:
     build:
       context: ./backend
+      dockerfile: ../docker/backend/Dockerfile
     command: air
     ports:
       - 8000:8000
@@ -14,6 +15,7 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: ../docker/frontend/Dockerfile
     command: yarn start
     ports:
       - 8080:8080
@@ -23,22 +25,26 @@ services:
     working_dir: /app
 
   db:
-    image: mysql:latest
+    build:
+      context: ./docker/db
     restart: always
     ports:
       - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: password
+    cap_add:
+      - SYS_NICE
     volumes:
       - datavolume:/var/lib/mysql
+      - ./docker/db/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
 
   skeema:
     build:
-      context: ./skeema
+      context: ./docker/skeema
     depends_on:
       - db
     volumes:
-      - ./skeema:/go/skeema
+      - ./db:/go/db
 
 volumes:
   node_modules-volume:
