@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,54 +15,48 @@ func NewFacilityTypeController() *FacilityTypeController {
 
 func (FacilityTypeController) Index(c *gin.Context) {
 	s := service.NewFacilityTypeService()
-
 	facilityTypes, err := s.GetAll()
 
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
-		fmt.Println(err)
-	} else {
-		c.JSON(http.StatusOK, facilityTypes)
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
 	}
+	c.JSON(http.StatusOK, facilityTypes)
 }
 
 func (FacilityTypeController) Create(c *gin.Context) {
 	s := service.NewFacilityTypeService()
-	f, err := s.Create(c)
+	ft, err := s.Create(c)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, f)
+	c.JSON(http.StatusOK, ft)
 }
 
 func (FacilityTypeController) Show(c *gin.Context) {
 	s := service.NewFacilityTypeService()
 	id := c.Params.ByName("id")
-
-	f, err := s.GetByID(id)
+	ft, err := s.GetByID(id)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, f)
+	c.JSON(http.StatusOK, ft)
 }
 
 func (FacilityTypeController) Update(c *gin.Context) {
 	s := service.NewFacilityTypeService()
 	id := c.Params.ByName("id")
-	f, err := s.UpdateByID(id, c)
+	ft, err := s.UpdateByID(id, c)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, f)
+	c.JSON(http.StatusOK, ft)
 }
 
 func (FacilityTypeController) Delete(c *gin.Context) {
@@ -74,6 +67,5 @@ func (FacilityTypeController) Delete(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
