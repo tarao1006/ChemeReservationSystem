@@ -5,9 +5,13 @@ import (
 	"github.com/tarao1006/ChemeReservationSystem/model"
 )
 
-type Service struct{}
+type UserService struct{}
 
-func (s *Service) GetAll() ([]model.User, error) {
+func NewUserService() *UserService {
+	return &UserService{}
+}
+
+func (u *UserService) GetAll() ([]model.User, error) {
 	db := db.GetDB()
 	users := []model.User{}
 
