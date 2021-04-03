@@ -36,6 +36,7 @@ func router() *gin.Engine {
 	{
 		c := controller.NewUserController()
 		u.GET("", c.Index)
+		u.POST("", c.Create)
 	}
 
 	r.GET("/ping", func(c *gin.Context) {

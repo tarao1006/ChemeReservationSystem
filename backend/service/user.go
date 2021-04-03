@@ -11,7 +11,7 @@ func NewUserService() *UserService {
 	return &UserService{}
 }
 
-func (u *UserService) GetAll() ([]model.User, error) {
+func (us *UserService) GetAll() ([]model.User, error) {
 	db := db.GetDB()
 	users := []model.User{}
 
@@ -19,4 +19,13 @@ func (u *UserService) GetAll() ([]model.User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func (us *UserService) Create(u model.User) (model.User, error) {
+	db := db.GetDB()
+
+	if err := db.Create(&u).Error; err != nil {
+		return u, err
+	}
+	return u, nil
 }
