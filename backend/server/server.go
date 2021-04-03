@@ -1,17 +1,14 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/db"
-	"gorm.io/gorm"
 )
 
 type Server struct {
-	db     *gorm.DB
 	router *gin.Engine
 }
 
@@ -20,12 +17,8 @@ func NewServer() *Server {
 }
 
 func (s *Server) Init(dsn string) error {
-	db, err := db.Open(dsn)
-	if err != nil {
-		return fmt.Errorf("failed init db. %s", err)
-	}
-	s.db = db
-	s.router = s.Route()
+	db.Init(dsn)
+	s.router = router()
 	return nil
 }
 
@@ -35,7 +28,7 @@ func (s *Server) Run(port int) {
 	}
 }
 
-func (s *Server) Route() *gin.Engine {
+func router() *gin.Engine {
 	r := gin.Default()
 
 	r.GET("/ping", func(c *gin.Context) {
