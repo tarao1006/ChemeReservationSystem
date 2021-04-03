@@ -29,3 +29,14 @@ func (us *UserService) Create(u model.User) (model.User, error) {
 	}
 	return u, nil
 }
+
+func (us *UserService) GetByID(id string) (model.User, error) {
+	db := db.GetDB()
+	var u model.User
+
+	if err := db.Where("id = ?", id).First(&u).Error; err != nil {
+		return u, err
+	}
+
+	return u, nil
+}

@@ -49,3 +49,17 @@ func (uc *UserController) Create(c *gin.Context) {
 
 	c.JSON(http.StatusOK, u)
 }
+
+func (uc *UserController) Show(c *gin.Context) {
+	s := service.NewUserService()
+	id := c.Params.ByName("id")
+
+	u, err := s.GetByID(id)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, u)
+}
