@@ -54,7 +54,7 @@ func (us *UserService) Create(c *gin.Context) (*model.User, error) {
 		}
 
 		for _, ut := range u.Types {
-			_, err = us.repo.AddGroup(tx, u.ID, ut.ID)
+			_, err = us.repo.AddGroup(tx, u.ID, ut)
 			if err != nil {
 				return err
 			}
@@ -63,13 +63,13 @@ func (us *UserService) Create(c *gin.Context) (*model.User, error) {
 	}); err != nil {
 		return nil, err
 	}
-	return &model.User{
-		ID:           u.ID,
-		Name:         u.Name,
-		NameRuby:     u.NameRuby,
-		EmailAddress: u.EmailAddress,
-		Types:        u.Types,
-	}, nil
+
+	user, err := us.repo.FindByID(us.db, u.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (us *UserService) DeleteByID(id string) error {

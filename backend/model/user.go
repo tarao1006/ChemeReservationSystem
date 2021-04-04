@@ -1,12 +1,12 @@
 package model
 
 type UserAPI struct {
-	ID           string     `json:"id"`
-	Name         string     `json:"name"`
-	NameRuby     string     `json:"name_ruby"`
-	EmailAddress string     `json:"email_address"`
-	Password     string     `json:"password"`
-	Types        []UserType `json:"types"`
+	ID           string  `json:"id"`
+	Name         string  `json:"name"`
+	NameRuby     string  `json:"name_ruby"`
+	EmailAddress string  `json:"email_address"`
+	Password     string  `json:"password"`
+	Types        []int64 `json:"types"`
 }
 
 type User struct {
