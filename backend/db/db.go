@@ -1,26 +1,21 @@
 package db
 
 import (
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 )
 
-var (
-	db  *gorm.DB
-	err error
-)
+var db *sqlx.DB
 
-func Init(dsn string) {
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+func Init(dsn string) error {
+	var err error
+	db, err = sqlx.Open("mysql", dsn)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
-func GetDB() *gorm.DB {
+func GetDB() *sqlx.DB {
 	return db
-}
-
-func Open(dsn string) (*gorm.DB, error) {
-	return gorm.Open(mysql.Open(dsn), &gorm.Config{})
 }
