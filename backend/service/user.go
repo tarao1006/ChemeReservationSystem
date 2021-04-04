@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/db"
@@ -36,8 +34,6 @@ func (us *UserService) Create(c *gin.Context) (*model.User, error) {
 	if err := c.BindJSON(&u); err != nil {
 		return nil, err
 	}
-
-	fmt.Println(u)
 
 	hashed, err := bcrypt.GenerateFromPassword([]byte(u.Password), 10)
 	if err != nil {
