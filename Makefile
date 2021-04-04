@@ -12,6 +12,9 @@ mysql/client:
 mysql/bash:
 	${DOCKER_COMPOSE} exec ${DB_SERVICE} /bin/bash
 
+mysql/reset:
+	${DOCKER_COMPOSE} exec ${DB_SERVICE} /reset
+
 SKEEMA_CMDS:= \
 	skeema/push \
 	skeema/diff \
@@ -22,3 +25,6 @@ skeema/init:
 
 ${SKEEMA_CMDS}:
 	${DOCKER_COMPOSE} run --rm ${MIGRATION_SERVICE} skeema -ppassword ${@F} development
+
+skeema/push/unsafe:
+	${DOCKER_COMPOSE} run --rm ${MIGRATION_SERVICE} skeema -ppassword push --allow-unsafe development
