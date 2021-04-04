@@ -73,6 +73,15 @@ func router() *gin.Engine {
 		ft.DELETE("/:id", c.Delete)
 	}
 
+	reservation := r.Group("/reservation")
+	{
+		c := controller.NewReservationController()
+		reservation.GET("", c.Index)
+		reservation.GET("/:id", c.Show)
+		reservation.POST("", c.Create)
+		reservation.DELETE("/:id", c.Delete)
+	}
+
 	p := r.Group("/plan")
 	{
 		c := controller.NewFacilityTypeController()

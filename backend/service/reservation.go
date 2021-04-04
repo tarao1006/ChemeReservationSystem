@@ -1,73 +1,107 @@
 package service
 
 import (
+	"database/sql"
+
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/db"
 	"github.com/tarao1006/ChemeReservationSystem/model"
+	"github.com/tarao1006/ChemeReservationSystem/repository"
 )
 
-type ReservationService struct{}
+type ReservationService struct {
+	db   *sqlx.DB
+	repo *repository.ReservationRepository
+}
 
 func NewReservationService() *ReservationService {
-	return &ReservationService{}
+	return &ReservationService{
+		db:   db.GetDB(),
+		repo: repository.NewReservationRepository(),
+	}
 }
 
-func (ReservationService) GetAll() ([]model.Reservation, error) {
-	db := db.GetDB()
-	reservations := []model.Reservation{}
+func (rs *ReservationService) GetAll() ([]model.Reservation, error) {
+	return rs.repo.GetAll(rs.db)
+}
 
-	if err := db.Find(&reservations).Error; err != nil {
+func (rs *ReservationService) GetByID(id int64) (*model.Reservation, error) {
+	return rs.repo.FindByID(rs.db, id)
+}
+
+func (rs *ReservationService) Create(c *gin.Context) (*model.Reservation, error) {
+	var (
+		r  model.ReservationAPI
+		id int64
+	)
+	if err := c.BindJSON(&r); err != nil {
 		return nil, err
 	}
-	return reservations, nil
+
+	if err := db.TXHandler(rs.db, func(tx *sqlx.Tx) error {
+		var (
+			res sql.Result
+			err error
+		)
+		res, err = rs.repo.Create(tx, &model.ReservationDTO{
+			CreatorID: r.CreatorID,
+			StartAt:   r.StartAt,
+			EndAt:     r.EndAt,
+			PlanID:    r.PlanID,
+			PlanMemo:  r.PlanMemo,
+		})
+		if err != nil {
+			return err
+		}
+		id, err = res.LastInsertId()
+		if err != nil {
+			return err
+		}
+
+		for _, userID := range r.UserIDs {
+			_, err = rs.repo.AddUser(tx, id, userID)
+			if err != nil {
+				return err
+			}
+		}
+
+		for _, facilityID := range r.FacilityIDs {
+			_, err = rs.repo.AddFacility(tx, id, facilityID)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	reservaton, err := rs.repo.FindByID(rs.db, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return reservaton, nil
 }
 
-func (ReservationService) Create(c *gin.Context) (model.Reservation, error) {
-	db := db.GetDB()
-	var r model.Reservation
-
-	if err := c.BindJSON(&r); err != nil {
-		return r, nil
-	}
-
-	if err := db.Create(&r).Error; err != nil {
-		return r, err
-	}
-
-	return r, nil
-}
-
-func (ReservationService) GetByID(id string) (model.Reservation, error) {
-	db := db.GetDB()
-	var r model.Reservation
-
-	if err := db.Where("id = ?", id).First(&r).Error; err != nil {
-		return r, err
-	}
-
-	return r, nil
-}
-
-func (ReservationService) UpdateByID(id string, c *gin.Context) (model.Reservation, error) {
-	db := db.GetDB()
-	var r model.Reservation
-
-	if err := db.Where("id = ?", id).First(&r).Error; err != nil {
-		return r, err
-	}
-
-	if err := c.BindJSON(&r); err != nil {
-		return r, nil
-	}
-
-	db.Save(&r)
-
-	return r, nil
-}
-
-func (ReservationService) DeleteByID(id string) error {
-	db := db.GetDB()
-	if err := db.Where("id = ?", id).Delete(&model.Reservation{}).Error; err != nil {
+func (rs *ReservationService) DeleteByID(id int64) error {
+	if err := db.TXHandler(rs.db, func(tx *sqlx.Tx) error {
+		var err error
+		_, err = rs.repo.RemoveUser(tx, id)
+		if err != nil {
+			return err
+		}
+		_, err = rs.repo.RemoveFacility(tx, id)
+		if err != nil {
+			return err
+		}
+		_, err = rs.repo.Delete(tx, id)
+		if err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
 		return err
 	}
 	return nil

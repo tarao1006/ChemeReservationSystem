@@ -2,12 +2,36 @@ package model
 
 import "time"
 
+type ReservationAPI struct {
+	CreatorID   string    `json:"creator_id"`
+	StartAt     time.Time `json:"start_at"`
+	EndAt       time.Time `json:"end_at"`
+	PlanID      int64     `json:"plan_id"`
+	PlanMemo    string    `json:"plan_memo"`
+	UserIDs     []string  `json:"user_ids"`
+	FacilityIDs []int64   `json:"facility_ids"`
+}
+
 type Reservation struct {
-	ID        int       `db:"id" json:"id"`
-	UserID    string    `db:"user_id" json:"user_id"`
-	StartAt   time.Time `db:"start_at" json:"start_at"`
-	EndAt     time.Time `db:"end_at" json:"end_at"`
-	PlanID    int       `db:"plan_id" json:"plan_id"`
-	PlanMemo  string    `db:"plan_memo" json:"plan_memo"`
-	CreatedAt time.Time `db:"created_at" json:"created_at"`
+	ID         int64      `json:"id"`
+	Creator    User       `json:"creator"`
+	StartAt    time.Time  `json:"start_at"`
+	EndAt      time.Time  `json:"end_at"`
+	Plan       Plan       `json:"plan"`
+	PlanMemo   string     `json:"plan_memo"`
+	CreatedAt  time.Time  `json:"created_at"`
+	UpdatedAt  time.Time  `json:"updated_at"`
+	Attendees  []User     `json:"attendees"`
+	Facilities []Facility `json:"facilities"`
+}
+
+type ReservationDTO struct {
+	ID        int64     `db:"id"`
+	CreatorID string    `db:"creator_id"`
+	StartAt   time.Time `db:"start_at"`
+	EndAt     time.Time `db:"end_at"`
+	PlanID    int64     `db:"plan_id"`
+	PlanMemo  string    `db:"plan_memo"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }
