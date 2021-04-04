@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/controller"
 	"github.com/tarao1006/ChemeReservationSystem/db"
+	"github.com/tarao1006/ChemeReservationSystem/middleware"
 )
 
 type Server struct {
@@ -92,11 +93,24 @@ func router() *gin.Engine {
 		p.DELETE("/:id", c.Delete)
 	}
 
+	authMiddleware, err := middleware.AuthMiddleware()
+	if err != nil {
+		panic(err)
+	}
+
+	r.POST("/login", authMiddleware.LoginHandler)
+	r.POST("/logout", authMiddleware.LogoutHandler)
+
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
+
+	r.Use(authMiddleware.MiddlewareFunc())
+	{
+		r.GET("/hello", controller.HelloHandler)
+	}
 
 	return r
 }

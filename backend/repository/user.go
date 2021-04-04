@@ -81,6 +81,17 @@ func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 	}, nil
 }
 
+func (UserRepository) FindByEmailAddress(db *sqlx.DB, email_address string) (*model.UserDTO, error) {
+	var user model.UserDTO
+	if err := db.Get(&user, `
+		SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE email_address = ?
+	`, email_address); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 func (UserRepository) Create(db *sqlx.Tx, param *model.UserDTO) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`INSERT INTO user (id, name, name_ruby, password_digest, email_address) VALUES (?, ?, ?, ?, ?)`)
 	if err != nil {
