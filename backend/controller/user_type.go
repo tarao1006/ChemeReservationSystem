@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/service"
@@ -37,9 +38,13 @@ func (UserTypeController) Create(c *gin.Context) {
 
 func (UserTypeController) Show(c *gin.Context) {
 	s := service.NewUserTypeService()
-	id := c.Params.ByName("id")
-	ut, err := s.GetByID(id)
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
+	ut, err := s.GetByID(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -49,9 +54,13 @@ func (UserTypeController) Show(c *gin.Context) {
 
 func (UserTypeController) Update(c *gin.Context) {
 	s := service.NewUserTypeService()
-	id := c.Params.ByName("id")
-	ut, err := s.UpdateByID(id, c)
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
+	ut, err := s.UpdateByID(id, c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -61,7 +70,11 @@ func (UserTypeController) Update(c *gin.Context) {
 
 func (UserTypeController) Delete(c *gin.Context) {
 	s := service.NewUserTypeService()
-	id := c.Params.ByName("id")
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	if err := s.DeleteByID(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

@@ -5,6 +5,6 @@ func (UserType) TableName() string {
 }
 
 type UserType struct {
-	ID   int    `db:"id" json:"id"`
+	ID   int64  `db:"id" json:"id"`
 	Name string `name:"name" json:"name"`
 }
