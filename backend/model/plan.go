@@ -5,6 +5,6 @@ func (Plan) TableName() string {
 }
 
 type Plan struct {
-	ID   string `db:"id" json:"id"`
+	ID   int64  `db:"id" json:"id"`
 	Name string `db:"name" json:"name"`
 }

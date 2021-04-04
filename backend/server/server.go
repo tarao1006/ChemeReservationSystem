@@ -75,15 +75,15 @@ func router() *gin.Engine {
 		ft.DELETE("/:id", c.Delete)
 	}
 
-	// p := r.Group("/plan")
-	// {
-	// 	c := controller.NewFacilityTypeController()
-	// 	p.GET("", c.Index)
-	// 	p.GET("/:id", c.Show)
-	// 	p.POST("", c.Create)
-	// 	p.PUT("/:id", c.Update)
-	// 	p.DELETE("/:id", c.Delete)
-	// }
+	p := r.Group("/plan")
+	{
+		c := controller.NewFacilityTypeController()
+		p.GET("", c.Index)
+		p.GET("/:id", c.Show)
+		p.POST("", c.Create)
+		p.PUT("/:id", c.Update)
+		p.DELETE("/:id", c.Delete)
+	}
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/service"
@@ -37,9 +38,13 @@ func (PlanController) Create(c *gin.Context) {
 
 func (PlanController) Show(c *gin.Context) {
 	s := service.NewPlanService()
-	id := c.Params.ByName("id")
-	p, err := s.GetByID(id)
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
+	p, err := s.GetByID(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -49,9 +54,13 @@ func (PlanController) Show(c *gin.Context) {
 
 func (PlanController) Update(c *gin.Context) {
 	s := service.NewPlanService()
-	id := c.Params.ByName("id")
-	p, err := s.UpdateByID(id, c)
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
+	p, err := s.UpdateByID(id, c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -61,7 +70,11 @@ func (PlanController) Update(c *gin.Context) {
 
 func (PlanController) Delete(c *gin.Context) {
 	s := service.NewPlanService()
-	id := c.Params.ByName("id")
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	if err := s.DeleteByID(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
