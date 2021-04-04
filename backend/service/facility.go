@@ -40,7 +40,7 @@ func (fs *FacilityService) Create(c *gin.Context) (*model.Facility, error) {
 			res sql.Result
 			err error
 		)
-		res, err = fs.repo.Create(tx, f.Name)
+		res, err = fs.repo.Create(tx, f)
 		if err != nil {
 			return err
 		}

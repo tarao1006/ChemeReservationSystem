@@ -83,7 +83,7 @@ func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, erro
 	}, nil
 }
 
-func (FacilityRepository) Create(db *sqlx.Tx, name string) (result sql.Result, err error) {
+func (FacilityRepository) Create(db *sqlx.Tx, param model.Facility) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`INSERT INTO facility (name) VALUES (?)`)
 	if err != nil {
 		return nil, err
@@ -93,7 +93,7 @@ func (FacilityRepository) Create(db *sqlx.Tx, name string) (result sql.Result, e
 			err = closeErr
 		}
 	}()
-	return stmt.Exec(name)
+	return stmt.Exec(param.Name)
 }
 
 func (FacilityRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err error) {
