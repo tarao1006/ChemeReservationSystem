@@ -35,15 +35,14 @@ func (s *Server) Run(port int) {
 func router() *gin.Engine {
 	r := gin.Default()
 
-	// u := r.Group("/user")
-	// {
-	// 	c := controller.NewUserController()
-	// 	u.GET("", c.Index)
-	// 	u.GET("/:id", c.Show)
-	// 	u.POST("", c.Create)
-	// 	u.PUT("/:id", c.Update)
-	// 	u.DELETE("/:id", c.Delete)
-	// }
+	u := r.Group("/user")
+	{
+		c := controller.NewUserController()
+		u.GET("", c.Index)
+		u.GET("/:id", c.Show)
+		u.POST("", c.Create)
+		u.DELETE("/:id", c.Delete)
+	}
 
 	ut := r.Group("/user_type")
 	{

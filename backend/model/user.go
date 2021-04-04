@@ -1,9 +1,26 @@
 package model
 
+type UserAPI struct {
+	ID           string     `json:"id"`
+	Name         string     `json:"name"`
+	NameRuby     string     `json:"name_ruby"`
+	EmailAddress string     `json:"email_address"`
+	Password     string     `json:"password"`
+	Types        []UserType `json:"types"`
+}
+
 type User struct {
-	ID             string `db:"id" json:"id" binding:"required"`
-	Name           string `db:"name" json:"name" binding:"required"`
-	NameRuby       string `db:"name_ruby" json:"name_ruby" binding:"required"`
-	PasswordDigest string `db:"password_digest" json:"password_digest" binding:"required"`
-	EmailAddress   string `db:"email_address" json:"email_address" binding:"required"`
+	ID           string     `json:"id"`
+	Name         string     `json:"name"`
+	NameRuby     string     `json:"name_ruby"`
+	EmailAddress string     `json:"email_address"`
+	Types        []UserType `json:"types"`
+}
+
+type UserDTO struct {
+	ID             string `db:"id"`
+	Name           string `db:"name"`
+	NameRuby       string `db:"name_ruby"`
+	PasswordDigest []byte `db:"password_digest"`
+	EmailAddress   string `db:"email_address"`
 }
