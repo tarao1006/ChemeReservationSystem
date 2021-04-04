@@ -5,6 +5,6 @@ func (FacilityType) TableName() string {
 }
 
 type FacilityType struct {
-	ID   int    `db:"id" json:"id"`
+	ID   int64  `db:"id" json:"id"`
 	Name string `name:"name" json:"name"`
 }

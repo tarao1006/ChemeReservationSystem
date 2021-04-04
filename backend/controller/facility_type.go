@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/service"
@@ -37,9 +38,13 @@ func (FacilityTypeController) Create(c *gin.Context) {
 
 func (FacilityTypeController) Show(c *gin.Context) {
 	s := service.NewFacilityTypeService()
-	id := c.Params.ByName("id")
-	ft, err := s.GetByID(id)
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
+	ft, err := s.GetByID(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -49,9 +54,13 @@ func (FacilityTypeController) Show(c *gin.Context) {
 
 func (FacilityTypeController) Update(c *gin.Context) {
 	s := service.NewFacilityTypeService()
-	id := c.Params.ByName("id")
-	ft, err := s.UpdateByID(id, c)
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
+	ft, err := s.UpdateByID(c, id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -61,7 +70,11 @@ func (FacilityTypeController) Update(c *gin.Context) {
 
 func (FacilityTypeController) Delete(c *gin.Context) {
 	s := service.NewFacilityTypeService()
-	id := c.Params.ByName("id")
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	if err := s.DeleteByID(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
