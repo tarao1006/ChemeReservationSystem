@@ -1,5 +1,10 @@
 package model
 
+type FacilityAPI struct {
+	Name  string  `json:"name"`
+	Types []int64 `json:"types"`
+}
+
 type Facility struct {
 	ID    int64          `json:"id"`
 	Name  string         `json:"name"`

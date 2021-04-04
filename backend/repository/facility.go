@@ -83,7 +83,7 @@ func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, erro
 	}, nil
 }
 
-func (FacilityRepository) Create(db *sqlx.Tx, param model.Facility) (result sql.Result, err error) {
+func (FacilityRepository) Create(db *sqlx.Tx, param *model.FacilityDTO) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`INSERT INTO facility (name) VALUES (?)`)
 	if err != nil {
 		return nil, err

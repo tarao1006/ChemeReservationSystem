@@ -31,7 +31,10 @@ func (fs *FacilityService) GetByID(id int64) (*model.Facility, error) {
 }
 
 func (fs *FacilityService) Create(c *gin.Context) (*model.Facility, error) {
-	var f model.Facility
+	var (
+		f  model.FacilityAPI
+		id int64
+	)
 	if err := c.BindJSON(&f); err != nil {
 		return nil, err
 	}
@@ -40,18 +43,17 @@ func (fs *FacilityService) Create(c *gin.Context) (*model.Facility, error) {
 			res sql.Result
 			err error
 		)
-		res, err = fs.repo.Create(tx, f)
+		res, err = fs.repo.Create(tx, &model.FacilityDTO{Name: f.Name})
 		if err != nil {
 			return err
 		}
-		id, err := res.LastInsertId()
+		id, err = res.LastInsertId()
 		if err != nil {
 			return err
 		}
-		f.ID = id
 
 		for _, ft := range f.Types {
-			_, err = fs.repo.AddGroup(tx, f.ID, ft.ID)
+			_, err = fs.repo.AddGroup(tx, id, ft)
 			if err != nil {
 				return err
 			}
@@ -60,7 +62,12 @@ func (fs *FacilityService) Create(c *gin.Context) (*model.Facility, error) {
 	}); err != nil {
 		return nil, err
 	}
-	return &f, nil
+
+	facility, err := fs.repo.FindByID(fs.db, id)
+	if err != nil {
+		return nil, err
+	}
+	return facility, nil
 }
 
 func (fs *FacilityService) DeleteByID(id int64) error {
