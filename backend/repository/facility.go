@@ -54,7 +54,7 @@ func (fr *FacilityRepository) GetAll(db *sqlx.DB) ([]model.Facility, error) {
 func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, error) {
 	var facility model.FacilityDTO
 	if err := db.Get(&facility, `
-		SELECT id, name FROM facility_type WHERE id = ?
+		SELECT id, name FROM facility WHERE id = ?
 	`, id); err != nil {
 		return nil, err
 	}
