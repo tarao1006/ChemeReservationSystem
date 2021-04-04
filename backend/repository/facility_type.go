@@ -38,7 +38,7 @@ func (FacilityTypeRepository) Create(db *sqlx.Tx, name string) (result sql.Resul
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -52,7 +52,7 @@ func (FacilityTypeRepository) Update(db *sqlx.Tx, id int64, param *model.Facilit
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -66,7 +66,7 @@ func (FacilityTypeRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, 
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()

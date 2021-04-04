@@ -37,7 +37,7 @@ func (UserTypeRepository) Create(db *sqlx.Tx, name string) (result sql.Result, e
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -50,7 +50,7 @@ func (UserTypeRepository) Update(db *sqlx.Tx, id int64, param *model.UserType) (
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -63,7 +63,7 @@ func (UserTypeRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err 
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()

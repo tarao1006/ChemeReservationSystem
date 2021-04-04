@@ -179,7 +179,7 @@ func (ReservationRepository) Create(db *sqlx.Tx, param *model.ReservationDTO) (r
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -192,7 +192,7 @@ func (ReservationRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, e
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -205,7 +205,7 @@ func (ReservationRepository) AddUser(db *sqlx.Tx, reservation_id int64, user_id 
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -218,7 +218,7 @@ func (ReservationRepository) RemoveUser(db *sqlx.Tx, reservation_id int64) (resu
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -231,7 +231,7 @@ func (ReservationRepository) AddFacility(db *sqlx.Tx, reservation_id int64, faci
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -244,7 +244,7 @@ func (ReservationRepository) RemoveFacility(db *sqlx.Tx, reservation_id int64) (
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()

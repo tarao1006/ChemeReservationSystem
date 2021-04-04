@@ -87,7 +87,7 @@ func (UserRepository) Create(db *sqlx.Tx, param *model.UserDTO) (result sql.Resu
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -100,7 +100,7 @@ func (UserRepository) Delete(db *sqlx.Tx, id string) (result sql.Result, err err
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -113,7 +113,7 @@ func (UserRepository) AddGroup(db *sqlx.Tx, user_id string, user_type_id int64) 
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -126,7 +126,7 @@ func (UserRepository) RemoveGroup(db *sqlx.Tx, user_id string) (result sql.Resul
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()

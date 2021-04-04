@@ -37,7 +37,7 @@ func (PlanRepository) Create(db *sqlx.Tx, name string) (result sql.Result, err e
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -50,7 +50,7 @@ func (PlanRepository) Update(db *sqlx.Tx, id int64, param *model.Plan) (result s
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -63,7 +63,7 @@ func (PlanRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err erro
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()

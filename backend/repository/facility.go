@@ -89,7 +89,7 @@ func (FacilityRepository) Create(db *sqlx.Tx, param model.Facility) (result sql.
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -102,7 +102,7 @@ func (FacilityRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err 
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -115,7 +115,7 @@ func (FacilityRepository) AddGroup(db *sqlx.Tx, facility_id int64, facility_type
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
@@ -128,7 +128,7 @@ func (FacilityRepository) RemoveGroup(db *sqlx.Tx, facility_id int64) (result sq
 		return nil, err
 	}
 	defer func() {
-		if closeErr := stmt.Close(); closeErr != err {
+		if closeErr := stmt.Close(); closeErr != nil {
 			err = closeErr
 		}
 	}()
