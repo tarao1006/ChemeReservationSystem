@@ -55,15 +55,14 @@ func router() *gin.Engine {
 		ut.DELETE("/:id", c.Delete)
 	}
 
-	// f := r.Group("/facility")
-	// {
-	// 	c := controller.NewFacilityController()
-	// 	f.GET("", c.Index)
-	// 	f.GET("/:id", c.Show)
-	// 	f.POST("", c.Create)
-	// 	f.PUT("/:id", c.Update)
-	// 	f.DELETE("/:id", c.Delete)
-	// }
+	f := r.Group("/facility")
+	{
+		c := controller.NewFacilityController()
+		f.GET("", c.Index)
+		f.GET("/:id", c.Show)
+		f.POST("", c.Create)
+		f.DELETE("/:id", c.Delete)
+	}
 
 	ft := r.Group("/facility_type")
 	{

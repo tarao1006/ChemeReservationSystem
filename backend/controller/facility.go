@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/service"
@@ -37,21 +38,13 @@ func (FacilityController) Create(c *gin.Context) {
 
 func (FacilityController) Show(c *gin.Context) {
 	s := service.NewFacilityService()
-	id := c.Params.ByName("id")
-	f, err := s.GetByID(id)
-
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, f)
-}
 
-func (FacilityController) Update(c *gin.Context) {
-	s := service.NewFacilityService()
-	id := c.Params.ByName("id")
-	f, err := s.UpdateByID(id, c)
-
+	f, err := s.GetByID(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -61,7 +54,11 @@ func (FacilityController) Update(c *gin.Context) {
 
 func (FacilityController) Delete(c *gin.Context) {
 	s := service.NewFacilityService()
-	id := c.Params.ByName("id")
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	if err := s.DeleteByID(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

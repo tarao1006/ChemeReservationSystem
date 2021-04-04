@@ -1,73 +1,81 @@
 package service
 
 import (
+	"database/sql"
+
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/db"
 	"github.com/tarao1006/ChemeReservationSystem/model"
+	"github.com/tarao1006/ChemeReservationSystem/repository"
 )
 
-type FacilityService struct{}
+type FacilityService struct {
+	db   *sqlx.DB
+	repo *repository.FacilityRepository
+}
 
 func NewFacilityService() *FacilityService {
-	return &FacilityService{}
+	return &FacilityService{
+		db:   db.GetDB(),
+		repo: repository.NewFacilityRepository(),
+	}
 }
 
-func (FacilityService) GetAll() ([]model.Facility, error) {
-	db := db.GetDB()
-	facilities := []model.Facility{}
+func (fs *FacilityService) GetAll() ([]model.Facility, error) {
+	return fs.repo.GetAll(fs.db)
+}
 
-	if err := db.Find(&facilities).Error; err != nil {
+func (fs *FacilityService) GetByID(id int64) (*model.Facility, error) {
+	return fs.repo.FindByID(fs.db, id)
+}
+
+func (fs *FacilityService) Create(c *gin.Context) (*model.Facility, error) {
+	var f model.Facility
+	if err := c.BindJSON(&f); err != nil {
 		return nil, err
 	}
-	return facilities, nil
+	if err := db.TXHandler(fs.db, func(tx *sqlx.Tx) error {
+		var (
+			res sql.Result
+			err error
+		)
+		res, err = fs.repo.Create(tx, f.Name)
+		if err != nil {
+			return err
+		}
+		id, err := res.LastInsertId()
+		if err != nil {
+			return err
+		}
+		f.ID = id
+
+		for _, ft := range f.Types {
+			_, err = fs.repo.AddGroup(tx, f.ID, ft.ID)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+	return &f, nil
 }
 
-func (FacilityService) Create(c *gin.Context) (model.Facility, error) {
-	db := db.GetDB()
-	var f model.Facility
-
-	if err := c.BindJSON(&f); err != nil {
-		return f, err
-	}
-
-	if err := db.Create(&f).Error; err != nil {
-		return f, err
-	}
-
-	return f, nil
-}
-
-func (FacilityService) GetByID(id string) (model.Facility, error) {
-	db := db.GetDB()
-	var f model.Facility
-
-	if err := db.Where("id = ?", id).First(&f).Error; err != nil {
-		return f, err
-	}
-
-	return f, nil
-}
-
-func (FacilityService) UpdateByID(id string, c *gin.Context) (model.Facility, error) {
-	db := db.GetDB()
-	var f model.Facility
-
-	if err := db.Where("id = ?", id).First(&f).Error; err != nil {
-		return f, err
-	}
-
-	if err := c.BindJSON(&f); err != nil {
-		return f, err
-	}
-
-	db.Save(&f)
-
-	return f, nil
-}
-
-func (FacilityService) DeleteByID(id string) error {
-	db := db.GetDB()
-	if err := db.Where("id = ?", id).Delete(&model.Facility{}).Error; err != nil {
+func (fs *FacilityService) DeleteByID(id int64) error {
+	if err := db.TXHandler(fs.db, func(tx *sqlx.Tx) error {
+		var err error
+		_, err = fs.repo.RemoveGroup(tx, id)
+		if err != nil {
+			return err
+		}
+		_, err = fs.repo.Delete(tx, id)
+		if err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
 		return err
 	}
 	return nil
