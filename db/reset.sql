@@ -49,3 +49,12 @@ INSERT INTO `facility_group` (`id`, `facility_id`, `facility_type_id`) VALUES (4
 
 INSERT INTO `facility` (`id`, `name`) VALUES (3, "施設C");
 INSERT INTO `facility_group` (`id`, `facility_id`, `facility_type_id`) VALUES (5, 3, 3);
+
+INSERT INTO `reservation` (
+  `id`, `creator_id`, `start_at`, `end_at`, `plan_id`, `plan_memo`
+) VALUES (
+  1, "professor001", "2021-04-04 10:00:00", "2021-04-04 11:00:00", 1, ""
+);
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (1, 1, "professor001");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (2, 1, "student001");
+INSERT INTO `reservation_facility` (`id`, `reservation_id`, `facility_id`) VALUES (1, 1, 1);
