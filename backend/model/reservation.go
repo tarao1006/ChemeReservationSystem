@@ -2,10 +2,6 @@ package model
 
 import "time"
 
-func (Reservation) TableName() string {
-	return "reservation"
-}
-
 type Reservation struct {
 	ID        int       `db:"id" json:"id"`
 	UserID    string    `db:"user_id" json:"user_id"`

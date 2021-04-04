@@ -1,9 +1,5 @@
 package model
 
-func (User) TableName() string {
-	return "user"
-}
-
 type User struct {
 	ID             string `db:"id" json:"id" binding:"required"`
 	Name           string `db:"name" json:"name" binding:"required"`
