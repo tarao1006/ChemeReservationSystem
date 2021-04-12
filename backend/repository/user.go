@@ -94,11 +94,11 @@ func (UserRepository) FindDTOByID(db *sqlx.DB, id string) (*model.UserDTO, error
 	return &user, nil
 }
 
-func (UserRepository) FindDTOByEmailAddress(db *sqlx.DB, email_address string) (*model.UserDTO, error) {
+func (UserRepository) FindDTOByEmailAddress(db *sqlx.DB, e string) (*model.UserDTO, error) {
 	var user model.UserDTO
 	if err := db.Get(&user, `
 		SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE email_address = ?
-	`, email_address); err != nil {
+	`, e); err != nil {
 		return nil, err
 	}
 
@@ -131,7 +131,7 @@ func (UserRepository) UpdateNameByID(db *sqlx.Tx, id string, name string) (resul
 	return stmt.Exec(name, id)
 }
 
-func (UserRepository) UpdateNameRubyByID(db *sqlx.Tx, id string, nameRuby string) (result sql.Result, err error) {
+func (UserRepository) UpdateNameRubyByID(db *sqlx.Tx, id string, n string) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`UPDATE user SET name_ruby = ? WHERE id = ?`)
 	if err != nil {
 		return nil, err
@@ -141,10 +141,10 @@ func (UserRepository) UpdateNameRubyByID(db *sqlx.Tx, id string, nameRuby string
 			err = closeErr
 		}
 	}()
-	return stmt.Exec(nameRuby, id)
+	return stmt.Exec(n, id)
 }
 
-func (UserRepository) UpdateEmailAddressByID(db *sqlx.Tx, id string, email_address string) (result sql.Result, err error) {
+func (UserRepository) UpdateEmailAddressByID(db *sqlx.Tx, id string, e string) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`UPDATE user SET email_address = ? WHERE id = ?`)
 	if err != nil {
 		return nil, err
@@ -154,10 +154,10 @@ func (UserRepository) UpdateEmailAddressByID(db *sqlx.Tx, id string, email_addre
 			err = closeErr
 		}
 	}()
-	return stmt.Exec(email_address, id)
+	return stmt.Exec(e, id)
 }
 
-func (UserRepository) UpdatePasswordDigestByID(db *sqlx.Tx, id string, password_digest []byte) (result sql.Result, err error) {
+func (UserRepository) UpdatePasswordDigestByID(db *sqlx.Tx, id string, p []byte) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`UPDATE user SET password_digest = ? WHERE id = ?`)
 	if err != nil {
 		return nil, err
@@ -167,7 +167,7 @@ func (UserRepository) UpdatePasswordDigestByID(db *sqlx.Tx, id string, password_
 			err = closeErr
 		}
 	}()
-	return stmt.Exec(password_digest, id)
+	return stmt.Exec(p, id)
 }
 
 func (UserRepository) Delete(db *sqlx.Tx, id string) (result sql.Result, err error) {
@@ -183,7 +183,7 @@ func (UserRepository) Delete(db *sqlx.Tx, id string) (result sql.Result, err err
 	return stmt.Exec(id)
 }
 
-func (UserRepository) AddGroup(db *sqlx.Tx, user_id string, user_type_id int64) (result sql.Result, err error) {
+func (UserRepository) AddGroup(db *sqlx.Tx, userID string, userTypeID int64) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`INSERT INTO user_group (user_id, user_type_id) VALUES (?, ?)`)
 	if err != nil {
 		return nil, err
@@ -193,10 +193,10 @@ func (UserRepository) AddGroup(db *sqlx.Tx, user_id string, user_type_id int64) 
 			err = closeErr
 		}
 	}()
-	return stmt.Exec(user_id, user_type_id)
+	return stmt.Exec(userID, userTypeID)
 }
 
-func (UserRepository) RemoveGroup(db *sqlx.Tx, user_id string, user_type_id int64) (result sql.Result, err error) {
+func (UserRepository) RemoveGroup(db *sqlx.Tx, userID string, userTypeID int64) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`DELETE FROM user_group WHERE user_id = ? AND user_type_id = ?`)
 	if err != nil {
 		return nil, err
@@ -206,10 +206,10 @@ func (UserRepository) RemoveGroup(db *sqlx.Tx, user_id string, user_type_id int6
 			err = closeErr
 		}
 	}()
-	return stmt.Exec(user_id, user_type_id)
+	return stmt.Exec(userID, userTypeID)
 }
 
-func (UserRepository) RemoveAllGroups(db *sqlx.Tx, user_id string) (result sql.Result, err error) {
+func (UserRepository) RemoveAllGroups(db *sqlx.Tx, userID string) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`DELETE FROM user_group WHERE user_id = ?`)
 	if err != nil {
 		return nil, err
@@ -219,5 +219,5 @@ func (UserRepository) RemoveAllGroups(db *sqlx.Tx, user_id string) (result sql.R
 			err = closeErr
 		}
 	}()
-	return stmt.Exec(user_id)
+	return stmt.Exec(userID)
 }

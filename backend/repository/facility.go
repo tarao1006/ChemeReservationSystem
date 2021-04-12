@@ -124,7 +124,7 @@ func (FacilityRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err 
 	return stmt.Exec(id)
 }
 
-func (FacilityRepository) AddGroup(db *sqlx.Tx, facility_id int64, facility_type_id int64) (result sql.Result, err error) {
+func (FacilityRepository) AddGroup(db *sqlx.Tx, facilityID int64, facilityTypeID int64) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`INSERT INTO facility_group (facility_id, facility_type_id) VALUES (?, ?)`)
 	if err != nil {
 		return nil, err
@@ -134,10 +134,10 @@ func (FacilityRepository) AddGroup(db *sqlx.Tx, facility_id int64, facility_type
 			err = closeErr
 		}
 	}()
-	return stmt.Exec(facility_id, facility_type_id)
+	return stmt.Exec(facilityID, facilityTypeID)
 }
 
-func (FacilityRepository) RemoveGroup(db *sqlx.Tx, facility_id int64, facility_type_id int64) (result sql.Result, err error) {
+func (FacilityRepository) RemoveGroup(db *sqlx.Tx, facilityID int64, facilityTypeID int64) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`DELETE FROM facility_group WHERE facility_id = ? AND facility_type_id = ?`)
 	if err != nil {
 		return nil, err
@@ -147,10 +147,10 @@ func (FacilityRepository) RemoveGroup(db *sqlx.Tx, facility_id int64, facility_t
 			err = closeErr
 		}
 	}()
-	return stmt.Exec(facility_id, facility_type_id)
+	return stmt.Exec(facilityID, facilityTypeID)
 }
 
-func (FacilityRepository) RemoveAllGroups(db *sqlx.Tx, facility_id int64) (result sql.Result, err error) {
+func (FacilityRepository) RemoveAllGroups(db *sqlx.Tx, facilityID int64) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`DELETE FROM facility_group WHERE facility_id = ?`)
 	if err != nil {
 		return nil, err
@@ -160,5 +160,5 @@ func (FacilityRepository) RemoveAllGroups(db *sqlx.Tx, facility_id int64) (resul
 			err = closeErr
 		}
 	}()
-	return stmt.Exec(facility_id)
+	return stmt.Exec(facilityID)
 }
