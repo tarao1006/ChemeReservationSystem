@@ -149,6 +149,10 @@ func (us *UserService) UpdatePasswordByID(id string, c *gin.Context) (*model.Use
 		return nil, err
 	}
 
+	if p.OldPassword == p.NewPassword {
+		return nil, model.ErrNewPasswordMustBeChanged
+	}
+
 	user, err := us.repo.FindDTOByID(us.db, id)
 	if err != nil {
 		return nil, err

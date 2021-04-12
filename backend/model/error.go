@@ -3,5 +3,5 @@ package model
 import "errors"
 
 var (
-	ErrInvalidNewPassword = errors.New("invalid new password")
+	ErrNewPasswordMustBeChanged = errors.New("new password should be changed")
 )
