@@ -85,14 +85,90 @@ func (rs *ReservationService) Create(c *gin.Context) (*model.Reservation, error)
 	return reservaton, nil
 }
 
+func (rs *ReservationService) UpdateByID(id int64, c *gin.Context) (*model.Reservation, error) {
+	var r model.ReservationAPI
+	if err := c.BindJSON(&r); err != nil {
+		return nil, err
+	}
+	reservaton, err := rs.repo.FindByID(rs.db, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.TXHandler(rs.db, func(tx *sqlx.Tx) error {
+		var err error
+		if !r.StartAt.IsZero() {
+			_, err = rs.repo.UpdateStartAtByID(tx, id, r.StartAt)
+			if err != nil {
+				return err
+			}
+		}
+		if !r.EndAt.IsZero() {
+			_, err = rs.repo.UpdateEndAtByID(tx, id, r.EndAt)
+			if err != nil {
+				return err
+			}
+		}
+		if r.PlanID != 0 {
+			_, err = rs.repo.UpdatePlanIDByID(tx, id, r.PlanID)
+			if err != nil {
+				return err
+			}
+		}
+		if r.UpdatePlanMemo || r.PlanMemo != "" {
+			_, err = rs.repo.UpdatePlanMemoByID(tx, id, r.PlanMemo)
+			if err != nil {
+				return err
+			}
+		}
+		if len(r.UserIDs) != 0 {
+			for _, user := range reservaton.Attendees {
+				_, err = rs.repo.RemoveUser(tx, id, user.ID)
+				if err != nil {
+					return err
+				}
+			}
+			for _, userID := range r.UserIDs {
+				_, err = rs.repo.AddUser(tx, id, userID)
+				if err != nil {
+					return err
+				}
+			}
+		}
+		if len(r.FacilityIDs) != 0 {
+			for _, facility := range reservaton.Facilities {
+				_, err = rs.repo.RemoveFacility(tx, id, facility.ID)
+				if err != nil {
+					return err
+				}
+			}
+			for _, facilityID := range r.FacilityIDs {
+				_, err = rs.repo.AddFacility(tx, id, facilityID)
+				if err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	newReservation, err := rs.repo.FindByID(rs.db, id)
+	if err != nil {
+		return nil, err
+	}
+	return newReservation, nil
+}
+
 func (rs *ReservationService) DeleteByID(id int64) error {
 	if err := db.TXHandler(rs.db, func(tx *sqlx.Tx) error {
 		var err error
-		_, err = rs.repo.RemoveUser(tx, id)
+		_, err = rs.repo.RemoveAllUsers(tx, id)
 		if err != nil {
 			return err
 		}
-		_, err = rs.repo.RemoveFacility(tx, id)
+		_, err = rs.repo.RemoveAllFacilities(tx, id)
 		if err != nil {
 			return err
 		}

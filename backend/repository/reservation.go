@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/model"
@@ -186,6 +187,58 @@ func (ReservationRepository) Create(db *sqlx.Tx, param *model.ReservationDTO) (r
 	return stmt.Exec(param.CreatorID, param.StartAt, param.EndAt, param.PlanID, param.PlanMemo)
 }
 
+func (ReservationRepository) UpdateStartAtByID(db *sqlx.Tx, id int64, start_at time.Time) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`UPDATE reservation SET start_at = ? WHERE id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(start_at, id)
+}
+
+func (ReservationRepository) UpdateEndAtByID(db *sqlx.Tx, id int64, end_at time.Time) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`UPDATE reservation SET end_at = ? WHERE id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(end_at, id)
+}
+
+func (ReservationRepository) UpdatePlanIDByID(db *sqlx.Tx, id int64, plan_id int64) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`UPDATE reservation SET plan_id = ? WHERE id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(plan_id, id)
+}
+
+func (ReservationRepository) UpdatePlanMemoByID(db *sqlx.Tx, id int64, plan_memo string) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`UPDATE reservation SET plan_memo = ? WHERE id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(plan_memo, id)
+}
+
 func (ReservationRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`DELETE FROM reservation WHERE id = ?`)
 	if err != nil {
@@ -212,7 +265,20 @@ func (ReservationRepository) AddUser(db *sqlx.Tx, reservation_id int64, user_id 
 	return stmt.Exec(reservation_id, user_id)
 }
 
-func (ReservationRepository) RemoveUser(db *sqlx.Tx, reservation_id int64) (result sql.Result, err error) {
+func (ReservationRepository) RemoveUser(db *sqlx.Tx, reservation_id int64, user_id string) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`DELETE FROM reservation_user WHERE reservation_id = ? AND user_id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(reservation_id, user_id)
+}
+
+func (ReservationRepository) RemoveAllUsers(db *sqlx.Tx, reservation_id int64) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`DELETE FROM reservation_user WHERE reservation_id = ?`)
 	if err != nil {
 		return nil, err
@@ -238,7 +304,20 @@ func (ReservationRepository) AddFacility(db *sqlx.Tx, reservation_id int64, faci
 	return stmt.Exec(reservation_id, facility_id)
 }
 
-func (ReservationRepository) RemoveFacility(db *sqlx.Tx, reservation_id int64) (result sql.Result, err error) {
+func (ReservationRepository) RemoveFacility(db *sqlx.Tx, reservation_id int64, facility_id int64) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`DELETE FROM reservation_facility WHERE reservation_id = ? AND facility_id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(reservation_id, facility_id)
+}
+
+func (ReservationRepository) RemoveAllFacilities(db *sqlx.Tx, reservation_id int64) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`DELETE FROM reservation_facility WHERE reservation_id = ?`)
 	if err != nil {
 		return nil, err

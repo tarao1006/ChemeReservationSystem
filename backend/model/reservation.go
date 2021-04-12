@@ -3,13 +3,14 @@ package model
 import "time"
 
 type ReservationAPI struct {
-	CreatorID   string    `json:"creator_id"`
-	StartAt     time.Time `json:"start_at"`
-	EndAt       time.Time `json:"end_at"`
-	PlanID      int64     `json:"plan_id"`
-	PlanMemo    string    `json:"plan_memo"`
-	UserIDs     []string  `json:"user_ids"`
-	FacilityIDs []int64   `json:"facility_ids"`
+	CreatorID      string    `json:"creator_id"`
+	StartAt        time.Time `json:"start_at"`
+	EndAt          time.Time `json:"end_at"`
+	PlanID         int64     `json:"plan_id"`
+	UpdatePlanMemo bool      `json:"update_plan_memo"`
+	PlanMemo       string    `json:"plan_memo"`
+	UserIDs        []string  `json:"user_ids"`
+	FacilityIDs    []int64   `json:"facility_ids"`
 }
 
 type Reservation struct {

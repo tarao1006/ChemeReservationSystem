@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -45,6 +46,25 @@ func (ReservationController) Show(c *gin.Context) {
 	}
 
 	r, err := s.GetByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, r)
+}
+
+func (ReservationController) Update(c *gin.Context) {
+	if v, exist := c.Get("plan_memo"); exist {
+		fmt.Println(v)
+	}
+	s := service.NewReservationService()
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	r, err := s.UpdateByID(id, c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

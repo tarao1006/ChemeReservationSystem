@@ -99,6 +99,7 @@ func router() *gin.Engine {
 			reservation.GET("", c.Index)
 			reservation.GET("/:id", c.Show)
 			reservation.POST("", c.Create)
+			reservation.PUT("/:id", c.Update)
 			reservation.DELETE("/:id", c.Delete)
 		}
 
