@@ -68,7 +68,9 @@ func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 		ON
 			ug.user_type_id = ut.id
 		WHERE
-			ug.user_id = ?;`, user.ID); err != nil {
+			ug.user_id = ?
+		ORDER BY
+			ut.id;`, user.ID); err != nil {
 		return nil, err
 	}
 
