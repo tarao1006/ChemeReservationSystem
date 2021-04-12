@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"fmt"
-
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/model"
@@ -54,7 +52,6 @@ func (AuthController) Authenticator(c *gin.Context) (interface{}, error) {
 //   claims := jwt.ExtractClaims(c)
 // で読むことができる。
 func (ac AuthController) PayloadFunc(data interface{}) jwt.MapClaims {
-	fmt.Println("PayloadFunc")
 	if v, ok := data.(*model.UserDTO); ok {
 		return jwt.MapClaims{
 			ac.identityKey: v.EmailAddress,
