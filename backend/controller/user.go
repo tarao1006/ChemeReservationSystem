@@ -59,6 +59,18 @@ func (UserController) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, u)
 }
 
+func (UserController) UpdatePassword(c *gin.Context) {
+	s := service.NewUserService()
+	id := c.Params.ByName("id")
+	u, err := s.UpdatePasswordByID(id, c)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, u)
+}
+
 func (UserController) Delete(c *gin.Context) {
 	s := service.NewUserService()
 	id := c.Params.ByName("id")

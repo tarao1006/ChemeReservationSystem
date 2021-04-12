@@ -83,7 +83,18 @@ func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 	}, nil
 }
 
-func (UserRepository) FindByEmailAddress(db *sqlx.DB, email_address string) (*model.UserDTO, error) {
+func (UserRepository) FindDTOByID(db *sqlx.DB, id string) (*model.UserDTO, error) {
+	var user model.UserDTO
+	if err := db.Get(&user, `
+		SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE id = ?
+	`, id); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (UserRepository) FindDTOByEmailAddress(db *sqlx.DB, email_address string) (*model.UserDTO, error) {
 	var user model.UserDTO
 	if err := db.Get(&user, `
 		SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE email_address = ?

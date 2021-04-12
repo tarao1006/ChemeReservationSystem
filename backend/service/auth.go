@@ -27,7 +27,7 @@ func (as *AuthService) Login(c *gin.Context) (*model.UserDTO, error) {
 		return nil, err
 	}
 
-	user, err := as.repo.FindByEmailAddress(as.db, auth.EmailAddress)
+	user, err := as.repo.FindDTOByEmailAddress(as.db, auth.EmailAddress)
 	if err != nil {
 		return nil, err
 	}

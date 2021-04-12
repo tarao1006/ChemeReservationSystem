@@ -138,6 +138,48 @@ func (us *UserService) UpdateByID(id string, c *gin.Context) (*model.User, error
 	return newUser, nil
 }
 
+type Password struct {
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}
+
+func (us *UserService) UpdatePasswordByID(id string, c *gin.Context) (*model.User, error) {
+	var p Password
+	if err := c.BindJSON(&p); err != nil {
+		return nil, err
+	}
+
+	user, err := us.repo.FindDTOByID(us.db, id)
+	if err != nil {
+		return nil, err
+	}
+
+	newHashed, err := bcrypt.GenerateFromPassword([]byte(p.NewPassword), 10)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := bcrypt.CompareHashAndPassword(user.PasswordDigest, []byte(p.OldPassword)); err != nil {
+		return nil, err
+	}
+
+	if err := db.TXHandler(us.db, func(tx *sqlx.Tx) error {
+		_, err := us.repo.UpdatePasswordDigestByID(tx, id, newHashed)
+		if err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	newUser, err := us.repo.FindByID(us.db, id)
+	if err != nil {
+		return nil, err
+	}
+	return newUser, nil
+}
+
 func (us *UserService) DeleteByID(id string) error {
 	if err := db.TXHandler(us.db, func(tx *sqlx.Tx) error {
 		var err error

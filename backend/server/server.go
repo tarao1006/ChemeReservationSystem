@@ -61,6 +61,8 @@ func router() *gin.Engine {
 			u.POST("", c.Create)
 			u.PUT("/:id", c.Update)
 			u.DELETE("/:id", c.Delete)
+
+			u.PUT("/:id/password", c.UpdatePassword)
 		}
 
 		ut := r.Group("/user_type")
