@@ -72,10 +72,76 @@ func (us *UserService) Create(c *gin.Context) (*model.User, error) {
 	return user, nil
 }
 
+func (us *UserService) UpdateByID(id string, c *gin.Context) (*model.User, error) {
+	var u model.UserAPI
+	if err := c.BindJSON(&u); err != nil {
+		return nil, err
+	}
+	user, err := us.repo.FindByID(us.db, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.TXHandler(us.db, func(tx *sqlx.Tx) error {
+		var err error
+		if u.Name != "" {
+			_, err = us.repo.UpdateNameByID(tx, id, u.Name)
+			if err != nil {
+				return err
+			}
+		}
+		if u.NameRuby != "" {
+			_, err = us.repo.UpdateNameRubyByID(tx, id, u.NameRuby)
+			if err != nil {
+				return err
+			}
+		}
+		if u.EmailAddress != "" {
+			_, err = us.repo.UpdateEmailAddressByID(tx, id, u.EmailAddress)
+			if err != nil {
+				return err
+			}
+		}
+		if u.Password != "" {
+			hashed, err := bcrypt.GenerateFromPassword([]byte(u.Password), 10)
+			if err != nil {
+				return err
+			}
+			_, err = us.repo.UpdatePasswordDigestByID(tx, id, hashed)
+			if err != nil {
+				return err
+			}
+		}
+		if len(u.Types) != 0 {
+			for _, userType := range user.Types {
+				_, err = us.repo.RemoveGroup(tx, id, userType.ID)
+				if err != nil {
+					return err
+				}
+			}
+			for _, userType := range u.Types {
+				_, err = us.repo.AddGroup(tx, id, userType)
+				if err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	newUser, err := us.repo.FindByID(us.db, id)
+	if err != nil {
+		return nil, err
+	}
+	return newUser, nil
+}
+
 func (us *UserService) DeleteByID(id string) error {
 	if err := db.TXHandler(us.db, func(tx *sqlx.Tx) error {
 		var err error
-		_, err = us.repo.RemoveGroup(tx, id)
+		_, err = us.repo.RemoveAllGroups(tx, id)
 		if err != nil {
 			return err
 		}

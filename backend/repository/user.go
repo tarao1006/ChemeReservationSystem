@@ -107,6 +107,58 @@ func (UserRepository) Create(db *sqlx.Tx, param *model.UserDTO) (result sql.Resu
 	return stmt.Exec(param.ID, param.Name, param.NameRuby, param.PasswordDigest, param.EmailAddress)
 }
 
+func (UserRepository) UpdateNameByID(db *sqlx.Tx, id string, name string) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`UPDATE user SET name = ? WHERE id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(name, id)
+}
+
+func (UserRepository) UpdateNameRubyByID(db *sqlx.Tx, id string, nameRuby string) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`UPDATE user SET name_ruby = ? WHERE id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(nameRuby, id)
+}
+
+func (UserRepository) UpdateEmailAddressByID(db *sqlx.Tx, id string, email_address string) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`UPDATE user SET email_address = ? WHERE id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(email_address, id)
+}
+
+func (UserRepository) UpdatePasswordDigestByID(db *sqlx.Tx, id string, password_digest []byte) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`UPDATE user SET password_digest = ? WHERE id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(password_digest, id)
+}
+
 func (UserRepository) Delete(db *sqlx.Tx, id string) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`DELETE FROM user WHERE id = ?`)
 	if err != nil {
@@ -133,7 +185,20 @@ func (UserRepository) AddGroup(db *sqlx.Tx, user_id string, user_type_id int64) 
 	return stmt.Exec(user_id, user_type_id)
 }
 
-func (UserRepository) RemoveGroup(db *sqlx.Tx, user_id string) (result sql.Result, err error) {
+func (UserRepository) RemoveGroup(db *sqlx.Tx, user_id string, user_type_id int64) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`DELETE FROM user_group WHERE user_id = ? AND user_type_id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(user_id, user_type_id)
+}
+
+func (UserRepository) RemoveAllGroups(db *sqlx.Tx, user_id string) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`DELETE FROM user_group WHERE user_id = ?`)
 	if err != nil {
 		return nil, err
