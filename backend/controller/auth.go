@@ -69,7 +69,7 @@ MiddlewareFunc flow
 2. Authorizator
 */
 
-// 使用していない
+// IdentityHandlerの返り値は、c.Get(identityKey)で取得できる。
 func (ac AuthController) IdentityHandler(c *gin.Context) interface{} {
 	claims := jwt.ExtractClaims(c)
 	return &model.Auth{
