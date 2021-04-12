@@ -8,12 +8,12 @@ import (
 )
 
 type AuthController struct {
-	identityKey string
+	IdentityKey string
 }
 
 func NewAuthController() *AuthController {
 	return &AuthController{
-		identityKey: "email_address",
+		IdentityKey: "id",
 	}
 }
 
@@ -31,7 +31,7 @@ login フロー
 
 // Authenticator は
 // {
-//    email_address: "email_address"
+//    id: "id"
 //    password: "password"
 //  }
 // を用いて有効なユーザーであるかを検証する。
@@ -54,7 +54,7 @@ func (AuthController) Authenticator(c *gin.Context) (interface{}, error) {
 func (ac AuthController) PayloadFunc(data interface{}) jwt.MapClaims {
 	if v, ok := data.(*model.UserDTO); ok {
 		return jwt.MapClaims{
-			ac.identityKey: v.EmailAddress,
+			ac.IdentityKey: v.ID,
 		}
 	}
 	return jwt.MapClaims{}
@@ -70,7 +70,7 @@ MiddlewareFunc flow
 func (ac AuthController) IdentityHandler(c *gin.Context) interface{} {
 	claims := jwt.ExtractClaims(c)
 	return &model.Auth{
-		EmailAddress: claims[ac.identityKey].(string),
+		ID: claims[ac.IdentityKey].(string),
 	}
 }
 

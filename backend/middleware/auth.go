@@ -7,8 +7,6 @@ import (
 	"github.com/tarao1006/ChemeReservationSystem/controller"
 )
 
-var identityKey = "email_address"
-
 func AuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 	c := controller.NewAuthController()
 	return jwt.New(&jwt.GinJWTMiddleware{
@@ -16,7 +14,7 @@ func AuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 		Key:             []byte("secret key"),
 		Timeout:         time.Hour * 24 * (365*3 + 366),
 		MaxRefresh:      time.Hour,
-		IdentityKey:     identityKey,
+		IdentityKey:     c.IdentityKey,
 		PayloadFunc:     c.PayloadFunc,
 		IdentityHandler: c.IdentityHandler,
 		Authenticator:   c.Authenticator,
