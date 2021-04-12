@@ -31,6 +31,36 @@ func (FacilityTypeRepository) FindByID(db *sqlx.DB, id int64) (*model.FacilityTy
 	return &facilityType, nil
 }
 
+func (FacilityTypeRepository) FindByIDs(db *sqlx.DB, ids []int64) ([]model.FacilityType, error) {
+	var facilityTypes []model.FacilityType
+	query := `SELECT id, name FROM facility_type WHERE id IN (?)`
+	query, args, err := sqlx.In(query, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	query = db.Rebind(query)
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var (
+		id   int64
+		name string
+	)
+	for rows.Next() {
+		if err := rows.Scan(&id, &name); err != nil {
+			return nil, err
+		}
+		facilityTypes = append(facilityTypes, model.FacilityType{
+			ID:   id,
+			Name: name,
+		})
+	}
+	return facilityTypes, nil
+}
+
 func (FacilityTypeRepository) Create(db *sqlx.Tx, name string) (result sql.Result, err error) {
 	query := `INSERT INTO facility_type (name) VALUES (?)`
 	stmt, err := db.Prepare(query)

@@ -78,6 +78,7 @@ func router() *gin.Engine {
 			f.GET("", c.Index)
 			f.GET("/:id", c.Show)
 			f.POST("", c.Create)
+			f.PUT("/:id", c.Update)
 			f.DELETE("/:id", c.Delete)
 		}
 

@@ -11,14 +11,16 @@ import (
 )
 
 type FacilityService struct {
-	db   *sqlx.DB
-	repo *repository.FacilityRepository
+	db       *sqlx.DB
+	repo     *repository.FacilityRepository
+	typeRepo *repository.FacilityTypeRepository
 }
 
 func NewFacilityService() *FacilityService {
 	return &FacilityService{
-		db:   db.GetDB(),
-		repo: repository.NewFacilityRepository(),
+		db:       db.GetDB(),
+		repo:     repository.NewFacilityRepository(),
+		typeRepo: repository.NewFacilityTypeRepository(),
 	}
 }
 
@@ -70,10 +72,54 @@ func (fs *FacilityService) Create(c *gin.Context) (*model.Facility, error) {
 	return facility, nil
 }
 
+func (fs *FacilityService) UpdateByID(id int64, c *gin.Context) (*model.Facility, error) {
+	var f model.FacilityAPI
+	if err := c.BindJSON(&f); err != nil {
+		return nil, err
+	}
+	facility, err := fs.repo.FindByID(fs.db, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.TXHandler(fs.db, func(tx *sqlx.Tx) error {
+		var err error
+		if f.Name != "" {
+			_, err = fs.repo.UpdateNameByID(tx, id, f.Name)
+			if err != nil {
+				return err
+			}
+		}
+		if len(f.Types) != 0 {
+			for _, facilityType := range facility.Types {
+				_, err = fs.repo.RemoveGroup(tx, id, facilityType.ID)
+				if err != nil {
+					return err
+				}
+			}
+			for _, facilityType := range f.Types {
+				_, err = fs.repo.AddGroup(tx, id, facilityType)
+				if err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	newFacility, err := fs.repo.FindByID(fs.db, id)
+	if err != nil {
+		return nil, err
+	}
+	return newFacility, nil
+}
+
 func (fs *FacilityService) DeleteByID(id int64) error {
 	if err := db.TXHandler(fs.db, func(tx *sqlx.Tx) error {
 		var err error
-		_, err = fs.repo.RemoveGroup(tx, id)
+		_, err = fs.repo.RemoveAllGroups(tx, id)
 		if err != nil {
 			return err
 		}

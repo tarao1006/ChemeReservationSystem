@@ -72,7 +72,9 @@ func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, erro
 		ON
 			fg.facility_type_id = ft.id
 		WHERE
-			fg.facility_id = ?;`, facility.ID); err != nil {
+			fg.facility_id = ?
+		ORDER BY
+			ft.id;`, facility.ID); err != nil {
 		return nil, err
 	}
 
@@ -94,6 +96,19 @@ func (FacilityRepository) Create(db *sqlx.Tx, param *model.FacilityDTO) (result 
 		}
 	}()
 	return stmt.Exec(param.Name)
+}
+
+func (FacilityRepository) UpdateNameByID(db *sqlx.Tx, id int64, name string) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`UPDATE facility SET name = ? WHERE id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(name, id)
 }
 
 func (FacilityRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err error) {
@@ -122,7 +137,20 @@ func (FacilityRepository) AddGroup(db *sqlx.Tx, facility_id int64, facility_type
 	return stmt.Exec(facility_id, facility_type_id)
 }
 
-func (FacilityRepository) RemoveGroup(db *sqlx.Tx, facility_id int64) (result sql.Result, err error) {
+func (FacilityRepository) RemoveGroup(db *sqlx.Tx, facility_id int64, facility_type_id int64) (result sql.Result, err error) {
+	stmt, err := db.Prepare(`DELETE FROM facility_group WHERE facility_id = ? AND facility_type_id = ?`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+	return stmt.Exec(facility_id, facility_type_id)
+}
+
+func (FacilityRepository) RemoveAllGroups(db *sqlx.Tx, facility_id int64) (result sql.Result, err error) {
 	stmt, err := db.Prepare(`DELETE FROM facility_group WHERE facility_id = ?`)
 	if err != nil {
 		return nil, err

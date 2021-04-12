@@ -52,6 +52,21 @@ func (FacilityController) Show(c *gin.Context) {
 	c.JSON(http.StatusOK, f)
 }
 
+func (FacilityController) Update(c *gin.Context) {
+	s := service.NewFacilityService()
+	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	f, err := s.UpdateByID(id, c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, f)
+}
+
 func (FacilityController) Delete(c *gin.Context) {
 	s := service.NewFacilityService()
 	id, err := strconv.ParseInt(c.Params.ByName("id"), 10, 64)
