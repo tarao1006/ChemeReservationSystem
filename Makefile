@@ -3,6 +3,9 @@ DB_SERVICE:=db
 MIGRATION_SERVICE:=skeema
 DATABASE_NAME:=cheme_reservation_system
 
+env:
+	cp .env.test .env
+
 ping:
 	curl http://localhost:8000/ping
 
