@@ -3,6 +3,7 @@ package controller
 import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/tarao1006/ChemeReservationSystem/config"
 	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
@@ -13,7 +14,7 @@ type AuthController struct {
 
 func NewAuthController() *AuthController {
 	return &AuthController{
-		IdentityKey: "id",
+		IdentityKey: config.IdentityKey(),
 	}
 }
 

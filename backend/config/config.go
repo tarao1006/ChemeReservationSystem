@@ -17,3 +17,7 @@ func Realm() string {
 func CookieName() string {
 	return os.Getenv("COOKIE_NAME")
 }
+
+func IdentityKey() string {
+	return os.Getenv("IDENTITY_KEY")
+}
