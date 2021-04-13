@@ -32,6 +32,12 @@ func (s *Server) Run(port string) {
 	}
 }
 
+func PingHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "pong",
+	})
+}
+
 func router() *gin.Engine {
 	authMiddleware, err := middleware.AuthMiddleware()
 	if err != nil {
@@ -39,11 +45,7 @@ func router() *gin.Engine {
 	}
 	r := gin.Default()
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
+	r.GET("/ping", PingHandler)
 
 	r.POST("/login", authMiddleware.LoginHandler)
 	r.POST("/logout", authMiddleware.LogoutHandler)
@@ -51,7 +53,7 @@ func router() *gin.Engine {
 	v1 := r.Group("/api/v1")
 	v1.Use(authMiddleware.MiddlewareFunc())
 	{
-		v1.GET("/hello", controller.HelloHandler)
+		v1.GET("/ping", PingHandler)
 
 		u := v1.Group("/user")
 		{

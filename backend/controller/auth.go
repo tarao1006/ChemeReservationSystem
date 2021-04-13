@@ -17,12 +17,6 @@ func NewAuthController() *AuthController {
 	}
 }
 
-func HelloHandler(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"text": "Hello World.",
-	})
-}
-
 /*
 login フロー
   1. Authenticator
