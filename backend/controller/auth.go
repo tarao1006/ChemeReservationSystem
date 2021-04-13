@@ -29,11 +29,7 @@ login フロー
   2. PayloadFunc
 */
 
-// Authenticator は
-// {
-//    id: "id"
-//    password: "password"
-//  }
+// Authenticator は {id: "id", password: "password"}
 // を用いて有効なユーザーであるかを検証する。
 // この関数で返す interface{} は PayloadFunc に渡される。
 func (AuthController) Authenticator(c *gin.Context) (interface{}, error) {
@@ -48,8 +44,7 @@ func (AuthController) Authenticator(c *gin.Context) (interface{}, error) {
 }
 
 // data の型は、 Authenticator の返り値
-// 返り値は、
-//   claims := jwt.ExtractClaims(c)
+// 返り値は、claims := jwt.ExtractClaims(c)
 // で読むことができる。
 func (ac AuthController) PayloadFunc(data interface{}) jwt.MapClaims {
 	if v, ok := data.(*model.UserDTO); ok {
