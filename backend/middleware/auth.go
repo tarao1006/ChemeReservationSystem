@@ -11,8 +11,8 @@ import (
 func AuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 	c := controller.NewAuthController()
 	return jwt.New(&jwt.GinJWTMiddleware{
-		Realm:           "test zone",
-		Key:             []byte(config.SecretKey()),
+		Realm:           config.Realm(),
+		Key:             config.SecretKey(),
 		Timeout:         time.Hour * 24 * (365*3 + 366),
 		MaxRefresh:      time.Hour,
 		IdentityKey:     c.IdentityKey,
@@ -25,6 +25,6 @@ func AuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 		SendCookie:      true,
 		SecureCookie:    false,
 		CookieHTTPOnly:  true,
-		CookieName:      "jwt",
+		CookieName:      config.CookieName(),
 	})
 }
