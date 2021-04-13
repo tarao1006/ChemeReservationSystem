@@ -45,15 +45,15 @@ func router() *gin.Engine {
 		log.Fatalf("failed init authmiddleware. %s", err)
 	}
 
-	r := gin.Default()
+	e := gin.Default()
 
-	r.GET("/ping", PingHandler)
+	e.GET("/ping", PingHandler)
 
-	r.POST("/login", authMiddleware.LoginHandler)
-	r.POST("/logout", authMiddleware.LogoutHandler)
-	r.POST("/refresh", authMiddleware.RefreshHandler)
+	e.POST("/login", authMiddleware.LoginHandler)
+	e.POST("/logout", authMiddleware.LogoutHandler)
+	e.POST("/refresh", authMiddleware.RefreshHandler)
 
-	v1 := r.Group("/api/v1")
+	v1 := e.Group("/api/v1")
 	v1.Use(authMiddleware.MiddlewareFunc())
 	{
 		v1.GET("/ping", PingHandler)
@@ -100,14 +100,14 @@ func router() *gin.Engine {
 			ft.DELETE("/:id", c.Delete)
 		}
 
-		reservation := v1.Group("/reservation")
+		r := v1.Group("/reservation")
 		{
 			c := controller.NewReservationController()
-			reservation.GET("", c.Index)
-			reservation.GET("/:id", c.Show)
-			reservation.POST("", c.Create)
-			reservation.PUT("/:id", c.Update)
-			reservation.DELETE("/:id", c.Delete)
+			r.GET("", c.Index)
+			r.GET("/:id", c.Show)
+			r.POST("", c.Create)
+			r.PUT("/:id", c.Update)
+			r.DELETE("/:id", c.Delete)
 		}
 
 		p := v1.Group("/plan")
@@ -121,5 +121,5 @@ func router() *gin.Engine {
 		}
 	}
 
-	return r
+	return e
 }
