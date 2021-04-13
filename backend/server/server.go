@@ -48,11 +48,12 @@ func router() *gin.Engine {
 	r.POST("/login", authMiddleware.LoginHandler)
 	r.POST("/logout", authMiddleware.LogoutHandler)
 
-	r.Use(authMiddleware.MiddlewareFunc())
+	v1 := r.Group("/api/v1")
+	v1.Use(authMiddleware.MiddlewareFunc())
 	{
-		r.GET("/hello", controller.HelloHandler)
+		v1.GET("/hello", controller.HelloHandler)
 
-		u := r.Group("/user")
+		u := v1.Group("/user")
 		{
 			c := controller.NewUserController()
 			u.GET("", c.Index)
@@ -64,7 +65,7 @@ func router() *gin.Engine {
 			u.PUT("/:id/password", c.UpdatePassword)
 		}
 
-		ut := r.Group("/user_type")
+		ut := v1.Group("/user_type")
 		{
 			c := controller.NewUserTypeController()
 			ut.GET("", c.Index)
@@ -74,7 +75,7 @@ func router() *gin.Engine {
 			ut.DELETE("/:id", c.Delete)
 		}
 
-		f := r.Group("/facility")
+		f := v1.Group("/facility")
 		{
 			c := controller.NewFacilityController()
 			f.GET("", c.Index)
@@ -84,7 +85,7 @@ func router() *gin.Engine {
 			f.DELETE("/:id", c.Delete)
 		}
 
-		ft := r.Group("/facility_type")
+		ft := v1.Group("/facility_type")
 		{
 			c := controller.NewFacilityTypeController()
 			ft.GET("", c.Index)
@@ -94,7 +95,7 @@ func router() *gin.Engine {
 			ft.DELETE("/:id", c.Delete)
 		}
 
-		reservation := r.Group("/reservation")
+		reservation := v1.Group("/reservation")
 		{
 			c := controller.NewReservationController()
 			reservation.GET("", c.Index)
@@ -104,7 +105,7 @@ func router() *gin.Engine {
 			reservation.DELETE("/:id", c.Delete)
 		}
 
-		p := r.Group("/plan")
+		p := v1.Group("/plan")
 		{
 			c := controller.NewFacilityTypeController()
 			p.GET("", c.Index)
