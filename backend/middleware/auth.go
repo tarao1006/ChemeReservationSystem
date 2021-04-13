@@ -4,6 +4,7 @@ import (
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
+	"github.com/tarao1006/ChemeReservationSystem/config"
 	"github.com/tarao1006/ChemeReservationSystem/controller"
 )
 
@@ -11,7 +12,7 @@ func AuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 	c := controller.NewAuthController()
 	return jwt.New(&jwt.GinJWTMiddleware{
 		Realm:           "test zone",
-		Key:             []byte("secret key"),
+		Key:             []byte(config.SecretKey()),
 		Timeout:         time.Hour * 24 * (365*3 + 366),
 		MaxRefresh:      time.Hour,
 		IdentityKey:     c.IdentityKey,
