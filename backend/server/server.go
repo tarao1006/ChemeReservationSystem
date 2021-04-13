@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -41,8 +42,9 @@ func PingHandler(c *gin.Context) {
 func router() *gin.Engine {
 	authMiddleware, err := middleware.AuthMiddleware()
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed init authmiddleware. %s", err)
 	}
+
 	r := gin.Default()
 
 	r.GET("/ping", PingHandler)
