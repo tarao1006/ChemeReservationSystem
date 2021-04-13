@@ -3,13 +3,14 @@ package main
 import (
 	"log"
 
+	"github.com/tarao1006/ChemeReservationSystem/config"
 	"github.com/tarao1006/ChemeReservationSystem/server"
 )
 
 func main() {
 	var (
-		dsn  = "root:password@tcp(db:3306)/cheme_reservation_system?parseTime=true&loc=Asia%2FTokyo"
-		port = 8000
+		dsn  = config.DSN()
+		port = config.Port()
 	)
 
 	s := server.NewServer()
