@@ -49,6 +49,7 @@ func router() *gin.Engine {
 
 	r.POST("/login", authMiddleware.LoginHandler)
 	r.POST("/logout", authMiddleware.LogoutHandler)
+	r.POST("/refresh", authMiddleware.RefreshHandler)
 
 	v1 := r.Group("/api/v1")
 	v1.Use(authMiddleware.MiddlewareFunc())
