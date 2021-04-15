@@ -19,7 +19,6 @@ func TXHandler(db *sqlx.DB, f func(*sqlx.Tx) error) (err error) {
 			if rollBackErr != nil {
 				log.Fatalf("rollback failed: %v", rollBackErr)
 			}
-			log.Print("Rollback operation")
 			err = fmt.Errorf("transaction: operation failed: %w", err)
 		} else if err != nil {
 			err = fmt.Errorf("transaction: operation failed: %w", err)
