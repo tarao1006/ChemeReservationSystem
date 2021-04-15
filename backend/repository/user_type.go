@@ -32,40 +32,16 @@ func (UserTypeRepository) FindByID(db *sqlx.DB, id int64) (*model.UserType, erro
 }
 
 func (UserTypeRepository) Create(db *sqlx.Tx, name string) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`INSERT INTO user_type (name) VALUES (?)`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(name)
+	query := `INSERT INTO user_type (name) VALUES (?)`
+	return db.Exec(query, name)
 }
 
 func (UserTypeRepository) Update(db *sqlx.Tx, id int64, param *model.UserType) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`UPDATE user_type SET name = ? WHERE id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(param.Name, id)
+	query := `UPDATE user_type SET name = ? WHERE id = ?`
+	return db.Exec(query, param.Name, id)
 }
 
 func (UserTypeRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`DELETE FROM user_type WHERE id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(id)
+	query := `DELETE FROM user_type WHERE id = ?`
+	return db.Exec(query, id)
 }
