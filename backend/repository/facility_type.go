@@ -36,9 +36,9 @@ func (FacilityTypeRepository) Create(db *sqlx.Tx, name string) (result sql.Resul
 	return db.Exec(query, name)
 }
 
-func (FacilityTypeRepository) Update(db *sqlx.Tx, id int64, param *model.FacilityType) (result sql.Result, err error) {
+func (FacilityTypeRepository) Update(db *sqlx.Tx, id int64, name string) (result sql.Result, err error) {
 	query := `UPDATE facility_type SET name = ? WHERE id = ?`
-	return db.Exec(query, param.Name, id)
+	return db.Exec(query, name, id)
 }
 
 func (FacilityTypeRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err error) {
