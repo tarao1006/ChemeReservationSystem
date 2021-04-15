@@ -33,15 +33,15 @@ func (PlanRepository) FindByID(db *sqlx.DB, id int64) (*model.Plan, error) {
 
 func (PlanRepository) Create(db *sqlx.Tx, name string) (result sql.Result, err error) {
 	query := `INSERT INTO plan (name) VALUES (?)`
-	return db.Exec(query)
+	return db.Exec(query, name)
 }
 
 func (PlanRepository) Update(db *sqlx.Tx, id int64, param *model.Plan) (result sql.Result, err error) {
 	query := `UPDATE plan SET name = ? WHERE id = ?`
-	return db.Exec(query)
+	return db.Exec(query, param.Name, id)
 }
 
 func (PlanRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err error) {
 	query := `DELETE FROM plan WHERE id = ?`
-	return db.Exec(query)
+	return db.Exec(query, id)
 }
