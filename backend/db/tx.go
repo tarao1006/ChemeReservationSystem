@@ -1,16 +1,16 @@
 package db
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
 )
 
 func TXHandler(db *sqlx.DB, f func(*sqlx.Tx) error) (err error) {
 	tx, err := db.Beginx()
 	if err != nil {
-		return errors.Wrap(err, "start transaction failed")
+		return fmt.Errorf("start transaction failed: %w", err)
 	}
 
 	defer func() {
@@ -20,9 +20,9 @@ func TXHandler(db *sqlx.DB, f func(*sqlx.Tx) error) (err error) {
 				log.Fatalf("rollback failed: %v", rollBackErr)
 			}
 			log.Print("Rollback operation")
-			err = errors.Wrap(err, "transaction: operation failed")
+			err = fmt.Errorf("transaction: operation failed: %w", err)
 		} else if err != nil {
-			err = errors.Wrap(err, "transaction: operation failed")
+			err = fmt.Errorf("transaction: operation failed: %w", err)
 			tx.Rollback()
 		} else {
 			err = tx.Commit()
