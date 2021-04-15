@@ -86,79 +86,31 @@ func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, erro
 }
 
 func (FacilityRepository) Create(db *sqlx.Tx, param *model.FacilityDTO) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`INSERT INTO facility (name) VALUES (?)`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(param.Name)
+	query := `INSERT INTO facility (name) VALUES (?)`
+	return db.Exec(query, param.Name)
 }
 
 func (FacilityRepository) UpdateNameByID(db *sqlx.Tx, id int64, name string) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`UPDATE facility SET name = ? WHERE id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(name, id)
+	query := `UPDATE facility SET name = ? WHERE id = ?`
+	return db.Exec(query, name, id)
 }
 
 func (FacilityRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`DELETE FROM facility WHERE id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(id)
+	query := `DELETE FROM facility WHERE id = ?`
+	return db.Exec(query, id)
 }
 
 func (FacilityRepository) AddGroup(db *sqlx.Tx, facilityID int64, facilityTypeID int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`INSERT INTO facility_group (facility_id, facility_type_id) VALUES (?, ?)`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(facilityID, facilityTypeID)
+	query := `INSERT INTO facility_group (facility_id, facility_type_id) VALUES (?, ?)`
+	return db.Exec(query, facilityID, facilityTypeID)
 }
 
 func (FacilityRepository) RemoveGroup(db *sqlx.Tx, facilityID int64, facilityTypeID int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`DELETE FROM facility_group WHERE facility_id = ? AND facility_type_id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(facilityID, facilityTypeID)
+	query := `DELETE FROM facility_group WHERE facility_id = ? AND facility_type_id = ?`
+	return db.Exec(query, facilityID, facilityTypeID)
 }
 
 func (FacilityRepository) RemoveAllGroups(db *sqlx.Tx, facilityID int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`DELETE FROM facility_group WHERE facility_id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(facilityID)
+	query := `DELETE FROM facility_group WHERE facility_id = ?`
+	return db.Exec(query, facilityID)
 }
