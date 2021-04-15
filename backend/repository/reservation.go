@@ -175,157 +175,61 @@ func (ReservationRepository) FindByID(db *sqlx.DB, id int64) (*model.Reservation
 }
 
 func (ReservationRepository) Create(db *sqlx.Tx, param *model.ReservationDTO) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`INSERT INTO reservation (creator_id, start_at, end_at, plan_id, plan_memo) VALUES (?, ?, ?, ?, ?)`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(param.CreatorID, param.StartAt, param.EndAt, param.PlanID, param.PlanMemo)
+	query := `INSERT INTO reservation (creator_id, start_at, end_at, plan_id, plan_memo) VALUES (?, ?, ?, ?, ?)`
+	return db.Exec(query, param.CreatorID, param.StartAt, param.EndAt, param.PlanID, param.PlanMemo)
 }
 
 func (ReservationRepository) UpdateStartAtByID(db *sqlx.Tx, id int64, s time.Time) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`UPDATE reservation SET start_at = ? WHERE id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(s, id)
+	query := `UPDATE reservation SET start_at = ? WHERE id = ?`
+	return db.Exec(query, s, id)
 }
 
 func (ReservationRepository) UpdateEndAtByID(db *sqlx.Tx, id int64, e time.Time) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`UPDATE reservation SET end_at = ? WHERE id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(e, id)
+	query := `UPDATE reservation SET end_at = ? WHERE id = ?`
+	return db.Exec(query, e, id)
 }
 
 func (ReservationRepository) UpdatePlanIDByID(db *sqlx.Tx, id int64, p int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`UPDATE reservation SET plan_id = ? WHERE id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(p, id)
+	query := `UPDATE reservation SET plan_id = ? WHERE id = ?`
+	return db.Exec(query, p, id)
 }
 
 func (ReservationRepository) UpdatePlanMemoByID(db *sqlx.Tx, id int64, p string) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`UPDATE reservation SET plan_memo = ? WHERE id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(p, id)
+	query := `UPDATE reservation SET plan_memo = ? WHERE id = ?`
+	return db.Exec(query, p, id)
 }
 
 func (ReservationRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`DELETE FROM reservation WHERE id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(id)
+	query := `DELETE FROM reservation WHERE id = ?`
+	return db.Exec(query, id)
 }
 
 func (ReservationRepository) AddUser(db *sqlx.Tx, reservationID int64, userID string) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`INSERT INTO reservation_user (reservation_id, user_id) VALUES (?, ?)`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(reservationID, userID)
+	query := `INSERT INTO reservation_user (reservation_id, user_id) VALUES (?, ?)`
+	return db.Exec(query, reservationID, userID)
 }
 
 func (ReservationRepository) RemoveUser(db *sqlx.Tx, reservationID int64, userID string) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`DELETE FROM reservation_user WHERE reservation_id = ? AND user_id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(reservationID, userID)
+	query := `DELETE FROM reservation_user WHERE reservation_id = ? AND user_id = ?`
+	return db.Exec(query, reservationID, userID)
 }
 
 func (ReservationRepository) RemoveAllUsers(db *sqlx.Tx, reservationID int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`DELETE FROM reservation_user WHERE reservation_id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(reservationID)
+	query := `DELETE FROM reservation_user WHERE reservation_id = ?`
+	return db.Exec(query, reservationID)
 }
 
 func (ReservationRepository) AddFacility(db *sqlx.Tx, reservationID int64, facilityID int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`INSERT INTO reservation_facility (reservation_id, facility_id) VALUES (?, ?)`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(reservationID, facilityID)
+	query := `INSERT INTO reservation_facility (reservation_id, facility_id) VALUES (?, ?)`
+	return db.Exec(query, reservationID, facilityID)
 }
 
 func (ReservationRepository) RemoveFacility(db *sqlx.Tx, reservationID int64, facilityID int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`DELETE FROM reservation_facility WHERE reservation_id = ? AND facility_id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(reservationID, facilityID)
+	query := `DELETE FROM reservation_facility WHERE reservation_id = ? AND facility_id = ?`
+	return db.Exec(query, reservationID, facilityID)
 }
 
 func (ReservationRepository) RemoveAllFacilities(db *sqlx.Tx, reservationID int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`DELETE FROM reservation_facility WHERE reservation_id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(reservationID)
+	query := `DELETE FROM reservation_facility WHERE reservation_id = ?`
+	return db.Exec(query, reservationID)
 }
