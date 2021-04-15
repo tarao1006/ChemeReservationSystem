@@ -32,40 +32,16 @@ func (PlanRepository) FindByID(db *sqlx.DB, id int64) (*model.Plan, error) {
 }
 
 func (PlanRepository) Create(db *sqlx.Tx, name string) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`INSERT INTO plan (name) VALUES (?)`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(name)
+	query := `INSERT INTO plan (name) VALUES (?)`
+	return db.Exec(query)
 }
 
 func (PlanRepository) Update(db *sqlx.Tx, id int64, param *model.Plan) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`UPDATE plan SET name = ? WHERE id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(param.Name, id)
+	query := `UPDATE plan SET name = ? WHERE id = ?`
+	return db.Exec(query)
 }
 
 func (PlanRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err error) {
-	stmt, err := db.Prepare(`DELETE FROM plan WHERE id = ?`)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := stmt.Close(); closeErr != nil {
-			err = closeErr
-		}
-	}()
-	return stmt.Exec(id)
+	query := `DELETE FROM plan WHERE id = ?`
+	return db.Exec(query)
 }
