@@ -16,7 +16,12 @@ func NewReservationRepository() *ReservationRepository {
 
 func (ur *ReservationRepository) GetAll(db *sqlx.DB) ([]model.Reservation, error) {
 	reservations := []model.ReservationDTO{}
-	if err := db.Select(&reservations, `SELECT id, creator_id, start_at, end_at, plan_id, plan_memo, created_at, updated_at FROM reservation ORDER BY id`); err != nil {
+	if err := db.Select(&reservations,
+		`SELECT
+			id, creator_id, start_at, end_at, plan_id, plan_memo, created_at, updated_at
+		FROM
+			reservation
+		ORDER BY id`); err != nil {
 		return nil, err
 	}
 
@@ -97,9 +102,12 @@ func (ur *ReservationRepository) GetAll(db *sqlx.DB) ([]model.Reservation, error
 
 func (ReservationRepository) FindByID(db *sqlx.DB, id int64) (*model.Reservation, error) {
 	var reservation model.ReservationDTO
-	if err := db.Get(&reservation, `
-		SELECT id, creator_id, start_at, end_at, plan_id, plan_memo, created_at, updated_at FROM reservation WHERE id = ?
-	`, id); err != nil {
+	if err := db.Get(&reservation,
+		`SELECT
+			id, creator_id, start_at, end_at, plan_id, plan_memo, created_at, updated_at
+		FROM
+			reservation
+		WHERE id = ?`, id); err != nil {
 		return nil, err
 	}
 
