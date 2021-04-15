@@ -8,7 +8,7 @@ import (
 	"github.com/tarao1006/ChemeReservationSystem/db"
 )
 
-func TestGetAllFacilityTypes(t *testing.T) {
+func TestShouldGetAllFacilityTypes(t *testing.T) {
 	r := NewFacilityTypeRepository()
 	mockDB, mock, err := sqlmock.New()
 	if err != nil {
@@ -32,7 +32,7 @@ func TestGetAllFacilityTypes(t *testing.T) {
 	}
 }
 
-func TestGetFacilityTypeByID(t *testing.T) {
+func TestShouldGetFacilityTypeByID(t *testing.T) {
 	r := NewFacilityTypeRepository()
 	mockDB, mock, err := sqlmock.New()
 	if err != nil {
