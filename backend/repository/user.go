@@ -110,9 +110,9 @@ func (UserRepository) Create(db *sqlx.Tx, param *model.UserDTO) (result sql.Resu
 	return db.Exec(query, param.ID, param.Name, param.NameRuby, param.PasswordDigest, param.EmailAddress)
 }
 
-func (UserRepository) UpdateNameByID(db *sqlx.Tx, id string, name string) (result sql.Result, err error) {
+func (UserRepository) UpdateNameByID(db *sqlx.Tx, id string, n string) (result sql.Result, err error) {
 	query := `UPDATE user SET name = ? WHERE id = ?`
-	return db.Exec(query, name, id)
+	return db.Exec(query, n, id)
 }
 
 func (UserRepository) UpdateNameRubyByID(db *sqlx.Tx, id string, n string) (result sql.Result, err error) {
