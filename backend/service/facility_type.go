@@ -30,7 +30,7 @@ func (fts *FacilityTypeService) GetByID(id int64) (*model.FacilityType, error) {
 
 func (fts *FacilityTypeService) Create(ft *model.FacilityType) (*model.FacilityType, error) {
 	if err := db.TXHandler(fts.db, func(tx *sqlx.Tx) error {
-		res, err := fts.repo.Create(tx, ft.Name)
+		res, err := fts.repo.Create(tx, ft)
 		if err != nil {
 			return err
 		}

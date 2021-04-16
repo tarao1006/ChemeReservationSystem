@@ -6,6 +6,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/db"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 )
 
 func TestShouldGetAllFacilityTypes(t *testing.T) {
@@ -72,7 +73,7 @@ func TestShouldCreateFacilityType(t *testing.T) {
 	mock.ExpectCommit()
 
 	if err := db.TXHandler(sqlxDB, func(tx *sqlx.Tx) error {
-		if _, err := r.Create(tx, "facility_type_001"); err != nil {
+		if _, err := r.Create(tx, &model.FacilityType{Name: "facility_type_001"}); err != nil {
 			return err
 		}
 		return nil

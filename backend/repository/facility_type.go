@@ -31,9 +31,9 @@ func (FacilityTypeRepository) FindByID(db *sqlx.DB, id int64) (*model.FacilityTy
 	return &facilityType, nil
 }
 
-func (FacilityTypeRepository) Create(db *sqlx.Tx, name string) (result sql.Result, err error) {
+func (FacilityTypeRepository) Create(db *sqlx.Tx, ft *model.FacilityType) (result sql.Result, err error) {
 	query := `INSERT INTO facility_type (name) VALUES (?)`
-	return db.Exec(query, name)
+	return db.Exec(query, ft.Name)
 }
 
 func (FacilityTypeRepository) Update(db *sqlx.Tx, id int64, name string) (result sql.Result, err error) {
