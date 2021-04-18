@@ -13,3 +13,8 @@ type Claims struct {
 	EmailAddress string
 	*jwt.StandardClaims
 }
+
+type Password struct {
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}

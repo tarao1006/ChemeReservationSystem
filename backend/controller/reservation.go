@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
 
@@ -28,13 +29,18 @@ func (ReservationController) Index(c *gin.Context) {
 
 func (ReservationController) Create(c *gin.Context) {
 	s := service.NewReservationService()
-	r, err := s.Create(c)
+	var r model.ReservationAPI
+	if err := c.BindJSON(&r); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
+	newR, err := s.Create(&r)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, r)
+	c.JSON(http.StatusOK, newR)
 }
 
 func (ReservationController) Show(c *gin.Context) {
@@ -64,12 +70,18 @@ func (ReservationController) Update(c *gin.Context) {
 		return
 	}
 
-	r, err := s.UpdateByID(id, c)
+	var r model.ReservationAPI
+	if err := c.BindJSON(&r); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	newR, err := s.UpdateByID(id, &r)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, r)
+	c.JSON(http.StatusOK, newR)
 }
 
 func (ReservationController) Delete(c *gin.Context) {

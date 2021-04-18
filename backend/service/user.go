@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/db"
 	"github.com/tarao1006/ChemeReservationSystem/model"
@@ -129,17 +128,7 @@ func (us *UserService) UpdateByID(id string, u *model.UserAPI) (*model.User, err
 	return newU, nil
 }
 
-type Password struct {
-	OldPassword string `json:"old_password"`
-	NewPassword string `json:"new_password"`
-}
-
-func (us *UserService) UpdatePasswordByID(id string, c *gin.Context) (*model.User, error) {
-	var p Password
-	if err := c.BindJSON(&p); err != nil {
-		return nil, err
-	}
-
+func (us *UserService) UpdatePasswordByID(id string, p *model.Password) (*model.User, error) {
 	if p.OldPassword == p.NewPassword {
 		return nil, model.ErrNewPasswordMustBeChanged
 	}

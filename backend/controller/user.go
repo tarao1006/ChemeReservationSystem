@@ -75,8 +75,14 @@ func (UserController) Update(c *gin.Context) {
 func (UserController) UpdatePassword(c *gin.Context) {
 	s := service.NewUserService()
 	id := c.Params.ByName("id")
-	u, err := s.UpdatePasswordByID(id, c)
 
+	var p model.Password
+	if err := c.BindJSON(&p); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	u, err := s.UpdatePasswordByID(id, &p)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

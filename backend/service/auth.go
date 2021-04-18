@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/db"
 	"github.com/tarao1006/ChemeReservationSystem/model"
@@ -21,12 +20,7 @@ func NewAuthService() *AuthService {
 	}
 }
 
-func (as *AuthService) Login(c *gin.Context) (*model.UserDTO, error) {
-	var auth model.Auth
-	if err := c.BindJSON(&auth); err != nil {
-		return nil, err
-	}
-
+func (as *AuthService) Login(auth *model.Auth) (*model.UserDTO, error) {
 	user, err := as.repo.FindDTOByID(as.db, auth.ID)
 	if err != nil {
 		return nil, err

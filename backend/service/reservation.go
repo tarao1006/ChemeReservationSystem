@@ -3,7 +3,6 @@ package service
 import (
 	"database/sql"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/db"
 	"github.com/tarao1006/ChemeReservationSystem/model"
@@ -30,14 +29,8 @@ func (rs *ReservationService) GetByID(id int64) (*model.Reservation, error) {
 	return rs.repo.FindByID(rs.db, id)
 }
 
-func (rs *ReservationService) Create(c *gin.Context) (*model.Reservation, error) {
-	var (
-		r  model.ReservationAPI
-		id int64
-	)
-	if err := c.BindJSON(&r); err != nil {
-		return nil, err
-	}
+func (rs *ReservationService) Create(r *model.ReservationAPI) (*model.Reservation, error) {
+	var id int64
 
 	if err := db.TXHandler(rs.db, func(tx *sqlx.Tx) error {
 		var (
@@ -77,19 +70,15 @@ func (rs *ReservationService) Create(c *gin.Context) (*model.Reservation, error)
 		return nil, err
 	}
 
-	reservaton, err := rs.repo.FindByID(rs.db, id)
+	newR, err := rs.repo.FindByID(rs.db, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return reservaton, nil
+	return newR, nil
 }
 
-func (rs *ReservationService) UpdateByID(id int64, c *gin.Context) (*model.Reservation, error) {
-	var r model.ReservationAPI
-	if err := c.BindJSON(&r); err != nil {
-		return nil, err
-	}
+func (rs *ReservationService) UpdateByID(id int64, r *model.ReservationAPI) (*model.Reservation, error) {
 	reservaton, err := rs.repo.FindByID(rs.db, id)
 	if err != nil {
 		return nil, err
@@ -154,11 +143,11 @@ func (rs *ReservationService) UpdateByID(id int64, c *gin.Context) (*model.Reser
 		return nil, err
 	}
 
-	newReservation, err := rs.repo.FindByID(rs.db, id)
+	newR, err := rs.repo.FindByID(rs.db, id)
 	if err != nil {
 		return nil, err
 	}
-	return newReservation, nil
+	return newR, nil
 }
 
 func (rs *ReservationService) DeleteByID(id int64) error {
