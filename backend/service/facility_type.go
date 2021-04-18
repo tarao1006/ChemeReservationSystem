@@ -46,7 +46,7 @@ func (fts *FacilityTypeService) Create(ft *model.FacilityType) (*model.FacilityT
 	return ft, nil
 }
 
-func (fts *FacilityTypeService) UpdateByID(ft *model.FacilityType, id int64) (*model.FacilityType, error) {
+func (fts *FacilityTypeService) UpdateByID(id int64, ft *model.FacilityType) (*model.FacilityType, error) {
 	if err := db.TXHandler(fts.db, func(tx *sqlx.Tx) error {
 		if _, err := fts.repo.Update(tx, id, ft.Name); err != nil {
 			return err

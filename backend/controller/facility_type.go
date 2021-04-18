@@ -73,7 +73,7 @@ func (FacilityTypeController) Update(c *gin.Context) {
 		return
 	}
 
-	newFt, err := s.UpdateByID(&ft, id)
+	newFt, err := s.UpdateByID(id, &ft)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
