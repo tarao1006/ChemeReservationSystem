@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/tarao1006/ChemeReservationSystem/db"
@@ -29,13 +28,9 @@ func (uts *UserTypeService) GetByID(id int64) (*model.UserType, error) {
 	return uts.repo.FindByID(uts.db, id)
 }
 
-func (uts *UserTypeService) Create(c *gin.Context) (*model.UserType, error) {
-	var ut model.UserType
-	if err := c.BindJSON(&ut); err != nil {
-		return nil, err
-	}
+func (uts *UserTypeService) Create(ut *model.UserType) (*model.UserType, error) {
 	if err := db.TXHandler(uts.db, func(tx *sqlx.Tx) error {
-		res, err := uts.repo.Create(tx, &ut)
+		res, err := uts.repo.Create(tx, ut)
 		if err != nil {
 			return err
 		}
@@ -48,18 +43,12 @@ func (uts *UserTypeService) Create(c *gin.Context) (*model.UserType, error) {
 	}); err != nil {
 		return nil, err
 	}
-	return &ut, nil
+	return ut, nil
 }
 
-func (uts *UserTypeService) UpdateByID(id int64, c *gin.Context) (*model.UserType, error) {
-	var oldUt model.UserType
-	if err := c.BindJSON(&oldUt); err != nil {
-		return nil, err
-	}
-	oldUt.ID = id
-
+func (uts *UserTypeService) UpdateByID(id int64, ut *model.UserType) (*model.UserType, error) {
 	if err := db.TXHandler(uts.db, func(tx *sqlx.Tx) error {
-		if _, err := uts.repo.Update(tx, oldUt.ID, &oldUt); err != nil {
+		if _, err := uts.repo.Update(tx, id, ut); err != nil {
 			return err
 		}
 		return nil
@@ -67,12 +56,12 @@ func (uts *UserTypeService) UpdateByID(id int64, c *gin.Context) (*model.UserTyp
 		return nil, errors.Wrap(err, "failed update")
 	}
 
-	ut, err := uts.repo.FindByID(uts.db, id)
+	newUt, err := uts.repo.FindByID(uts.db, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return ut, nil
+	return newUt, nil
 }
 
 func (uts *UserTypeService) DeleteByID(id int64) error {

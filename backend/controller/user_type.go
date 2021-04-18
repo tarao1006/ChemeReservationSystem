@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
 
@@ -27,13 +28,19 @@ func (UserTypeController) Index(c *gin.Context) {
 
 func (UserTypeController) Create(c *gin.Context) {
 	s := service.NewUserTypeService()
-	ut, err := s.Create(c)
+	var ut model.UserType
+	if err := c.BindJSON(&ut); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	newUt, err := s.Create(&ut)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, ut)
+	c.JSON(http.StatusOK, newUt)
 }
 
 func (UserTypeController) Show(c *gin.Context) {
@@ -60,12 +67,18 @@ func (UserTypeController) Update(c *gin.Context) {
 		return
 	}
 
-	ut, err := s.UpdateByID(id, c)
+	var ut model.UserType
+	if err := c.BindJSON(&ut); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	newUt, err := s.UpdateByID(id, &ut)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, ut)
+	c.JSON(http.StatusOK, newUt)
 }
 
 func (UserTypeController) Delete(c *gin.Context) {
