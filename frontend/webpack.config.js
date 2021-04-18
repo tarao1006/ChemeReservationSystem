@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   mode: "development",
@@ -10,7 +11,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.ts?x/,
+        test: /\.tsx?/,
         use: 'ts-loader',
       }
     ]
@@ -24,4 +25,10 @@ module.exports = {
     port: 8080,
     historyApiFallback: true,
   },
+  plugins: [
+    new webpack.EnvironmentPlugin([
+      'TOKEN',
+      'BACKEND_URL',
+    ]),
+  ],
 }
