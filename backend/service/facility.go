@@ -3,7 +3,6 @@ package service
 import (
 	"database/sql"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/db"
 	"github.com/tarao1006/ChemeReservationSystem/model"
@@ -32,14 +31,10 @@ func (fs *FacilityService) GetByID(id int64) (*model.Facility, error) {
 	return fs.repo.FindByID(fs.db, id)
 }
 
-func (fs *FacilityService) Create(c *gin.Context) (*model.Facility, error) {
+func (fs *FacilityService) Create(f *model.FacilityAPI) (*model.Facility, error) {
 	var (
-		f  model.FacilityAPI
 		id int64
 	)
-	if err := c.BindJSON(&f); err != nil {
-		return nil, err
-	}
 	if err := db.TXHandler(fs.db, func(tx *sqlx.Tx) error {
 		var (
 			res sql.Result
@@ -65,18 +60,14 @@ func (fs *FacilityService) Create(c *gin.Context) (*model.Facility, error) {
 		return nil, err
 	}
 
-	facility, err := fs.repo.FindByID(fs.db, id)
+	newF, err := fs.repo.FindByID(fs.db, id)
 	if err != nil {
 		return nil, err
 	}
-	return facility, nil
+	return newF, nil
 }
 
-func (fs *FacilityService) UpdateByID(id int64, c *gin.Context) (*model.Facility, error) {
-	var f model.FacilityAPI
-	if err := c.BindJSON(&f); err != nil {
-		return nil, err
-	}
+func (fs *FacilityService) UpdateByID(id int64, f *model.FacilityAPI) (*model.Facility, error) {
 	facility, err := fs.repo.FindByID(fs.db, id)
 	if err != nil {
 		return nil, err

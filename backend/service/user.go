@@ -29,12 +29,7 @@ func (us *UserService) GetByID(id string) (*model.User, error) {
 	return us.repo.FindByID(us.db, id)
 }
 
-func (us *UserService) Create(c *gin.Context) (*model.User, error) {
-	var u model.UserAPI
-	if err := c.BindJSON(&u); err != nil {
-		return nil, err
-	}
-
+func (us *UserService) Create(u *model.UserAPI) (*model.User, error) {
 	hashed, err := bcrypt.GenerateFromPassword([]byte(u.Password), 10)
 	if err != nil {
 		return nil, err
@@ -64,19 +59,15 @@ func (us *UserService) Create(c *gin.Context) (*model.User, error) {
 		return nil, err
 	}
 
-	user, err := us.repo.FindByID(us.db, u.ID)
+	newU, err := us.repo.FindByID(us.db, u.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	return newU, nil
 }
 
-func (us *UserService) UpdateByID(id string, c *gin.Context) (*model.User, error) {
-	var u model.UserAPI
-	if err := c.BindJSON(&u); err != nil {
-		return nil, err
-	}
+func (us *UserService) UpdateByID(id string, u *model.UserAPI) (*model.User, error) {
 	user, err := us.repo.FindByID(us.db, id)
 	if err != nil {
 		return nil, err
@@ -131,11 +122,11 @@ func (us *UserService) UpdateByID(id string, c *gin.Context) (*model.User, error
 		return nil, err
 	}
 
-	newUser, err := us.repo.FindByID(us.db, id)
+	newU, err := us.repo.FindByID(us.db, id)
 	if err != nil {
 		return nil, err
 	}
-	return newUser, nil
+	return newU, nil
 }
 
 type Password struct {

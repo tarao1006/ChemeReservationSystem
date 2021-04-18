@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
 
@@ -26,13 +27,19 @@ func (UserController) Index(c *gin.Context) {
 
 func (UserController) Create(c *gin.Context) {
 	s := service.NewUserService()
-	u, err := s.Create(c)
 
+	var u model.UserAPI
+	if err := c.BindJSON(&u); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	newU, err := s.Create(&u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, u)
+	c.JSON(http.StatusOK, newU)
 }
 
 func (UserController) Show(c *gin.Context) {
@@ -50,13 +57,19 @@ func (UserController) Show(c *gin.Context) {
 func (UserController) Update(c *gin.Context) {
 	s := service.NewUserService()
 	id := c.Params.ByName("id")
-	u, err := s.UpdateByID(id, c)
 
+	var u model.UserAPI
+	if err := c.BindJSON(&u); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	newU, err := s.UpdateByID(id, &u)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, u)
+	c.JSON(http.StatusOK, newU)
 }
 
 func (UserController) UpdatePassword(c *gin.Context) {

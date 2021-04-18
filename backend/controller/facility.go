@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
 
@@ -27,13 +28,19 @@ func (FacilityController) Index(c *gin.Context) {
 
 func (FacilityController) Create(c *gin.Context) {
 	s := service.NewFacilityService()
-	f, err := s.Create(c)
 
+	var f model.FacilityAPI
+	if err := c.BindJSON(&f); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	newF, err := s.Create(&f)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, f)
+	c.JSON(http.StatusOK, newF)
 }
 
 func (FacilityController) Show(c *gin.Context) {
@@ -59,12 +66,19 @@ func (FacilityController) Update(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	f, err := s.UpdateByID(id, c)
+
+	var f model.FacilityAPI
+	if err := c.BindJSON(&f); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	newF, err := s.UpdateByID(id, &f)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, f)
+	c.JSON(http.StatusOK, newF)
 }
 
 func (FacilityController) Delete(c *gin.Context) {
