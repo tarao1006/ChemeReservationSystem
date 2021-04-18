@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/tarao1006/ChemeReservationSystem/db"
@@ -29,13 +28,9 @@ func (ps *PlanService) GetByID(id int64) (*model.Plan, error) {
 	return ps.repo.FindByID(ps.db, id)
 }
 
-func (ps *PlanService) Create(c *gin.Context) (*model.Plan, error) {
-	var p model.Plan
-	if err := c.BindJSON(&p); err != nil {
-		return nil, err
-	}
+func (ps *PlanService) Create(p *model.Plan) (*model.Plan, error) {
 	if err := db.TXHandler(ps.db, func(tx *sqlx.Tx) error {
-		res, err := ps.repo.Create(tx, &p)
+		res, err := ps.repo.Create(tx, p)
 		if err != nil {
 			return err
 		}
@@ -48,18 +43,12 @@ func (ps *PlanService) Create(c *gin.Context) (*model.Plan, error) {
 	}); err != nil {
 		return nil, err
 	}
-	return &p, nil
+	return p, nil
 }
 
-func (ps *PlanService) UpdateByID(id int64, c *gin.Context) (*model.Plan, error) {
-	var oldP model.Plan
-	if err := c.BindJSON(&oldP); err != nil {
-		return nil, err
-	}
-	oldP.ID = id
-
+func (ps *PlanService) UpdateByID(id int64, p *model.Plan) (*model.Plan, error) {
 	if err := db.TXHandler(ps.db, func(tx *sqlx.Tx) error {
-		if _, err := ps.repo.Update(tx, oldP.ID, &oldP); err != nil {
+		if _, err := ps.repo.Update(tx, id, p); err != nil {
 			return err
 		}
 		return nil
@@ -67,12 +56,12 @@ func (ps *PlanService) UpdateByID(id int64, c *gin.Context) (*model.Plan, error)
 		return nil, errors.Wrap(err, "failed update")
 	}
 
-	p, err := ps.repo.FindByID(ps.db, id)
+	newP, err := ps.repo.FindByID(ps.db, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return p, nil
+	return newP, nil
 }
 
 func (ps *PlanService) DeleteByID(id int64) error {
