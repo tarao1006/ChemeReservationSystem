@@ -153,16 +153,14 @@ func TestShouldCreateReservation(t *testing.T) {
 	mock.ExpectExec("INSERT INTO reservation").WithArgs("user001", stringToTime("2021-04-04 10:00:00"), stringToTime("2021-04-04 11:00:00"), 1, "").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	dto := model.ReservationDTO{
-		CreatorID: "user001",
-		StartAt:   stringToTime("2021-04-04 10:00:00"),
-		EndAt:     stringToTime("2021-04-04 11:00:00"),
-		PlanID:    1,
-		PlanMemo:  "",
-	}
-
 	if err := db.TXHandler(sqlxDB, func(tx *sqlx.Tx) error {
-		if _, err := r.Create(tx, &dto); err != nil {
+		if _, err := r.Create(tx, &model.ReservationDTO{
+			CreatorID: "user001",
+			StartAt:   stringToTime("2021-04-04 10:00:00"),
+			EndAt:     stringToTime("2021-04-04 11:00:00"),
+			PlanID:    1,
+			PlanMemo:  "",
+		}); err != nil {
 			return err
 		}
 		return nil

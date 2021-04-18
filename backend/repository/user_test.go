@@ -67,16 +67,14 @@ func TestShouldCreateUser(t *testing.T) {
 	mock.ExpectExec("INSERT INTO user").WithArgs("user_001", "user_001", "user_001", []byte("password"), "test@test.com").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	f := model.UserDTO{
-		ID:             "user_001",
-		Name:           "user_001",
-		NameRuby:       "user_001",
-		PasswordDigest: []byte("password"),
-		EmailAddress:   "test@test.com",
-	}
-
 	if err := db.TXHandler(sqlxDB, func(tx *sqlx.Tx) error {
-		if _, err := r.Create(tx, &f); err != nil {
+		if _, err := r.Create(tx, &model.UserDTO{
+			ID:             "user_001",
+			Name:           "user_001",
+			NameRuby:       "user_001",
+			PasswordDigest: []byte("password"),
+			EmailAddress:   "test@test.com",
+		}); err != nil {
 			return err
 		}
 		return nil

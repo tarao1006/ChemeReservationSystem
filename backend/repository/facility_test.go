@@ -68,12 +68,10 @@ func TestShouldCreateFacility(t *testing.T) {
 	mock.ExpectExec("INSERT INTO facility").WithArgs("facility_001").WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	f := model.FacilityDTO{
-		Name: "facility_001",
-	}
-
 	if err := db.TXHandler(sqlxDB, func(tx *sqlx.Tx) error {
-		if _, err := r.Create(tx, &f); err != nil {
+		if _, err := r.Create(tx, &model.FacilityDTO{
+			Name: "facility_001",
+		}); err != nil {
 			return err
 		}
 		return nil
