@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/controller"
 	"github.com/tarao1006/ChemeReservationSystem/db"
@@ -45,8 +46,13 @@ func router() *gin.Engine {
 		log.Fatalf("failed init authmiddleware. %s", err)
 	}
 
-	e := gin.Default()
+	config := cors.New(cors.Config{
+		AllowHeaders: []string{"Authorization"},
+		AllowOrigins: []string{"*"},
+	})
 
+	e := gin.Default()
+	e.Use(config)
 	e.GET("/ping", PingHandler)
 
 	e.POST("/login", authMiddleware.LoginHandler)
