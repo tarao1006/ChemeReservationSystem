@@ -31,9 +31,9 @@ func (UserTypeRepository) FindByID(db *sqlx.DB, id int64) (*model.UserType, erro
 	return &userType, nil
 }
 
-func (UserTypeRepository) Create(db *sqlx.Tx, name string) (result sql.Result, err error) {
+func (UserTypeRepository) Create(db *sqlx.Tx, ut *model.UserType) (result sql.Result, err error) {
 	query := `INSERT INTO user_type (name) VALUES (?)`
-	return db.Exec(query, name)
+	return db.Exec(query, ut.Name)
 }
 
 func (UserTypeRepository) Update(db *sqlx.Tx, id int64, param *model.UserType) (result sql.Result, err error) {

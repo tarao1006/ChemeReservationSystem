@@ -6,6 +6,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/db"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 )
 
 func TestShouldGetAllPlans(t *testing.T) {
@@ -72,7 +73,9 @@ func TestShouldCreatePlan(t *testing.T) {
 	mock.ExpectCommit()
 
 	if err := db.TXHandler(sqlxDB, func(tx *sqlx.Tx) error {
-		if _, err := r.Create(tx, "plan_001"); err != nil {
+		if _, err := r.Create(tx, &model.Plan{
+			Name: "plan_001",
+		}); err != nil {
 			return err
 		}
 		return nil

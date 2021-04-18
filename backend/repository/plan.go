@@ -31,9 +31,9 @@ func (PlanRepository) FindByID(db *sqlx.DB, id int64) (*model.Plan, error) {
 	return &plan, nil
 }
 
-func (PlanRepository) Create(db *sqlx.Tx, name string) (result sql.Result, err error) {
+func (PlanRepository) Create(db *sqlx.Tx, p *model.Plan) (result sql.Result, err error) {
 	query := `INSERT INTO plan (name) VALUES (?)`
-	return db.Exec(query, name)
+	return db.Exec(query, p.Name)
 }
 
 func (PlanRepository) Update(db *sqlx.Tx, id int64, param *model.Plan) (result sql.Result, err error) {

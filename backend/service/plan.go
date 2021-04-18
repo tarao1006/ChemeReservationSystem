@@ -35,7 +35,7 @@ func (ps *PlanService) Create(c *gin.Context) (*model.Plan, error) {
 		return nil, err
 	}
 	if err := db.TXHandler(ps.db, func(tx *sqlx.Tx) error {
-		res, err := ps.repo.Create(tx, p.Name)
+		res, err := ps.repo.Create(tx, &p)
 		if err != nil {
 			return err
 		}

@@ -6,6 +6,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/db"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 )
 
 func TestShouldGetAllUserTypes(t *testing.T) {
@@ -72,7 +73,9 @@ func TestShouldCreateUserType(t *testing.T) {
 	mock.ExpectCommit()
 
 	if err := db.TXHandler(sqlxDB, func(tx *sqlx.Tx) error {
-		if _, err := r.Create(tx, "user_type_001"); err != nil {
+		if _, err := r.Create(tx, &model.UserType{
+			Name: "user_type_001",
+		}); err != nil {
 			return err
 		}
 		return nil

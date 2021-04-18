@@ -35,7 +35,7 @@ func (uts *UserTypeService) Create(c *gin.Context) (*model.UserType, error) {
 		return nil, err
 	}
 	if err := db.TXHandler(uts.db, func(tx *sqlx.Tx) error {
-		res, err := uts.repo.Create(tx, ut.Name)
+		res, err := uts.repo.Create(tx, &ut)
 		if err != nil {
 			return err
 		}
