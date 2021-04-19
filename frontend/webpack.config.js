@@ -29,6 +29,8 @@ module.exports = {
     new webpack.EnvironmentPlugin([
       'TOKEN',
       'BACKEND_URL',
+      'TEST_USER_ID',
+      'TEST_USER_PASSWORD',
     ]),
   ],
 }
