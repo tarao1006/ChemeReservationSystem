@@ -6,8 +6,11 @@ DATABASE_NAME:=cheme_reservation_system
 ENV_TEST_FILE:=.env.test
 ENV_TEST:=${shell cat ${ENV_TEST_FILE}}
 
-env:
-	cp -i .env.sample .env
+env/backend:
+	cp -i .env.backend.sample .env.backend
+
+env/frontend:
+	cp -i .env.frontend.sample .env.frontend
 
 test:
 	cd backend && ${ENV_TEST} go test ./... -v
