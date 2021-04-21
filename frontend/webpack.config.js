@@ -18,6 +18,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    alias: {
+      '@api': path.resolve(__dirname, './src/api/index.ts')
+    }
   },
   devServer: {
     contentBase: path.relative(__dirname, 'dist'),
