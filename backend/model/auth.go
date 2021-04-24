@@ -5,6 +5,7 @@ import "github.com/dgrijalva/jwt-go"
 type Auth struct {
 	ID       string `json:"id"`
 	Password string `json:"password"`
+	Remember bool   `json:"remember"`
 }
 
 type Claims struct {
