@@ -19,7 +19,7 @@ func AuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 		PayloadFunc:     c.PayloadFunc,
 		IdentityHandler: c.IdentityHandler,
 		Authenticator:   c.Authenticator,
-		TokenLookup:     "header: Authorization, query: token, cookie: jwt",
+		TokenLookup:     "header: Authorization, cookie: " + config.CookieName(),
 		TokenHeadName:   "Bearer",
 		TimeFunc:        time.Now,
 		SendCookie:      true,
