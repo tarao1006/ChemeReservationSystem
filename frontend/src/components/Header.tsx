@@ -2,19 +2,21 @@ import React from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
-import IconButton from '@material-ui/core/IconButton'
+import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import MenuItem from '@material-ui/core/MenuItem'
 import AccountCircle from '@material-ui/icons/AccountCircle'
-import Popover from '@material-ui/core/Popover'
+import Menu from '@material-ui/core/Menu'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     grow: {
       flexGrow: 1,
     },
-    menuButton: {
-      marginRight: theme.spacing(2),
+    popover: {
+      marginTop: theme.spacing(8),
     },
   }),
 );
@@ -34,22 +36,23 @@ export const Header = () => {
   };
 
   const renderMenu = (
-    <Popover
+    <Menu
+      className={classes.popover}
       anchorEl={anchorEl}
       open={isOpen}
       onClose={handleClose}
       anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
+        vertical: 'top',
+        horizontal: 'center',
       }}
       transformOrigin={{
         vertical: 'top',
-        horizontal: 'left',
+        horizontal: 'center',
       }}
     >
       <MenuItem onClick={handleClose}>マイページ</MenuItem>
       <MenuItem onClick={handleClose}>ログアウト</MenuItem>
-    </Popover>
+    </Menu>
   );
 
   return (
@@ -57,19 +60,17 @@ export const Header = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" noWrap>
-            施設予約システム
+            施設予約
           </Typography>
           <div className={classes.grow} />
-          <div>
-            <IconButton
-              edge="end"
-              onClick={handleOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            {renderMenu}
-          </div>
+          <Button
+            onClick={handleOpen}
+            color="inherit"
+            endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          >
+            <AccountCircle />
+          </Button>
+          {renderMenu}
         </Toolbar>
       </AppBar>
     </div>
