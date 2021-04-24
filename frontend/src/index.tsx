@@ -1,11 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Routing } from './routing'
 
 const App = () => {
   return (
-    <h1>
-      Hello, world.
-    </h1>
+    <Routing />
   )
 }
 
