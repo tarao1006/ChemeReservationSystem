@@ -14,3 +14,16 @@ export interface JWT {
   expire: number
   token: string
 }
+
+export interface UserType {
+  id: number
+  name: string
+}
+
+export interface User {
+  id: string
+  name: string
+  name_ruby: string
+  email_address: string
+  types: UserType[]
+}
