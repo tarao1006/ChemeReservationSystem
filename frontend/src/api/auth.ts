@@ -1,9 +1,9 @@
-import { backendInstance, JWT, testUserID, testUserPassword } from '.';
+import { backendInstance, JWT } from '.';
 
-export const login = async (): Promise<JWT> => {
+export const login = async (userId: string, password: string): Promise<JWT> => {
   const res = await backendInstance.post<JWT>('/login', {
-    id: testUserID,
-    password: testUserPassword,
+    id: userId,
+    password: password,
   })
 
   return res.data
