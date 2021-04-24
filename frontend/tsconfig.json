@@ -14,7 +14,7 @@
     "baseUrl": "./",
     "paths": {
       "@api": ["src/api/index.ts"],
-      "@context": ["src/context/index.ts"],
+      "@contexts": ["src/contexts/index.ts"],
     }
   },
   "include": [
