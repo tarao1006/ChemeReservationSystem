@@ -3,7 +3,9 @@ package controller
 import (
 	"net/http"
 
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/tarao1006/ChemeReservationSystem/config"
 	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
@@ -45,6 +47,19 @@ func (UserController) Create(c *gin.Context) {
 func (UserController) Show(c *gin.Context) {
 	s := service.NewUserService()
 	id := c.Params.ByName("id")
+	u, err := s.GetByID(id)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, u)
+}
+
+func (UserController) ShowMe(c *gin.Context) {
+	s := service.NewUserService()
+	claims := jwt.ExtractClaims(c)
+	id := claims[config.IdentityKey()].(string)
 	u, err := s.GetByID(id)
 
 	if err != nil {

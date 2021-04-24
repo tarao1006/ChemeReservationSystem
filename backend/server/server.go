@@ -69,6 +69,12 @@ func router() *gin.Engine {
 	{
 		v1.GET("/ping", PingHandler)
 
+		me := v1.Group("/me")
+		{
+			c := controller.NewUserController()
+			me.GET("", c.ShowMe)
+		}
+
 		u := v1.Group("/user")
 		{
 			c := controller.NewUserController()
