@@ -13,14 +13,15 @@ module.exports = {
       {
         test: /\.tsx?/,
         use: 'ts-loader',
-      }
-    ]
+      },
+    ],
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
-      '@api': path.resolve(__dirname, './src/api/index.ts')
-    }
+      '@api': path.resolve(__dirname, './src/api/index.ts'),
+      '@contexts': path.resolve(__dirname, './src/contexts/index.ts'),
+    },
   },
   devServer: {
     contentBase: path.relative(__dirname, 'dist'),

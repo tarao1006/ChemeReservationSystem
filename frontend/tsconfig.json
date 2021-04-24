@@ -9,11 +9,12 @@
     "allowSyntheticDefaultImports": true,
     "lib": [
       "es2020",
-      "dom"
+      "dom",
     ],
     "baseUrl": "./",
     "paths": {
-      "@api": ["src/api/index.ts"]
+      "@api": ["src/api/index.ts"],
+      "@context": ["src/context/index.ts"],
     }
   },
   "include": [
