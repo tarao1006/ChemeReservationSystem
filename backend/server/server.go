@@ -47,7 +47,11 @@ func router() *gin.Engine {
 	}
 
 	config := cors.New(cors.Config{
-		AllowHeaders:     []string{"Authorization"},
+		AllowHeaders: []string{
+			"Authorization",
+			"Access-Control-Allow-Origin",
+			"Content-Type",
+		},
 		AllowOrigins:     []string{"http://localhost:8080"},
 		AllowCredentials: true,
 	})
