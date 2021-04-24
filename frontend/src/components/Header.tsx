@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -9,6 +9,8 @@ import AccountCircle from '@material-ui/icons/AccountCircle'
 import Menu from '@material-ui/core/Menu'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
+import { AuthContext } from '@contexts'
+import { testUserID, testUserPassword } from '@api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,6 +24,8 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export const Header = () => {
+  const { currentUser, login, logout} = useContext(AuthContext)
+
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -34,6 +38,16 @@ export const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleLogin = () => {
+    handleClose()
+    login(testUserID, testUserPassword, true)
+  }
+
+  const handleLogout = () => {
+    handleClose()
+    logout()
+  }
 
   const renderMenu = (
     <Menu
@@ -51,7 +65,7 @@ export const Header = () => {
       }}
     >
       <MenuItem onClick={handleClose}>マイページ</MenuItem>
-      <MenuItem onClick={handleClose}>ログアウト</MenuItem>
+      <MenuItem onClick={handleLogout}>ログアウト</MenuItem>
     </Menu>
   );
 
@@ -63,14 +77,19 @@ export const Header = () => {
             施設予約
           </Typography>
           <div className={classes.grow} />
-          <Button
-            onClick={handleOpen}
-            color="inherit"
-            endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          >
-            <AccountCircle />
-          </Button>
-          {renderMenu}
+          {currentUser === undefined
+          ? (<Button variant="outlined" size="small" onClick={handleLogin}>ログイン</Button>)
+          : (<>
+              <Button
+                onClick={handleOpen}
+                color="inherit"
+                endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              >
+                <AccountCircle />
+              </Button>
+              {renderMenu}
+            </>)
+          }
         </Toolbar>
       </AppBar>
     </div>
