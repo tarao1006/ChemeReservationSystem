@@ -64,6 +64,11 @@ func router() *gin.Engine {
 	e.POST("/logout", authMiddleware.LogoutHandler)
 	e.POST("/refresh", authMiddleware.RefreshHandler)
 
+	{
+		c := controller.NewUserController()
+		e.POST("/validate", c.ValidateUserID)
+	}
+
 	v1 := e.Group("/api/v1")
 	v1.Use(authMiddleware.MiddlewareFunc())
 	{

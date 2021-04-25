@@ -69,6 +69,34 @@ func (UserController) ShowMe(c *gin.Context) {
 	c.JSON(http.StatusOK, u)
 }
 
+type ValidationData struct {
+	UserID string `json:"user_id"`
+}
+
+func (UserController) ValidateUserID(c *gin.Context) {
+	s := service.NewUserService()
+
+	var v ValidationData
+	if err := c.BindJSON(&v); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	id := v.UserID
+	count, err := s.CountUser(id)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if count == 0 {
+		c.JSON(http.StatusOK, gin.H{"valid": false})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"valid": true})
+	}
+}
+
 func (UserController) Update(c *gin.Context) {
 	s := service.NewUserService()
 	id := c.Params.ByName("id")

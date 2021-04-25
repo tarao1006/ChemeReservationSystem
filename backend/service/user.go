@@ -66,6 +66,10 @@ func (us *UserService) Create(u *model.UserAPI) (*model.User, error) {
 	return newU, nil
 }
 
+func (us *UserService) CountUser(id string) (int, error) {
+	return us.repo.CountUser(us.db, id)
+}
+
 func (us *UserService) UpdateByID(id string, u *model.UserAPI) (*model.User, error) {
 	user, err := us.repo.FindByID(us.db, id)
 	if err != nil {
