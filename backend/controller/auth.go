@@ -68,6 +68,15 @@ func (AuthController) Authenticator(c *gin.Context) (interface{}, error) {
 		}
 
 		c.Set(config.RememberTokenKey(), tokenString)
+		c.SetCookie(
+			config.RememberMeTokenCookieName(),
+			tokenString,
+			60*60*24*(365*3+366),
+			"/",
+			"",
+			false,
+			true,
+		)
 	}
 
 	return user, nil
