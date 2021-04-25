@@ -82,8 +82,8 @@ func (AuthController) Authenticator(c *gin.Context) (interface{}, error) {
 	return user, nil
 }
 
-// PayloadFunc は Authenticator の戻り値を用いて Claims を生成し、
-// claims := jwt.ExtractClaims(c)で取得することができるようにする。
+// PayloadFunc は Authenticator の戻り値を用いて MapClaims を生成する。
+// 生成された MapClaims の値は jwt 生成に用いられる。
 func (ac AuthController) PayloadFunc(data interface{}) ginjwt.MapClaims {
 	if v, ok := data.(*model.UserDTO); ok {
 		return ginjwt.MapClaims{
