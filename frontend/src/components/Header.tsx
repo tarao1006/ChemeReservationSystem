@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -10,10 +11,12 @@ import Menu from '@material-ui/core/Menu'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import { AuthContext } from '@contexts'
-import { testUserID, testUserPassword } from '@api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    toolbar: {
+      minHeight: `56px`,
+    },
     grow: {
       flexGrow: 1,
     },
@@ -21,32 +24,33 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(8),
     },
   }),
-);
+)
 
 export const Header = () => {
-  const { currentUser, login, logout} = useContext(AuthContext)
+  const { currentUser, setToken, setCurrentUser } = useContext(AuthContext)
+  const location = useLocation()
 
-  const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const classes = useStyles()
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
 
-  const isOpen = Boolean(anchorEl);
+  const isOpen = Boolean(anchorEl)
 
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget)
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
 
   const handleLogin = () => {
     handleClose()
-    login(testUserID, testUserPassword, true)
   }
 
   const handleLogout = () => {
+    setToken('')
+    setCurrentUser(undefined)
     handleClose()
-    logout()
   }
 
   const renderMenu = (
@@ -67,29 +71,57 @@ export const Header = () => {
       <MenuItem onClick={handleClose}>マイページ</MenuItem>
       <MenuItem onClick={handleLogout}>ログアウト</MenuItem>
     </Menu>
-  );
+  )
+
+  const LoginButton = () => {
+    return (
+      <Button
+        variant="outlined"
+        component={RouterLink}
+        to="/login"
+      >
+        ログイン
+      </Button>
+    )
+  }
+
+  const AccountButton = () => {
+    return (
+      <Button
+        onClick={handleOpen}
+        color="inherit"
+        endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+      >
+        <AccountCircle />
+      </Button>
+    )
+  }
 
   return (
     <div className={classes.grow}>
       <AppBar position="static">
-        <Toolbar>
+        <Toolbar className={classes.toolbar}>
           <Typography variant="h6" noWrap>
             施設予約
           </Typography>
           <div className={classes.grow} />
-          {currentUser === undefined
-          ? (<Button variant="outlined" size="small" onClick={handleLogin}>ログイン</Button>)
-          : (<>
-              <Button
-                onClick={handleOpen}
-                color="inherit"
-                endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-              >
-                <AccountCircle />
-              </Button>
-              {renderMenu}
-            </>)
-          }
+          {(currentUser !== undefined)
+          ?
+            (
+              <>
+                <Button
+                  onClick={handleOpen}
+                  color="inherit"
+                  endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                >
+                  <AccountCircle />
+                </Button>
+                {renderMenu}
+              </>
+            )
+          : (location.pathname === "/login")
+          ? <></>
+          : <LoginButton />}
         </Toolbar>
       </AppBar>
     </div>
