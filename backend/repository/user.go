@@ -116,6 +116,17 @@ func (UserRepository) CountUser(db *sqlx.DB, id string) (int, error) {
 	return c, nil
 }
 
+func (UserRepository) GetRememberMeToken(db *sqlx.DB, id string) ([]byte, error) {
+	var token []byte
+	if err := db.Get(&token, `
+		SELECT remember_me_token FROM user WHERE id = ?
+	`, id); err != nil {
+		return nil, err
+	}
+
+	return token, nil
+}
+
 func (UserRepository) Create(db *sqlx.Tx, param *model.UserDTO) (result sql.Result, err error) {
 	query := `INSERT INTO user (id, name, name_ruby, password_digest, email_address) VALUES (?, ?, ?, ?, ?)`
 	return db.Exec(query, param.ID, param.Name, param.NameRuby, param.PasswordDigest, param.EmailAddress)
