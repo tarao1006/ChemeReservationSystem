@@ -116,6 +116,25 @@ func TestCookieName(t *testing.T) {
 	}
 }
 
+func TestRememberMeTokenCookieName(t *testing.T) {
+	tests := []struct {
+		name string
+		want string
+	}{
+		{
+			name: "正しく取得できる",
+			want: "remember_me_token_cookie_name",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RememberMeTokenCookieName(); got != tt.want {
+				t.Errorf("RememberMeTokenCookieName() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestIdentityKey(t *testing.T) {
 	tests := []struct {
 		name string

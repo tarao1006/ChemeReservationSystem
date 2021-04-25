@@ -22,6 +22,10 @@ func CookieName() string {
 	return os.Getenv("COOKIE_NAME")
 }
 
+func RememberMeTokenCookieName() string {
+	return os.Getenv("REMEMBER_ME_TOKEN_COOKIE_NAME")
+}
+
 func IdentityKey() string {
 	return os.Getenv("IDENTITY_KEY")
 }
