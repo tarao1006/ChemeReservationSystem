@@ -1,4 +1,4 @@
-import { backendInstance, JWT } from '.';
+import { backendInstance, JWT, ValidateResult } from '.';
 
 export const login = async (userId: string, password: string, rememberMe: boolean): Promise<JWT> => {
   const res = await backendInstance.post<JWT>('/login', {
@@ -12,4 +12,12 @@ export const login = async (userId: string, password: string, rememberMe: boolea
 
 export const logout = async (): Promise<void> => {
   await backendInstance.post('/logout')
+}
+
+export const validate = async (userId: string) => {
+  const res = await backendInstance.post<ValidateResult>('/validate', {
+    user_id: userId,
+  })
+
+  return res.data
 }

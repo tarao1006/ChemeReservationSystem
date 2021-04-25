@@ -17,7 +17,7 @@ export const baseInstance = axios.create({
   withCredentials: true,
 })
 
-export { login, logout } from './auth'
+export { login, logout, validate } from './auth'
 export { getAllFacilities } from './facility'
 export { getMe } from './user'
-export { Facility, JWT, User } from './types'
+export { Facility, JWT, User, ValidateResult } from './types'

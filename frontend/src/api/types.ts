@@ -27,3 +27,7 @@ export interface User {
   email_address: string
   types: UserType[]
 }
+
+export interface ValidateResult {
+  valid: boolean
+}
