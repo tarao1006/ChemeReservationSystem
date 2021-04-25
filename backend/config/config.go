@@ -21,3 +21,7 @@ func CookieName() string {
 func IdentityKey() string {
 	return os.Getenv("IDENTITY_KEY")
 }
+
+func RememberTokenKey() string {
+	return os.Getenv("REMEMBER_TOKEN_KEY")
+}

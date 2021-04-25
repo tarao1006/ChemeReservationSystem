@@ -17,6 +17,7 @@ func AuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 		MaxRefresh:      time.Hour,
 		IdentityKey:     c.IdentityKey,
 		PayloadFunc:     c.PayloadFunc,
+		LoginResponse:   c.LoginResponse,
 		IdentityHandler: c.IdentityHandler,
 		Authenticator:   c.Authenticator,
 		TokenLookup:     "header: Authorization, cookie: " + config.CookieName(),

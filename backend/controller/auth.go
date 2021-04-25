@@ -1,11 +1,16 @@
 package controller
 
 import (
+	"net/http"
+	"time"
+
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/tarao1006/ChemeReservationSystem/config"
 	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthController struct {
@@ -37,6 +42,21 @@ func (AuthController) Authenticator(c *gin.Context) (interface{}, error) {
 		return nil, jwt.ErrMissingLoginValues
 	}
 
+	if auth.RememberMe {
+		UUID, err := uuid.NewUUID()
+		if err != nil {
+			return nil, err
+		}
+		hashed, err := bcrypt.GenerateFromPassword([]byte(UUID.String()), 10)
+		if err != nil {
+			return nil, err
+		}
+		if err := s.AddRememberDigest(user.ID, hashed); err != nil {
+			return nil, err
+		}
+		c.Set(config.RememberTokenKey(), UUID.String())
+	}
+
 	return user, nil
 }
 
@@ -57,4 +77,11 @@ func (ac AuthController) IdentityHandler(c *gin.Context) interface{} {
 	return &model.Auth{
 		ID: claims[ac.IdentityKey].(string),
 	}
+}
+
+func (ac AuthController) LoginResponse(c *gin.Context, code int, token string, expire time.Time) {
+	c.JSON(http.StatusOK, gin.H{
+		"token":          token,
+		"remember_token": c.GetString(config.RememberTokenKey()),
+	})
 }

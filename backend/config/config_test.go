@@ -39,6 +39,26 @@ func TestSecretKey(t *testing.T) {
 		})
 	}
 }
+
+func TestRememberTokenKey(t *testing.T) {
+	tests := []struct {
+		name string
+		want string
+	}{
+		{
+			name: "正しく取得できる",
+			want: "remember_token_key",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RememberTokenKey(); got != tt.want {
+				t.Errorf("RememberTokenKey() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestRealm(t *testing.T) {
 	tests := []struct {
 		name string

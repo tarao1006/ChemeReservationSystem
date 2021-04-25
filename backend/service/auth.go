@@ -32,3 +32,16 @@ func (as *AuthService) Login(auth *model.Auth) (*model.UserDTO, error) {
 
 	return user, nil
 }
+
+func (as *AuthService) AddRememberDigest(id string, d []byte) error {
+	if err := db.TXHandler(as.db, func(tx *sqlx.Tx) error {
+		_, err := as.repo.UpdateRememberDigest(tx, id, d)
+		if err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return err
+	}
+	return nil
+}
