@@ -70,6 +70,24 @@ func (us *UserService) CountUser(id string) (int, error) {
 	return us.repo.CountUser(us.db, id)
 }
 
+func (us *UserService) GetRememberedUser(id string, rememberMeTokenDigest []byte) (*model.User, error) {
+	rememberMeToken, err := us.repo.GetRememberMeToken(us.db, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := bcrypt.CompareHashAndPassword(rememberMeTokenDigest, rememberMeToken); err != nil {
+		return nil, err
+	}
+
+	u, err := us.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return u, nil
+}
+
 func (us *UserService) UpdateByID(id string, u *model.UserAPI) (*model.User, error) {
 	user, err := us.repo.FindByID(us.db, id)
 	if err != nil {

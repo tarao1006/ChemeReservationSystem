@@ -69,6 +69,12 @@ func router() *gin.Engine {
 		e.POST("/validate", c.ValidateUserID)
 	}
 
+	e.Use(authMiddleware.MiddlewareFunc())
+	{
+		c := controller.NewUserController()
+		e.GET("/remembered", c.ShowRememberedUser)
+	}
+
 	v1 := e.Group("/api/v1")
 	v1.Use(authMiddleware.MiddlewareFunc())
 	{
