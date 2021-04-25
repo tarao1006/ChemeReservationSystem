@@ -4,7 +4,7 @@ export const backendURL = process.env.BACKEND_URL
 export const baseURL = `${backendURL}/api/v1`
 
 export const testUserToken = process.env.TOKEN
-export const testUserID = process.env.TEST_USER_ID
+export const testUserId = process.env.TEST_USER_ID
 export const testUserPassword = process.env.TEST_USER_PASSWORD
 
 export const backendInstance = axios.create({
