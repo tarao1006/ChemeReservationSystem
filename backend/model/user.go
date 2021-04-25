@@ -10,12 +10,11 @@ type UserAPI struct {
 }
 
 type User struct {
-	ID                    string     `json:"id"`
-	Name                  string     `json:"name"`
-	NameRuby              string     `json:"name_ruby"`
-	EmailAddress          string     `json:"email_address"`
-	Types                 []UserType `json:"types"`
-	RememberMeTokenDigest string     `json:"remember_me_token_digest"`
+	ID           string     `json:"id"`
+	Name         string     `json:"name"`
+	NameRuby     string     `json:"name_ruby"`
+	EmailAddress string     `json:"email_address"`
+	Types        []UserType `json:"types"`
 }
 
 type UserDTO struct {
