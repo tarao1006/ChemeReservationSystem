@@ -51,7 +51,7 @@ func (ur *UserRepository) GetAll(db *sqlx.DB) ([]model.User, error) {
 func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 	var user model.UserDTO
 	if err := db.Get(&user, `
-		SELECT id, name, name_ruby, password_digest, email_address, remember_digest FROM user WHERE id = ?
+		SELECT id, name, name_ruby, password_digest, email_address, remember_me_token FROM user WHERE id = ?
 	`, id); err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 func (UserRepository) FindDTOByID(db *sqlx.DB, id string) (*model.UserDTO, error) {
 	var user model.UserDTO
 	if err := db.Get(&user, `
-		SELECT id, name, name_ruby, password_digest, email_address, remember_digest FROM user WHERE id = ?
+		SELECT id, name, name_ruby, password_digest, email_address, remember_me_token FROM user WHERE id = ?
 	`, id); err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (UserRepository) FindDTOByID(db *sqlx.DB, id string) (*model.UserDTO, error
 func (UserRepository) FindDTOByEmailAddress(db *sqlx.DB, e string) (*model.UserDTO, error) {
 	var user model.UserDTO
 	if err := db.Get(&user, `
-		SELECT id, name, name_ruby, password_digest, email_address, remember_digest FROM user WHERE email_address = ?
+		SELECT id, name, name_ruby, password_digest, email_address, remember_me_token FROM user WHERE email_address = ?
 	`, e); err != nil {
 		return nil, err
 	}
@@ -121,9 +121,9 @@ func (UserRepository) Create(db *sqlx.Tx, param *model.UserDTO) (result sql.Resu
 	return db.Exec(query, param.ID, param.Name, param.NameRuby, param.PasswordDigest, param.EmailAddress)
 }
 
-func (UserRepository) UpdateRememberDigest(db *sqlx.Tx, id string, d []byte) (result sql.Result, err error) {
-	query := `UPDATE user SET remember_digest = ? WHERE id = ?`
-	return db.Exec(query, d, id)
+func (UserRepository) UpdateRememberMeToken(db *sqlx.Tx, id string, t []byte) (result sql.Result, err error) {
+	query := `UPDATE user SET remember_me_token = ? WHERE id = ?`
+	return db.Exec(query, t, id)
 }
 
 func (UserRepository) UpdateNameByID(db *sqlx.Tx, id string, n string) (result sql.Result, err error) {

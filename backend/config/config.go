@@ -10,6 +10,10 @@ func SecretKey() []byte {
 	return []byte(os.Getenv("SECRET_KEY"))
 }
 
+func RememberMeTokenSecretKey() []byte {
+	return []byte(os.Getenv("REMEMBER_ME_TOKEN_SECRET_KEY"))
+}
+
 func Realm() string {
 	return os.Getenv("REALM")
 }

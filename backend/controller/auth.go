@@ -4,7 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	jwt "github.com/appleboy/gin-jwt/v2"
+	ginjwt "github.com/appleboy/gin-jwt/v2"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/tarao1006/ChemeReservationSystem/config"
@@ -39,7 +40,7 @@ func (AuthController) Authenticator(c *gin.Context) (interface{}, error) {
 
 	user, err := s.Login(&auth)
 	if err != nil {
-		return nil, jwt.ErrMissingLoginValues
+		return nil, ginjwt.ErrMissingLoginValues
 	}
 
 	if auth.RememberMe {
@@ -47,14 +48,26 @@ func (AuthController) Authenticator(c *gin.Context) (interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		hashed, err := bcrypt.GenerateFromPassword([]byte(UUID.String()), 10)
+		t := []byte(UUID.String())
+		hashed, err := bcrypt.GenerateFromPassword(t, 10)
 		if err != nil {
 			return nil, err
 		}
-		if err := s.AddRememberDigest(user.ID, hashed); err != nil {
+		if err := s.UpdateRememberMeToken(user.ID, t); err != nil {
 			return nil, err
 		}
-		c.Set(config.RememberTokenKey(), UUID.String())
+
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"remember_me_token_digest": hashed,
+			"user_id":                  user.ID,
+		})
+
+		tokenString, err := token.SignedString(config.RememberMeTokenSecretKey())
+		if err != nil {
+			return nil, err
+		}
+
+		c.Set(config.RememberTokenKey(), tokenString)
 	}
 
 	return user, nil
@@ -62,18 +75,18 @@ func (AuthController) Authenticator(c *gin.Context) (interface{}, error) {
 
 // PayloadFunc は Authenticator の戻り値を用いて Claims を生成し、
 // claims := jwt.ExtractClaims(c)で取得することができるようにする。
-func (ac AuthController) PayloadFunc(data interface{}) jwt.MapClaims {
+func (ac AuthController) PayloadFunc(data interface{}) ginjwt.MapClaims {
 	if v, ok := data.(*model.UserDTO); ok {
-		return jwt.MapClaims{
+		return ginjwt.MapClaims{
 			ac.IdentityKey: v.ID,
 		}
 	}
-	return jwt.MapClaims{}
+	return ginjwt.MapClaims{}
 }
 
 // IdentityHandler の返り値は、コントローラ内で、c.Get(identityKey)で取得できる。
 func (ac AuthController) IdentityHandler(c *gin.Context) interface{} {
-	claims := jwt.ExtractClaims(c)
+	claims := ginjwt.ExtractClaims(c)
 	return &model.Auth{
 		ID: claims[ac.IdentityKey].(string),
 	}
@@ -81,7 +94,7 @@ func (ac AuthController) IdentityHandler(c *gin.Context) interface{} {
 
 func (ac AuthController) LoginResponse(c *gin.Context, code int, token string, expire time.Time) {
 	c.JSON(http.StatusOK, gin.H{
-		"token":          token,
-		"remember_token": c.GetString(config.RememberTokenKey()),
+		"token":             token,
+		"remember_me_token": c.GetString(config.RememberTokenKey()),
 	})
 }
