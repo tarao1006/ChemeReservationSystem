@@ -21,7 +21,7 @@ func TestPort(t *testing.T) {
 	}
 }
 
-func TestSecretKey(t *testing.T) {
+func TestSecretKeyAccessToken(t *testing.T) {
 	tests := []struct {
 		name string
 		want string
@@ -33,14 +33,14 @@ func TestSecretKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := string(SecretKey()); got != tt.want {
-				t.Errorf("SecretKey() = %v, want %v", got, tt.want)
+			if got := string(SecretKeyAccessToken()); got != tt.want {
+				t.Errorf("SecretKeyAccessToken() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestRememberMeTokenSecretKey(t *testing.T) {
+func TestSecretKeyAccessTokenRememberMeToken(t *testing.T) {
 	tests := []struct {
 		name string
 		want string
@@ -52,27 +52,84 @@ func TestRememberMeTokenSecretKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := string(RememberMeTokenSecretKey()); got != tt.want {
-				t.Errorf("RememberMeTokenSecretKey() = %v, want %v", got, tt.want)
+			if got := string(SecretKeyRememberMeToken()); got != tt.want {
+				t.Errorf("SecretKeyRememberMeToken() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestRememberTokenKey(t *testing.T) {
+func TestCookieNameAccessToken(t *testing.T) {
 	tests := []struct {
 		name string
 		want string
 	}{
 		{
 			name: "正しく取得できる",
-			want: "key_remember_token",
+			want: "cookie_name_access_token",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := RememberTokenKey(); got != tt.want {
-				t.Errorf("RememberTokenKey() = %v, want %v", got, tt.want)
+			if got := CookieNameAccessToken(); got != tt.want {
+				t.Errorf("CookieNameAccessToken() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCookieNameRememberMeToken(t *testing.T) {
+	tests := []struct {
+		name string
+		want string
+	}{
+		{
+			name: "正しく取得できる",
+			want: "cookie_name_remember_me_token",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := CookieNameRememberMeToken(); got != tt.want {
+				t.Errorf("CookieNameRememberMeToken() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIdentityKeyAccessToken(t *testing.T) {
+	tests := []struct {
+		name string
+		want string
+	}{
+		{
+			name: "正しく取得できる",
+			want: "key_access_token",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IdentityKeyAccessToken(); got != tt.want {
+				t.Errorf("IdentityKeyAccessToken() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIdentityKeyRememberMeToken(t *testing.T) {
+	tests := []struct {
+		name string
+		want string
+	}{
+		{
+			name: "正しく取得できる",
+			want: "key_remember_me_token",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IdentityKeyRememberMeToken(); got != tt.want {
+				t.Errorf("IdentityKeyRememberMeToken() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -92,63 +149,6 @@ func TestRealm(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Realm(); got != tt.want {
 				t.Errorf("Realm() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestCookieName(t *testing.T) {
-	tests := []struct {
-		name string
-		want string
-	}{
-		{
-			name: "正しく取得できる",
-			want: "cookie_name_access_token",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := CookieName(); got != tt.want {
-				t.Errorf("CookieName() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestRememberMeTokenCookieName(t *testing.T) {
-	tests := []struct {
-		name string
-		want string
-	}{
-		{
-			name: "正しく取得できる",
-			want: "cookie_name_remember_me_token",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := RememberMeTokenCookieName(); got != tt.want {
-				t.Errorf("RememberMeTokenCookieName() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestIdentityKey(t *testing.T) {
-	tests := []struct {
-		name string
-		want string
-	}{
-		{
-			name: "正しく取得できる",
-			want: "key_access_token",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := IdentityKey(); got != tt.want {
-				t.Errorf("IdentityKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

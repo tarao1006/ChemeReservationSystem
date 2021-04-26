@@ -132,7 +132,7 @@ func (UserRepository) Create(db *sqlx.Tx, param *model.UserDTO) (result sql.Resu
 	return db.Exec(query, param.ID, param.Name, param.NameRuby, param.PasswordDigest, param.EmailAddress)
 }
 
-func (UserRepository) UpdateRememberMeToken(db *sqlx.Tx, id string, t []byte) (result sql.Result, err error) {
+func (UserRepository) UpdateRememberMeToken(db *sqlx.Tx, id string, t string) (result sql.Result, err error) {
 	query := `UPDATE user SET remember_me_token = ? WHERE id = ?`
 	return db.Exec(query, t, id)
 }

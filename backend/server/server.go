@@ -67,12 +67,7 @@ func router() *gin.Engine {
 	{
 		c := controller.NewUserController()
 		e.POST("/validate", c.ValidateUserID)
-	}
-
-	e.Use(authMiddleware.MiddlewareFunc())
-	{
-		c := controller.NewUserController()
-		e.GET("/remembered", c.ShowRememberedUser)
+		e.GET("/remembered", controller.RememberMeHandler)
 	}
 
 	v1 := e.Group("/api/v1")

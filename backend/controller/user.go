@@ -63,7 +63,7 @@ func (UserController) Show(c *gin.Context) {
 func (UserController) ShowMe(c *gin.Context) {
 	s := service.NewUserService()
 	claims := jwt.ExtractClaims(c)
-	id := claims[config.IdentityKey()].(string)
+	id := claims[config.IdentityKeyAccessToken()].(string)
 	u, err := s.GetByID(id)
 
 	if err != nil {
@@ -98,7 +98,7 @@ func (UserController) GetRememberMeTokenDigest(jwt string) (*RememberMeData, err
 }
 
 func (uc *UserController) ShowRememberedUser(c *gin.Context) {
-	jwt, err := c.Cookie(config.RememberMeTokenCookieName())
+	jwt, err := c.Cookie(config.CookieNameRememberMeToken())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
