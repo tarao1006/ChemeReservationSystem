@@ -28,7 +28,7 @@ func TestSecretKey(t *testing.T) {
 	}{
 		{
 			name: "正しく取得できる",
-			want: "secret_key",
+			want: "secret_key_access_token",
 		},
 	}
 	for _, tt := range tests {
@@ -47,7 +47,7 @@ func TestRememberMeTokenSecretKey(t *testing.T) {
 	}{
 		{
 			name: "正しく取得できる",
-			want: "remember_me_token_secret_key",
+			want: "secret_key_remember_me_token",
 		},
 	}
 	for _, tt := range tests {
@@ -66,7 +66,7 @@ func TestRememberTokenKey(t *testing.T) {
 	}{
 		{
 			name: "正しく取得できる",
-			want: "remember_token_key",
+			want: "key_remember_token",
 		},
 	}
 	for _, tt := range tests {
@@ -104,7 +104,7 @@ func TestCookieName(t *testing.T) {
 	}{
 		{
 			name: "正しく取得できる",
-			want: "cookie_name",
+			want: "cookie_name_access_token",
 		},
 	}
 	for _, tt := range tests {
@@ -123,7 +123,7 @@ func TestRememberMeTokenCookieName(t *testing.T) {
 	}{
 		{
 			name: "正しく取得できる",
-			want: "remember_me_token_cookie_name",
+			want: "cookie_name_remember_me_token",
 		},
 	}
 	for _, tt := range tests {
@@ -142,7 +142,7 @@ func TestIdentityKey(t *testing.T) {
 	}{
 		{
 			name: "正しく取得できる",
-			want: "identity_key",
+			want: "key_access_token",
 		},
 	}
 	for _, tt := range tests {

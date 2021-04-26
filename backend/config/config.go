@@ -7,11 +7,11 @@ func Port() string {
 }
 
 func SecretKey() []byte {
-	return []byte(os.Getenv("SECRET_KEY"))
+	return []byte(os.Getenv("SECRET_KEY_ACCESS_TOKEN"))
 }
 
 func RememberMeTokenSecretKey() []byte {
-	return []byte(os.Getenv("REMEMBER_ME_TOKEN_SECRET_KEY"))
+	return []byte(os.Getenv("SECRET_KEY_REMEMBER_ME_TOKEN"))
 }
 
 func Realm() string {
@@ -19,17 +19,17 @@ func Realm() string {
 }
 
 func CookieName() string {
-	return os.Getenv("COOKIE_NAME")
+	return os.Getenv("COOKIE_NAME_ACCESS_TOKEN")
 }
 
 func RememberMeTokenCookieName() string {
-	return os.Getenv("REMEMBER_ME_TOKEN_COOKIE_NAME")
+	return os.Getenv("COOKIE_NAME_REMEMBER_ME_TOKEN")
 }
 
 func IdentityKey() string {
-	return os.Getenv("IDENTITY_KEY")
+	return os.Getenv("KEY_ACCESS_TOKEN")
 }
 
 func RememberTokenKey() string {
-	return os.Getenv("REMEMBER_TOKEN_KEY")
+	return os.Getenv("KEY_REMEMBER_ME_TOKEN")
 }
