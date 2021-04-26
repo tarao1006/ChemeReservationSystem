@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -14,7 +13,7 @@ import (
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
 
-func TokenGenerator(data jwt.MapClaims) (string, time.Time, error) {
+func TokenGenerator(data jwt.MapClaims, secretKey []byte, timeout time.Duration) (string, time.Time, error) {
 	token := jwt.New(jwt.GetSigningMethod("HS256"))
 	claims := token.Claims.(jwt.MapClaims)
 
@@ -22,10 +21,10 @@ func TokenGenerator(data jwt.MapClaims) (string, time.Time, error) {
 		claims[key] = value
 	}
 
-	expire := time.Now().UTC().Add(time.Hour * 24 * (365*3 + 366))
+	expire := time.Now().UTC().Add(timeout)
 	claims["exp"] = expire.Unix()
 	claims["orig_iat"] = time.Now().Unix()
-	tokenString, err := token.SignedString(config.SecretKeyRememberMeToken())
+	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
 		return "", time.Time{}, err
 	}
@@ -33,29 +32,43 @@ func TokenGenerator(data jwt.MapClaims) (string, time.Time, error) {
 	return tokenString, expire, nil
 }
 
-func GenerateRememberMeToken(c *gin.Context, userId string) error {
-	s := service.NewAuthService()
-
-	id := uuid.New().String()
-
-	if err := s.UpdateRememberMeToken(userId, id); err != nil {
-		return err
-	}
-
-	tokenString, _, err := TokenGenerator(jwt.MapClaims{
-		"token": id,
-	})
+func GenerateRememberMeToken(c *gin.Context, data jwt.MapClaims) error {
+	tokenString, _, err := TokenGenerator(data, config.SecretKeyRememberMeToken(), config.TimeoutRememberMeToken())
 	if err != nil {
 		return err
 	}
-	fmt.Println(tokenString)
-	fmt.Println(config.IdentityKeyRememberMeToken())
+
+	expireCookie := time.Now().Add(config.TimeoutRememberMeToken())
+	maxage := int(expireCookie.Unix() - time.Now().Unix())
 
 	c.Set(config.IdentityKeyRememberMeToken(), tokenString)
 	c.SetCookie(
 		config.CookieNameRememberMeToken(),
 		tokenString,
-		60*60*24*(365*3+366),
+		maxage,
+		"/",
+		"",
+		false,
+		true,
+	)
+
+	return nil
+}
+
+func GenerateAccessToken(c *gin.Context, data jwt.MapClaims) error {
+	tokenString, _, err := TokenGenerator(data, config.SecretKeyAccessToken(), config.TimeoutAccessToken())
+	if err != nil {
+		return err
+	}
+
+	expireCookie := time.Now().Add(config.TimeoutAccessToken())
+	maxage := int(expireCookie.Unix() - time.Now().Unix())
+
+	c.Set(config.IdentityKeyAccessToken(), tokenString)
+	c.SetCookie(
+		config.CookieNameAccessToken(),
+		tokenString,
+		maxage,
 		"/",
 		"",
 		false,
@@ -85,7 +98,16 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 	}
 
 	if auth.RememberMe {
-		if err := GenerateRememberMeToken(c, user.ID); err != nil {
+		s := service.NewAuthService()
+
+		id := uuid.New().String()
+		if err := s.UpdateRememberMeToken(user.ID, id); err != nil {
+			return nil, ginjwt.ErrMissingLoginValues
+		}
+
+		if err := GenerateRememberMeToken(c, jwt.MapClaims{
+			"id": id,
+		}); err != nil {
 			return nil, ginjwt.ErrMissingLoginValues
 		}
 	}
@@ -98,7 +120,7 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 func PayloadFunc(data interface{}) ginjwt.MapClaims {
 	if v, ok := data.(*model.UserDTO); ok {
 		return ginjwt.MapClaims{
-			config.IdentityKeyAccessToken(): v.ID,
+			"id": v.ID,
 		}
 	}
 	return ginjwt.MapClaims{}
@@ -114,8 +136,8 @@ func IdentityHandler(c *gin.Context) interface{} {
 
 func LoginResponse(c *gin.Context, code int, token string, expire time.Time) {
 	c.JSON(http.StatusOK, gin.H{
-		"token":             token,
-		"remember_me_token": c.GetString(config.IdentityKeyRememberMeToken()),
+		config.IdentityKeyAccessToken():     token,
+		config.IdentityKeyRememberMeToken(): c.GetString(config.IdentityKeyRememberMeToken()),
 	})
 }
 
@@ -123,7 +145,7 @@ func AuthMiddleware() (*ginjwt.GinJWTMiddleware, error) {
 	return ginjwt.New(&ginjwt.GinJWTMiddleware{
 		Realm:           config.Realm(),
 		Key:             config.SecretKeyAccessToken(),
-		Timeout:         time.Hour * 24 * (365*3 + 366),
+		Timeout:         config.TimeoutAccessToken(),
 		MaxRefresh:      time.Hour,
 		IdentityKey:     config.IdentityKeyAccessToken(),
 		PayloadFunc:     PayloadFunc,

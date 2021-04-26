@@ -1,11 +1,7 @@
 package controller
 
 import (
-	"encoding/base64"
-	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -70,53 +66,6 @@ func (UserController) ShowMe(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, u)
-}
-
-type RememberMeData struct {
-	UserID                string `json:"user_id"`
-	RememberMeTokenDigest []byte `json:"remember_me_token_digest"`
-}
-
-func (UserController) GetRememberMeTokenDigest(jwt string) (*RememberMeData, error) {
-	splittedJWT := strings.Split(jwt, ".")
-	if len(splittedJWT) != 3 {
-		return nil, fmt.Errorf("invalid token")
-	}
-
-	tokenByte, err := base64.RawStdEncoding.DecodeString(splittedJWT[1])
-	if err != nil {
-		return nil, err
-	}
-
-	var res RememberMeData
-	if err := json.Unmarshal(tokenByte, &res); err != nil {
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-func (uc *UserController) ShowRememberedUser(c *gin.Context) {
-	jwt, err := c.Cookie(config.CookieNameRememberMeToken())
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	data, err := uc.GetRememberMeTokenDigest(jwt)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	s := service.NewUserService()
-	u, err := s.GetRememberedUser(data.UserID, data.RememberMeTokenDigest)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
 	c.JSON(http.StatusOK, u)
 }
 

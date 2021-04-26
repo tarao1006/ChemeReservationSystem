@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	"os"
+	"time"
+)
 
 func SecretKeyAccessToken() []byte {
 	return []byte(os.Getenv("SECRET_KEY_ACCESS_TOKEN"))
@@ -28,4 +31,12 @@ func IdentityKeyRememberMeToken() string {
 
 func Realm() string {
 	return os.Getenv("REALM")
+}
+
+func TimeoutAccessToken() time.Duration {
+	return time.Hour * 24 * (365*3 + 366)
+}
+
+func TimeoutRememberMeToken() time.Duration {
+	return time.Hour * 24 * (365*3 + 366)
 }
