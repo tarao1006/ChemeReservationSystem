@@ -43,10 +43,6 @@ export const Header = () => {
     setAnchorEl(null)
   }
 
-  const handleLogin = () => {
-    handleClose()
-  }
-
   const handleLogout = () => {
     setToken('')
     setCurrentUser(undefined)
@@ -105,23 +101,18 @@ export const Header = () => {
             施設予約
           </Typography>
           <div className={classes.grow} />
-          {(currentUser !== undefined)
-          ?
-            (
-              <>
-                <Button
-                  onClick={handleOpen}
-                  color="inherit"
-                  endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                >
-                  <AccountCircle />
-                </Button>
-                {renderMenu}
-              </>
-            )
-          : (location.pathname === "/login")
-          ? <></>
-          : <LoginButton />}
+          {currentUser !== undefined && (
+            <>
+              <Button
+                onClick={handleOpen}
+                color="inherit"
+                endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              >
+                <AccountCircle />
+              </Button>
+              {renderMenu}
+            </>
+          )}
         </Toolbar>
       </AppBar>
     </div>
