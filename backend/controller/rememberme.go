@@ -1,13 +1,15 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	ginjwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"github.com/tarao1006/ChemeReservationSystem/auth"
 	"github.com/tarao1006/ChemeReservationSystem/config"
+	"github.com/tarao1006/ChemeReservationSystem/service"
 )
 
 func jwtFromCookie(c *gin.Context, key string) (string, error) {
@@ -65,6 +67,44 @@ func RememberMeHandler(c *gin.Context) {
 		return
 	}
 
-	id := claims[config.IdentityKeyRememberMeToken()]
-	fmt.Println(id)
+	id := claims[config.IdentityKeyRememberMeToken()].(string)
+
+	us := service.NewUserService()
+
+	userID, err := us.GetIDByRememberMeToken(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	accessToken, err := auth.GenerateAccessToken(c, jwt.MapClaims{
+		config.IdentityKeyAccessToken(): userID,
+	})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	as := service.NewAuthService()
+
+	newID := uuid.New().String()
+	if err := as.UpdateRememberMeToken(userID, newID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	rememberMeToken, err := auth.GenerateRememberMeToken(c, jwt.MapClaims{
+		config.IdentityKeyRememberMeToken(): newID,
+	})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"access_token":      accessToken,
+		"remember_me_token": rememberMeToken,
+	})
 }

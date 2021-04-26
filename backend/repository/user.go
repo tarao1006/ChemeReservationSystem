@@ -116,6 +116,17 @@ func (UserRepository) CountUser(db *sqlx.DB, id string) (int, error) {
 	return c, nil
 }
 
+func (UserRepository) GetIDByRememberMeToken(db *sqlx.DB, t string) (string, error) {
+	var id string
+	if err := db.Get(&id, `
+		SELECT id FROM user WHERE remember_me_token = ?
+	`, t); err != nil {
+		return "", err
+	}
+
+	return id, nil
+}
+
 func (UserRepository) GetRememberMeToken(db *sqlx.DB, id string) ([]byte, error) {
 	var token []byte
 	if err := db.Get(&token, `

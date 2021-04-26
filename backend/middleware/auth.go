@@ -41,7 +41,7 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 			return nil, ginjwt.ErrMissingLoginValues
 		}
 
-		if err := auth.GenerateRememberMeToken(c, jwt.MapClaims{
+		if _, err := auth.GenerateRememberMeToken(c, jwt.MapClaims{
 			config.IdentityKeyRememberMeToken(): id,
 		}); err != nil {
 			return nil, ginjwt.ErrMissingLoginValues

@@ -33,10 +33,10 @@ func TokenGenerator(data jwt.MapClaims, secretKey []byte, timeout time.Duration)
 	return tokenString, expire, nil
 }
 
-func GenerateRememberMeToken(c *gin.Context, data jwt.MapClaims) error {
+func GenerateRememberMeToken(c *gin.Context, data jwt.MapClaims) (string, error) {
 	tokenString, _, err := TokenGenerator(data, config.SecretKeyRememberMeToken(), config.TimeoutRememberMeToken())
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	expireCookie := time.Now().Add(config.TimeoutRememberMeToken())
@@ -53,13 +53,13 @@ func GenerateRememberMeToken(c *gin.Context, data jwt.MapClaims) error {
 		true,
 	)
 
-	return nil
+	return tokenString, nil
 }
 
-func GenerateAccessToken(c *gin.Context, data jwt.MapClaims) error {
+func GenerateAccessToken(c *gin.Context, data jwt.MapClaims) (string, error) {
 	tokenString, _, err := TokenGenerator(data, config.SecretKeyAccessToken(), config.TimeoutAccessToken())
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	expireCookie := time.Now().Add(config.TimeoutAccessToken())
@@ -76,5 +76,5 @@ func GenerateAccessToken(c *gin.Context, data jwt.MapClaims) error {
 		true,
 	)
 
-	return nil
+	return tokenString, nil
 }
