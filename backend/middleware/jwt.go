@@ -86,6 +86,7 @@ func (mw *JWTMiddleware) Init() error {
 				"code":    code,
 				"message": message,
 			})
+			c.Abort()
 		}
 	}
 
