@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/controller"
 	"github.com/tarao1006/ChemeReservationSystem/db"
-	"github.com/tarao1006/ChemeReservationSystem/middleware"
 )
 
 type Server struct {
@@ -42,11 +41,6 @@ func PingHandler(c *gin.Context) {
 }
 
 func (s *Server) Router() error {
-	authMiddleware, err := middleware.DefaultJWTMiddleware()
-	if err != nil {
-		return fmt.Errorf("failed init auth middleware. %s", err)
-	}
-
 	config := cors.New(cors.Config{
 		AllowHeaders: []string{
 			"Authorization",
@@ -74,11 +68,9 @@ func (s *Server) Router() error {
 	{
 		c := controller.NewUserController()
 		e.POST("/validate", c.ValidateUserID)
-		e.GET("/remembered", controller.RememberMeHandler)
 	}
 
 	v1 := e.Group("/api/v1")
-	v1.Use(authMiddleware.MiddlewareFunc())
 	{
 		v1.GET("/ping", PingHandler)
 
