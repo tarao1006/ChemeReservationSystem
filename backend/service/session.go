@@ -24,9 +24,9 @@ func (ss *SessionService) GetUserIDByID(id string) (string, error) {
 	return ss.repo.GetUserIDByID(ss.db, id)
 }
 
-func (ss *SessionService) Create(userID string, id string) error {
+func (ss *SessionService) Create(userID string, id string, expireAt time.Time) error {
 	if err := db.TXHandler(ss.db, func(tx *sqlx.Tx) error {
-		if _, err := ss.repo.Create(tx, id, userID, time.Now().Add(time.Hour*12)); err != nil {
+		if _, err := ss.repo.Create(tx, id, userID, expireAt); err != nil {
 			return err
 		}
 		return nil

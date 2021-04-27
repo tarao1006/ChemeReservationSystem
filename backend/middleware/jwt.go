@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -130,9 +129,7 @@ func (mw *JWTMiddleware) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	// TODO: DB に書き込む。
 	accessTokenID := uuid.New().String()
-
 	accessToken := jwt.New(jwt.GetSigningMethod(mw.SigningAlgorithm))
 	accessTokenclaims := accessToken.Claims.(jwt.MapClaims)
 	accessTokenclaims[mw.IdentityKeyAccessToken] = accessTokenID
@@ -145,23 +142,44 @@ func (mw *JWTMiddleware) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	if a.RememberMe {
-		// TODO: DB に書き込む。
-		rememberMeTokenID := uuid.New().String()
+	ss := service.NewSessionService()
+	if err := ss.Create(a.ID, accessTokenID, accessTokenExpire); err != nil {
+		mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(err, c))
+		return
+	}
 
+	if a.RememberMe {
+		rememberMeTokenID := uuid.New().String()
 		rememberMeToken := jwt.New(jwt.GetSigningMethod(mw.SigningAlgorithm))
 		rememberMeTokenclaims := rememberMeToken.Claims.(jwt.MapClaims)
 		rememberMeTokenclaims[mw.IdentityKeyRememberMeToken] = rememberMeTokenID
 		rememberMeTokenExpire := mw.TimeFunc().Add(mw.TimeoutRememberMeToken)
 		rememberMeTokenclaims["exp"] = rememberMeTokenExpire.Unix()
 		rememberMeTokenclaims["orig_iat"] = mw.TimeFunc().Unix()
-		rememberMeTokenString, err := accessToken.SignedString(mw.SecretKeyRememberMeToken)
+		rememberMeTokenString, err := rememberMeToken.SignedString(mw.SecretKeyRememberMeToken)
 		if err != nil {
 			mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(ErrFailedTokenCreation, c))
 			return
 		}
-		fmt.Println(rememberMeTokenString)
-		// TODO: Cookie にセットする。
+
+		s := service.NewAuthService()
+		if err := s.UpdateRememberMeToken(a.ID, rememberMeTokenID); err != nil {
+			mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(err, c))
+			return
+		}
+
+		expireCookie := mw.TimeFunc().Add(mw.TimeoutRememberMeToken)
+		maxage := int(expireCookie.Unix() - mw.TimeFunc().Unix())
+
+		c.SetCookie(
+			config.CookieNameRememberMeToken(),
+			rememberMeTokenString,
+			maxage,
+			"/",
+			"/",
+			false,
+			true,
+		)
 	}
 
 	mw.LoginResponse(c, http.StatusOK, accessTokenString, accessTokenExpire)
@@ -183,49 +201,47 @@ func (mw *JWTMiddleware) RefreshHandler(c *gin.Context) {
 
 func (mw *JWTMiddleware) MiddlewareFunc() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		mw.middlewareImpl(c)
+		tokenString, err := mw.jwtFromHeader(c, mw.TokenLookup)
+		if err != nil {
+			mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(err, c))
+			return
+		}
+
+		token, err := mw.parseTokenString(tokenString)
+		if err != nil {
+			mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(err, c))
+			return
+		}
+		c.Header("Authorization", mw.TokenHeadName+" "+tokenString)
+
+		claims := token.Claims.(jwt.MapClaims)
+
+		if claims["exp"] == nil {
+			mw.Unauthorized(c, http.StatusBadRequest, mw.HTTPStatusMessageFunc(ErrMissingExpField, c))
+			return
+		}
+
+		if _, ok := claims["exp"].(float64); !ok {
+			mw.Unauthorized(c, http.StatusBadRequest, mw.HTTPStatusMessageFunc(ErrWrongFormatOfExp, c))
+			return
+		}
+
+		if int64(claims["exp"].(float64)) < mw.TimeFunc().Unix() {
+			mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(ErrExpiredToken, c))
+			return
+		}
+
+		// TODO: uuid を検証する。
+
+		c.Set("JWT_PAYLOAD", claims)
+		identity := mw.IdentityHandler(c)
+
+		if identity != nil {
+			c.Set(mw.IdentityKeyAccessToken, identity)
+		}
+
+		c.Next()
 	}
-}
-
-func (mw *JWTMiddleware) middlewareImpl(c *gin.Context) {
-	tokenString, err := mw.jwtFromHeader(c, mw.TokenLookup)
-	if err != nil {
-		mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(err, c))
-		return
-	}
-
-	token, err := mw.parseTokenString(tokenString)
-	if err != nil {
-		mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(err, c))
-		return
-	}
-	c.Header("Authorization", mw.TokenHeadName+" "+tokenString)
-
-	claims := token.Claims.(jwt.MapClaims)
-
-	if claims["exp"] == nil {
-		mw.Unauthorized(c, http.StatusBadRequest, mw.HTTPStatusMessageFunc(ErrMissingExpField, c))
-		return
-	}
-
-	if _, ok := claims["exp"].(float64); !ok {
-		mw.Unauthorized(c, http.StatusBadRequest, mw.HTTPStatusMessageFunc(ErrWrongFormatOfExp, c))
-		return
-	}
-
-	if int64(claims["exp"].(float64)) < mw.TimeFunc().Unix() {
-		mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(ErrExpiredToken, c))
-		return
-	}
-
-	c.Set("JWT_PAYLOAD", claims)
-	identity := mw.IdentityHandler(c)
-
-	if identity != nil {
-		c.Set(mw.IdentityKeyAccessToken, identity)
-	}
-
-	c.Next()
 }
 
 func (mw *JWTMiddleware) refreshToken(c *gin.Context) (string, time.Time, error) {

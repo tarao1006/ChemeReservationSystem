@@ -41,7 +41,7 @@ func PingHandler(c *gin.Context) {
 }
 
 func router() *gin.Engine {
-	authMiddleware, err := middleware.AuthMiddleware()
+	authMiddleware, err := middleware.DefaultJWTMiddleware()
 	if err != nil {
 		log.Fatalf("failed init authmiddleware. %s", err)
 	}

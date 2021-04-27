@@ -33,7 +33,7 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 
 	ss := service.NewSessionService()
 	accessTokenID := uuid.New().String()
-	if err := ss.Create(a.ID, accessTokenID); err != nil {
+	if err := ss.Create(a.ID, accessTokenID, time.Now().Add(time.Hour*12)); err != nil {
 		return nil, err
 	}
 

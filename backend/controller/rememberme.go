@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"time"
 
 	ginjwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/dgrijalva/jwt-go"
@@ -83,7 +84,7 @@ func RememberMeHandler(c *gin.Context) {
 	})
 
 	ss := service.NewSessionService()
-	if err := ss.Create(userID, newAccessTokenID); err != nil {
+	if err := ss.Create(userID, newAccessTokenID, time.Now().Add(time.Hour*12)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
