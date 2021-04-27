@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 	"time"
@@ -13,19 +12,6 @@ import (
 	"github.com/tarao1006/ChemeReservationSystem/config"
 	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
-)
-
-var (
-	ErrForbidden               = errors.New("you don't have permission to access this resource")
-	ErrMissingLoginValues      = errors.New("missing Username or Password")
-	ErrFailedAuthentication    = errors.New("incorrect Username or Password")
-	ErrFailedTokenCreation     = errors.New("failed to create JWT Token")
-	ErrExpiredToken            = errors.New("token is expired")
-	ErrEmptyAuthHeader         = errors.New("auth header is empty")
-	ErrMissingExpField         = errors.New("missing exp field")
-	ErrWrongFormatOfExp        = errors.New("exp must be float64 format")
-	ErrInvalidAuthHeader       = errors.New("auth header is invalid")
-	ErrInvalidSigningAlgorithm = errors.New("invalid signing algorithm")
 )
 
 type JWTMiddleware struct {
@@ -139,7 +125,7 @@ func (mw *JWTMiddleware) LoginHandler(c *gin.Context) {
 	accessTokenclaims["orig_iat"] = mw.TimeFunc().Unix()
 	accessTokenString, err := accessToken.SignedString(mw.SecretKeyAccessToken)
 	if err != nil {
-		mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(ErrFailedTokenCreation, c))
+		mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(model.ErrFailedTokenCreation, c))
 		return
 	}
 
@@ -159,7 +145,7 @@ func (mw *JWTMiddleware) LoginHandler(c *gin.Context) {
 		rememberMeTokenclaims["orig_iat"] = mw.TimeFunc().Unix()
 		rememberMeTokenString, err := rememberMeToken.SignedString(mw.SecretKeyRememberMeToken)
 		if err != nil {
-			mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(ErrFailedTokenCreation, c))
+			mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(model.ErrFailedTokenCreation, c))
 			return
 		}
 
@@ -217,17 +203,17 @@ func (mw *JWTMiddleware) MiddlewareFunc() gin.HandlerFunc {
 		claims := token.Claims.(jwt.MapClaims)
 
 		if claims["exp"] == nil {
-			mw.Unauthorized(c, http.StatusBadRequest, mw.HTTPStatusMessageFunc(ErrMissingExpField, c))
+			mw.Unauthorized(c, http.StatusBadRequest, mw.HTTPStatusMessageFunc(model.ErrMissingExpField, c))
 			return
 		}
 
 		if _, ok := claims["exp"].(float64); !ok {
-			mw.Unauthorized(c, http.StatusBadRequest, mw.HTTPStatusMessageFunc(ErrWrongFormatOfExp, c))
+			mw.Unauthorized(c, http.StatusBadRequest, mw.HTTPStatusMessageFunc(model.ErrWrongFormatOfExp, c))
 			return
 		}
 
 		if int64(claims["exp"].(float64)) < mw.TimeFunc().Unix() {
-			mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(ErrExpiredToken, c))
+			mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(model.ErrExpiredToken, c))
 			return
 		}
 
@@ -305,12 +291,12 @@ func (mw *JWTMiddleware) jwtFromHeader(c *gin.Context, key string) (string, erro
 	authHeader := c.Request.Header.Get(key)
 
 	if authHeader == "" {
-		return "", ErrEmptyAuthHeader
+		return "", model.ErrEmptyAuthHeader
 	}
 
 	parts := strings.SplitN(authHeader, " ", 2)
 	if !(len(parts) == 2 && parts[0] == mw.TokenHeadName) {
-		return "", ErrInvalidAuthHeader
+		return "", model.ErrInvalidAuthHeader
 	}
 
 	return parts[1], nil
@@ -319,7 +305,7 @@ func (mw *JWTMiddleware) jwtFromHeader(c *gin.Context, key string) (string, erro
 func (mw *JWTMiddleware) parseTokenString(tokenString string) (*jwt.Token, error) {
 	return jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
 		if jwt.GetSigningMethod(mw.SigningAlgorithm) != t.Method {
-			return nil, ErrInvalidSigningAlgorithm
+			return nil, model.ErrInvalidSigningAlgorithm
 		}
 		return mw.SecretKeyAccessToken, nil
 	})
@@ -343,7 +329,7 @@ func (mw *JWTMiddleware) checkIfTokenExpire(c *gin.Context) (jwt.MapClaims, erro
 
 	origIat := int64(claims["orig_iat"].(float64))
 	if origIat < mw.TimeFunc().Add(-mw.MaxRefreshAccessToken).Unix() {
-		return nil, ErrExpiredToken
+		return nil, model.ErrExpiredToken
 	}
 
 	return claims, nil
