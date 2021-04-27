@@ -15,7 +15,7 @@ type Auth struct {
 }
 
 func TokenGenerator(data jwt.MapClaims, secretKey []byte, timeout time.Duration) (string, time.Time, error) {
-	token := jwt.New(jwt.GetSigningMethod("HS256"))
+	token := jwt.New(jwt.GetSigningMethod(config.SigningAlgorithm()))
 	claims := token.Claims.(jwt.MapClaims)
 
 	for key, value := range data {

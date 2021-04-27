@@ -24,7 +24,7 @@ func jwtFromCookie(c *gin.Context, key string) (string, error) {
 
 func ParseTokenString(token string) (*jwt.Token, error) {
 	return jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if jwt.GetSigningMethod("HS256") != t.Method {
+		if jwt.GetSigningMethod(config.SigningAlgorithm()) != t.Method {
 			return nil, ginjwt.ErrInvalidSigningAlgorithm
 		}
 

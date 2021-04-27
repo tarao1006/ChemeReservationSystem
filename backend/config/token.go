@@ -40,3 +40,7 @@ func TimeoutAccessToken() time.Duration {
 func TimeoutRememberMeToken() time.Duration {
 	return time.Hour * 24 * (365*3 + 366)
 }
+
+func SigningAlgorithm() string {
+	return "HS256"
+}

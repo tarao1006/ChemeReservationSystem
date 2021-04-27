@@ -87,7 +87,7 @@ func Authorizator(data interface{}, c *gin.Context) bool {
 func AuthMiddleware() (*ginjwt.GinJWTMiddleware, error) {
 	return ginjwt.New(&ginjwt.GinJWTMiddleware{
 		Realm:            config.Realm(),
-		SigningAlgorithm: "HS256",
+		SigningAlgorithm: config.SigningAlgorithm(),
 		Key:              config.SecretKeyAccessToken(),
 		Timeout:          config.TimeoutAccessToken(),
 		MaxRefresh:       time.Hour,
