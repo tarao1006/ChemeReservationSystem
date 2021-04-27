@@ -27,20 +27,20 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	user, err := s.Login(&a)
+	userID, err := s.Login(&a)
 	if err != nil {
 		return nil, ginjwt.ErrMissingLoginValues
 	}
 
 	ss := service.NewSessionService()
 	accessTokenID := uuid.New().String()
-	if err := ss.Create(user.ID, accessTokenID); err != nil {
+	if err := ss.Create(userID, accessTokenID); err != nil {
 		return nil, err
 	}
 
 	if a.RememberMe {
 		rememberMeTokenID := uuid.New().String()
-		if err := s.UpdateRememberMeToken(user.ID, rememberMeTokenID); err != nil {
+		if err := s.UpdateRememberMeToken(userID, rememberMeTokenID); err != nil {
 			return nil, ginjwt.ErrMissingLoginValues
 		}
 

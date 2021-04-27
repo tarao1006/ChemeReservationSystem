@@ -4,7 +4,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/auth"
 	"github.com/tarao1006/ChemeReservationSystem/db"
-	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/repository"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -21,17 +20,17 @@ func NewAuthService() *AuthService {
 	}
 }
 
-func (as *AuthService) Login(auth *auth.Auth) (*model.UserDTO, error) {
+func (as *AuthService) Login(auth *auth.Auth) (string, error) {
 	user, err := as.repo.FindDTOByID(as.db, auth.ID)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordDigest), []byte(auth.Password)); err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return user, nil
+	return user.ID, nil
 }
 
 func (as *AuthService) UpdateRememberMeToken(id string, t string) error {
