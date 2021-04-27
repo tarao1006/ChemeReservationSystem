@@ -91,10 +91,11 @@ func (UserController) ValidateUserID(c *gin.Context) {
 	}
 
 	if count == 0 {
-		c.JSON(http.StatusOK, gin.H{"valid": false})
-	} else {
-		c.JSON(http.StatusOK, gin.H{"valid": true})
+		c.JSON(http.StatusBadRequest, gin.H{"error": model.ErrInvalidUserID})
+		return
 	}
+
+	c.JSON(http.StatusOK, gin.H{"valid": true})
 }
 
 func (UserController) Update(c *gin.Context) {
