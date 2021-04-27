@@ -80,23 +80,29 @@ func LoginResponse(c *gin.Context, code int, token string, expire time.Time) {
 	})
 }
 
+func Authorizator(data interface{}, c *gin.Context) bool {
+	return true
+}
+
 func AuthMiddleware() (*ginjwt.GinJWTMiddleware, error) {
 	return ginjwt.New(&ginjwt.GinJWTMiddleware{
-		Realm:           config.Realm(),
-		Key:             config.SecretKeyAccessToken(),
-		Timeout:         config.TimeoutAccessToken(),
-		MaxRefresh:      time.Hour,
-		IdentityKey:     config.IdentityKeyAccessToken(),
-		PayloadFunc:     PayloadFunc,
-		LoginResponse:   LoginResponse,
-		IdentityHandler: IdentityHandler,
-		Authenticator:   Authenticator,
-		TokenLookup:     "header: Authorization, cookie: " + config.CookieNameAccessToken(),
-		TokenHeadName:   "Bearer",
-		TimeFunc:        time.Now,
-		SendCookie:      true,
-		SecureCookie:    false,
-		CookieHTTPOnly:  true,
-		CookieName:      config.CookieNameAccessToken(),
+		Realm:            config.Realm(),
+		SigningAlgorithm: "HS256",
+		Key:              config.SecretKeyAccessToken(),
+		Timeout:          config.TimeoutAccessToken(),
+		MaxRefresh:       time.Hour,
+		Authenticator:    Authenticator,
+		Authorizator:     Authorizator,
+		PayloadFunc:      PayloadFunc,
+		LoginResponse:    LoginResponse,
+		IdentityHandler:  IdentityHandler,
+		IdentityKey:      config.IdentityKeyAccessToken(),
+		TokenLookup:      "header: Authorization, cookie: " + config.CookieNameAccessToken(),
+		TokenHeadName:    "Bearer",
+		TimeFunc:         time.Now,
+		SendCookie:       true,
+		SecureCookie:     false,
+		CookieHTTPOnly:   true,
+		CookieName:       config.CookieNameAccessToken(),
 	})
 }
