@@ -230,11 +230,18 @@ func (mw *JWTMiddleware) MiddlewareFunc() gin.HandlerFunc {
 			return
 		}
 
-		// TODO: uuid を検証する。
+		accessTokenID := claims["id"].(string)
+		s := service.NewSessionService()
+		userID, err := s.GetUserIDByID(accessTokenID)
+		if err != nil {
+			mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(model.ErrInvalidAccessToken, c))
+			return
+		}
 
-		c.Set("JWT_PAYLOAD", claims)
+		// TODO: アクセストークンを更新する。
+
+		c.Set("USER_ID", userID)
 		identity := mw.IdentityHandler(c)
-
 		if identity != nil {
 			c.Set(mw.IdentityKeyAccessToken, identity)
 		}
@@ -339,6 +346,15 @@ func (mw *JWTMiddleware) checkIfTokenExpire(c *gin.Context) (jwt.MapClaims, erro
 	}
 
 	return claims, nil
+}
+
+func ExtractUserID(c *gin.Context) string {
+	userID, exists := c.Get("USER_ID")
+	if !exists {
+		return ""
+	}
+
+	return userID.(string)
 }
 
 // ExtractClaims help to extract the JWT claims
