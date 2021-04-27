@@ -21,7 +21,7 @@ MiddlewareFunc : IdentityHandler -> Authorizator
 // Authenticator は {id: "id", password: "password"} を用いて、
 // 有効なユーザーであるかを検証する。
 func Authenticator(c *gin.Context) (interface{}, error) {
-	s := service.NewAuthService()
+	s := service.NewSessionService()
 	var a auth.Auth
 	if err := c.BindJSON(&a); err != nil {
 		return nil, err

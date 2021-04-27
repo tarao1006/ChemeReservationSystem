@@ -94,10 +94,8 @@ func RememberMeHandler(c *gin.Context) {
 		return
 	}
 
-	as := service.NewAuthService()
-
 	newID := uuid.New().String()
-	if err := as.UpdateRememberMeToken(userID, newID); err != nil {
+	if err := ss.UpdateRememberMeToken(userID, newID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

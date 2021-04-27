@@ -123,7 +123,7 @@ func (mw *JWTMiddleware) LoginHandler(c *gin.Context) {
 	}
 
 	// user_id と password を検証する。
-	s := service.NewAuthService()
+	s := service.NewSessionService()
 	if err := s.Login(&a); err != nil {
 		mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(model.ErrInvalidPassword, c))
 		return
@@ -162,7 +162,6 @@ func (mw *JWTMiddleware) LoginHandler(c *gin.Context) {
 			return
 		}
 
-		s := service.NewAuthService()
 		if err := s.UpdateRememberMeToken(a.ID, rememberMeTokenID); err != nil {
 			mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(err, c))
 			return
