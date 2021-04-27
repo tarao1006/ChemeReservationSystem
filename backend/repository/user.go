@@ -132,17 +132,23 @@ func (UserRepository) GetIDByRememberMeToken(db *sqlx.DB, t string) (string, err
 	if err := db.Get(&id, `
 		SELECT id FROM user WHERE remember_me_token = ?
 	`, t); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", model.ErrInvalidToken
+		}
 		return "", err
 	}
 
 	return id, nil
 }
 
-func (UserRepository) GetRememberMeToken(db *sqlx.DB, id string) ([]byte, error) {
+func (UserRepository) GetRememberMeTokenByID(db *sqlx.DB, id string) ([]byte, error) {
 	var token []byte
 	if err := db.Get(&token, `
 		SELECT remember_me_token FROM user WHERE id = ?
 	`, id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, model.ErrInvalidID
+		}
 		return nil, err
 	}
 

@@ -4,6 +4,8 @@ import "errors"
 
 var (
 	ErrUserNotFound             = errors.New("user not found")
+	ErrInvalidID                = errors.New("id is invalid")
+	ErrInvalidToken             = errors.New("token is invalid")
 	ErrInvalidUserID            = errors.New("user id is invalid")
 	ErrInvalidPassword          = errors.New("password is invalid")
 	ErrInvalidAccessToken       = errors.New("access token is invalid")
