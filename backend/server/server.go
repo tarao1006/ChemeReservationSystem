@@ -2,7 +2,6 @@ package server
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
@@ -24,7 +23,9 @@ func (s *Server) Init(dsn string) error {
 	if err := db.Init(dsn); err != nil {
 		return fmt.Errorf("failed init db. %s", err)
 	}
-	s.router = router()
+	if err := s.Router(); err != nil {
+		return fmt.Errorf("failed init router. %s", err)
+	}
 	return nil
 }
 
@@ -40,10 +41,10 @@ func PingHandler(c *gin.Context) {
 	})
 }
 
-func router() *gin.Engine {
+func (s *Server) Router() error {
 	authMiddleware, err := middleware.DefaultJWTMiddleware()
 	if err != nil {
-		log.Fatalf("failed init authmiddleware. %s", err)
+		return fmt.Errorf("failed init auth middleware. %s", err)
 	}
 
 	config := cors.New(cors.Config{
@@ -52,12 +53,15 @@ func router() *gin.Engine {
 			"Access-Control-Allow-Origin",
 			"Content-Type",
 		},
-		AllowOrigins:     []string{"http://localhost:8080"},
+		AllowOrigins: []string{
+			"http://localhost:8080",
+		},
 		AllowCredentials: true,
 	})
 
 	e := gin.Default()
 	e.Use(config)
+
 	e.GET("/ping", PingHandler)
 
 	e.POST("/login", authMiddleware.LoginHandler)
@@ -93,7 +97,7 @@ func router() *gin.Engine {
 			u.PUT("/:id/password", c.UpdatePassword)
 		}
 
-		ut := v1.Group("/user_type")
+		ut := v1.Group("/user-type")
 		{
 			c := controller.NewUserTypeController()
 			ut.GET("", c.Index)
@@ -113,7 +117,7 @@ func router() *gin.Engine {
 			f.DELETE("/:id", c.Delete)
 		}
 
-		ft := v1.Group("/facility_type")
+		ft := v1.Group("/facility-type")
 		{
 			c := controller.NewFacilityTypeController()
 			ft.GET("", c.Index)
@@ -144,5 +148,6 @@ func router() *gin.Engine {
 		}
 	}
 
-	return e
+	s.router = e
+	return nil
 }
