@@ -27,3 +27,8 @@ func (RememberMeSessionRepository) Create(db *sqlx.Tx, id string, userID string,
 	query := `INSERT INTO remember_me_session (id, user_id, expire_at) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, expire_at = ?`
 	return db.Exec(query, id, userID, expireAt, id, expireAt)
 }
+
+func (RememberMeSessionRepository) Delete(db *sqlx.Tx, id string) (result sql.Result, err error) {
+	query := `DELETE FROM remember_me_session WHERE id = ?`
+	return db.Exec(query, id)
+}

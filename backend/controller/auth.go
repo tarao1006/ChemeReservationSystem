@@ -3,6 +3,7 @@ package controller
 import (
 	"errors"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -48,12 +49,6 @@ func (AuthController) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code":   http.StatusOK,
-		"token":  accessToken,
-		"expire": accessTokenExpire.Format(time.RFC3339),
-	})
-
 	if a.RememberMe {
 		rememberMeTokenID, rememberMeToken, rememberMeTokenExpire, err := GenerateRememberMeToken()
 		if err != nil {
@@ -70,14 +65,17 @@ func (AuthController) LoginHandler(c *gin.Context) {
 		c.Set(config.IdentityKeyRememberMeToken(), rememberMeToken)
 		c.SetCookie(config.CookieNameRememberMeToken(), rememberMeToken, maxage, "/", "", false, true)
 	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":   http.StatusOK,
+		"token":  accessToken,
+		"expire": accessTokenExpire.Format(time.RFC3339),
+	})
 }
 
 func unauthorized(c *gin.Context, code int, err error) {
 	c.Header("WWW-Authenticate", "JWT realm="+config.Realm())
-	c.JSON(code, gin.H{
-		"code":    code,
-		"message": err.Error(),
-	})
+	response(c, code, err)
 }
 
 func GenerateToken(data jwt.MapClaims, secretKey []byte, timeout time.Duration) (string, time.Time, error) {
@@ -125,8 +123,98 @@ func GenerateRememberMeToken() (string, string, time.Time, error) {
 	return id, token, expire, nil
 }
 
+func jwtFromHeader(c *gin.Context, key string) (string, error) {
+	authHeader := c.Request.Header.Get(key)
+
+	if authHeader == "" {
+		return "", model.ErrEmptyAuthHeader
+	}
+
+	parts := strings.SplitN(authHeader, " ", 2)
+	if !(len(parts) == 2 && parts[0] == "Bearer") {
+		return "", model.ErrInvalidAuthHeader
+	}
+
+	return parts[1], nil
+}
+
+func jwtFromCookie(c *gin.Context, key string) (string, error) {
+	cookie, _ := c.Cookie(key)
+
+	if cookie == "" {
+		return "", model.ErrEmptyCookieToken
+	}
+
+	return cookie, nil
+}
+
+func ParseAccessToken(c *gin.Context) (*jwt.Token, error) {
+	token, err := jwtFromHeader(c, "Authorization")
+	if err != nil {
+		return nil, err
+	}
+
+	return jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		if jwt.GetSigningMethod(config.SigningAlgorithm()) != t.Method {
+			return nil, model.ErrInvalidSigningAlgorithm
+		}
+		c.Set("ACCESS_TOKEN", token)
+		return config.SecretKeyAccessToken(), nil
+	})
+}
+
+func ParseRememberMeToken(c *gin.Context) (*jwt.Token, error) {
+	token, err := jwtFromCookie(c, config.CookieNameRememberMeToken())
+	if err != nil {
+		return nil, err
+	}
+
+	return jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		if jwt.GetSigningMethod(config.SigningAlgorithm()) != t.Method {
+			return nil, model.ErrInvalidSigningAlgorithm
+		}
+		c.Set("REMEMBER_ME_TOKEN", token)
+		return config.SecretKeyRememberMeToken(), nil
+	})
+}
+
 func (AuthController) LogoutHandler(c *gin.Context) {
+	accessToken, err := ParseAccessToken(c)
+	if err != nil {
+		response(c, http.StatusBadRequest, err)
+		return
+	}
+
+	rememberMeToken, err := ParseRememberMeToken(c)
+	if err != nil {
+		response(c, http.StatusBadRequest, err)
+		return
+	}
+
+	accessTokenClaims := accessToken.Claims.(jwt.MapClaims)
+	rememberMeTokenClaims := rememberMeToken.Claims.(jwt.MapClaims)
+
+	accessTokenID := accessTokenClaims[config.IdentityKeyAccessToken()].(string)
+	rememberMeTokenID := rememberMeTokenClaims[config.IdentityKeyRememberMeToken()].(string)
+
+	s := service.NewAuthService()
+	if err := s.Delete(accessTokenID, rememberMeTokenID); err != nil {
+		response(c, http.StatusBadRequest, err)
+		return
+	}
+
+	code := http.StatusOK
+	c.JSON(code, gin.H{
+		"code": code,
+	})
 }
 
 func (AuthController) RefreshHandler(c *gin.Context) {
+}
+
+func response(c *gin.Context, code int, err error) {
+	c.JSON(code, gin.H{
+		"code":    code,
+		"message": err.Error(),
+	})
 }

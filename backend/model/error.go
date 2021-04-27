@@ -19,6 +19,7 @@ var (
 	ErrFailedTokenCreation     = errors.New("failed to create JWT Token")
 	ErrExpiredToken            = errors.New("token is expired")
 	ErrEmptyAuthHeader         = errors.New("auth header is empty")
+	ErrEmptyCookieToken        = errors.New("cookie token is empty")
 	ErrMissingExpField         = errors.New("missing exp field")
 	ErrWrongFormatOfExp        = errors.New("exp must be float64 format")
 	ErrInvalidAuthHeader       = errors.New("auth header is invalid")
