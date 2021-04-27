@@ -20,17 +20,17 @@ func NewAuthService() *AuthService {
 	}
 }
 
-func (as *AuthService) Login(auth *auth.Auth) (string, error) {
+func (as *AuthService) Login(auth *auth.Auth) error {
 	user, err := as.repo.FindDTOByID(as.db, auth.ID)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordDigest), []byte(auth.Password)); err != nil {
-		return "", err
+		return err
 	}
 
-	return user.ID, nil
+	return nil
 }
 
 func (as *AuthService) UpdateRememberMeToken(id string, t string) error {
