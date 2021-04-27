@@ -60,3 +60,7 @@ func TokenLookup() string {
 func TokenHeadName() string {
 	return "Bearer"
 }
+
+func TimeFunc() time.Time {
+	return time.Now()
+}
