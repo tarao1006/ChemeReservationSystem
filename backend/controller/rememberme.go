@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/tarao1006/ChemeReservationSystem/config"
 	"github.com/tarao1006/ChemeReservationSystem/service"
+	"github.com/tarao1006/ChemeReservationSystem/util"
 )
 
 func jwtFromCookie(c *gin.Context, key string) (string, error) {
@@ -78,7 +79,7 @@ func RememberMeHandler(c *gin.Context) {
 	}
 
 	newAccessTokenID := uuid.New().String()
-	accessToken, err := GenerateAccessToken(c, jwt.MapClaims{
+	accessToken, err := util.GenerateAccessToken(c, jwt.MapClaims{
 		config.IdentityKeyAccessToken(): newAccessTokenID,
 	})
 
@@ -99,7 +100,7 @@ func RememberMeHandler(c *gin.Context) {
 		return
 	}
 
-	rememberMeToken, err := GenerateRememberMeToken(c, jwt.MapClaims{
+	rememberMeToken, err := util.GenerateRememberMeToken(c, jwt.MapClaims{
 		config.IdentityKeyRememberMeToken(): newID,
 	})
 
