@@ -8,7 +8,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/tarao1006/ChemeReservationSystem/auth"
 	"github.com/tarao1006/ChemeReservationSystem/config"
 	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
@@ -28,7 +27,7 @@ type JWTMiddleware struct {
 	TokenLookup                string
 	TokenHeadName              string
 	TimeFunc                   func() time.Time
-	Authenticator              func(a *auth.Auth) error
+	Authenticator              func(a *model.Auth) error
 	Unauthorized               func(*gin.Context, int, string)
 	IdentityHandler            func(*gin.Context) interface{}
 	LoginResponse              func(*gin.Context, int, string, time.Time)
@@ -103,7 +102,7 @@ func (mw *JWTMiddleware) Init() error {
 }
 
 func (mw *JWTMiddleware) LoginHandler(c *gin.Context) {
-	var a auth.Auth
+	var a model.Auth
 	if err := c.BindJSON(&a); err != nil {
 		mw.Unauthorized(c, http.StatusUnauthorized, mw.HTTPStatusMessageFunc(err, c))
 		return

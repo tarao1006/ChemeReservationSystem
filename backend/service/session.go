@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/tarao1006/ChemeReservationSystem/auth"
 	"github.com/tarao1006/ChemeReservationSystem/db"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/repository"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -24,7 +24,7 @@ func NewSessionService() *SessionService {
 	}
 }
 
-func (ss *SessionService) Login(auth *auth.Auth) error {
+func (ss *SessionService) Login(auth *model.Auth) error {
 	user, err := ss.userRepo.FindDTOByID(ss.db, auth.ID)
 	if err != nil {
 		return err

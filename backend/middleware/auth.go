@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/tarao1006/ChemeReservationSystem/auth"
 	"github.com/tarao1006/ChemeReservationSystem/config"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
 
@@ -22,7 +23,7 @@ MiddlewareFunc : IdentityHandler -> Authorizator
 // 有効なユーザーであるかを検証する。
 func Authenticator(c *gin.Context) (interface{}, error) {
 	s := service.NewSessionService()
-	var a auth.Auth
+	var a model.Auth
 	if err := c.BindJSON(&a); err != nil {
 		return nil, err
 	}

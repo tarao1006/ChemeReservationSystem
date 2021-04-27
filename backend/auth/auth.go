@@ -8,12 +8,6 @@ import (
 	"github.com/tarao1006/ChemeReservationSystem/config"
 )
 
-type Auth struct {
-	ID         string `json:"id"`
-	Password   string `json:"password"`
-	RememberMe bool   `json:"remember_me"`
-}
-
 func TokenGenerator(data jwt.MapClaims, secretKey []byte, timeout time.Duration) (string, time.Time, error) {
 	token := jwt.New(jwt.GetSigningMethod(config.SigningAlgorithm()))
 	claims := token.Claims.(jwt.MapClaims)
