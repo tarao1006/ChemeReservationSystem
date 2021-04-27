@@ -10,7 +10,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/tarao1006/ChemeReservationSystem/auth"
 	"github.com/tarao1006/ChemeReservationSystem/config"
-	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
 
@@ -33,30 +32,34 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 		return nil, ginjwt.ErrMissingLoginValues
 	}
 
-	if a.RememberMe {
-		s := service.NewAuthService()
+	ss := service.NewSessionService()
+	accessTokenID := uuid.New().String()
+	if err := ss.Create(user.ID, accessTokenID); err != nil {
+		return nil, err
+	}
 
-		id := uuid.New().String()
-		if err := s.UpdateRememberMeToken(user.ID, id); err != nil {
+	if a.RememberMe {
+		rememberMeTokenID := uuid.New().String()
+		if err := s.UpdateRememberMeToken(user.ID, rememberMeTokenID); err != nil {
 			return nil, ginjwt.ErrMissingLoginValues
 		}
 
 		if _, err := auth.GenerateRememberMeToken(c, jwt.MapClaims{
-			config.IdentityKeyRememberMeToken(): id,
+			config.IdentityKeyRememberMeToken(): rememberMeTokenID,
 		}); err != nil {
 			return nil, ginjwt.ErrMissingLoginValues
 		}
 	}
 
-	return user, nil
+	return accessTokenID, nil
 }
 
 // PayloadFunc は Authenticator の戻り値を用いて MapClaims を生成する。
 // 生成された MapClaims の値は jwt 生成に用いられる。
 func PayloadFunc(data interface{}) ginjwt.MapClaims {
-	if v, ok := data.(*model.UserDTO); ok {
+	if v, ok := data.(string); ok {
 		return ginjwt.MapClaims{
-			config.IdentityKeyAccessToken(): v.ID,
+			config.IdentityKeyAccessToken(): v,
 		}
 	}
 	return ginjwt.MapClaims{}

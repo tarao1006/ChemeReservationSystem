@@ -77,9 +77,16 @@ func RememberMeHandler(c *gin.Context) {
 		return
 	}
 
+	newAccessTokenID := uuid.New().String()
 	accessToken, err := auth.GenerateAccessToken(c, jwt.MapClaims{
-		config.IdentityKeyAccessToken(): userID,
+		config.IdentityKeyAccessToken(): newAccessTokenID,
 	})
+
+	ss := service.NewSessionService()
+	if err := ss.Create(userID, newAccessTokenID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
