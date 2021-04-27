@@ -64,9 +64,12 @@ func (s *Server) Router() error {
 
 	e.GET("/ping", PingHandler)
 
-	e.POST("/login", authMiddleware.LoginHandler)
-	e.POST("/logout", authMiddleware.LogoutHandler)
-	e.POST("/refresh", authMiddleware.RefreshHandler)
+	{
+		c := controller.NewAuthController()
+		e.POST("/login", c.LoginHandler)
+		e.POST("/logout", c.LogoutHandler)
+		e.POST("/refresh", c.RefreshHandler)
+	}
 
 	{
 		c := controller.NewUserController()
