@@ -68,9 +68,7 @@ func PayloadFunc(data interface{}) ginjwt.MapClaims {
 // IdentityHandler の返り値は、コントローラ内で、c.Get(identityKey)で取得できる。
 func IdentityHandler(c *gin.Context) interface{} {
 	claims := ginjwt.ExtractClaims(c)
-	return &auth.Auth{
-		ID: claims[config.IdentityKeyAccessToken()].(string),
-	}
+	return claims[config.IdentityKeyAccessToken()].(string)
 }
 
 func LoginResponse(c *gin.Context, code int, token string, expire time.Time) {
