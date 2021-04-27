@@ -8,7 +8,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/tarao1006/ChemeReservationSystem/auth"
 	"github.com/tarao1006/ChemeReservationSystem/config"
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
@@ -79,7 +78,7 @@ func RememberMeHandler(c *gin.Context) {
 	}
 
 	newAccessTokenID := uuid.New().String()
-	accessToken, err := auth.GenerateAccessToken(c, jwt.MapClaims{
+	accessToken, err := GenerateAccessToken(c, jwt.MapClaims{
 		config.IdentityKeyAccessToken(): newAccessTokenID,
 	})
 
@@ -100,7 +99,7 @@ func RememberMeHandler(c *gin.Context) {
 		return
 	}
 
-	rememberMeToken, err := auth.GenerateRememberMeToken(c, jwt.MapClaims{
+	rememberMeToken, err := GenerateRememberMeToken(c, jwt.MapClaims{
 		config.IdentityKeyRememberMeToken(): newID,
 	})
 

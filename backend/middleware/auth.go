@@ -8,8 +8,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/tarao1006/ChemeReservationSystem/auth"
 	"github.com/tarao1006/ChemeReservationSystem/config"
+	"github.com/tarao1006/ChemeReservationSystem/controller"
 	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
@@ -44,7 +44,7 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 			return nil, ginjwt.ErrMissingLoginValues
 		}
 
-		if _, err := auth.GenerateRememberMeToken(c, jwt.MapClaims{
+		if _, err := controller.GenerateRememberMeToken(c, jwt.MapClaims{
 			config.IdentityKeyRememberMeToken(): rememberMeTokenID,
 		}); err != nil {
 			return nil, ginjwt.ErrMissingLoginValues
