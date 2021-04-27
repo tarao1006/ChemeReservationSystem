@@ -37,24 +37,11 @@ func (ss *SessionService) Login(auth *model.Auth) error {
 	return nil
 }
 
-func (ss *SessionService) UpdateRememberMeToken(id string, t string) error {
-	if err := db.TXHandler(ss.db, func(tx *sqlx.Tx) error {
-		_, err := ss.userRepo.UpdateRememberMeToken(tx, id, t)
-		if err != nil {
-			return err
-		}
-		return nil
-	}); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (ss *SessionService) GetUserIDByID(id string) (string, error) {
 	return ss.repo.GetUserIDByID(ss.db, id)
 }
 
-func (ss *SessionService) Create(userID string, id string, expireAt time.Time) error {
+func (ss *SessionService) CreateOrUpdate(userID string, id string, expireAt time.Time) error {
 	if err := db.TXHandler(ss.db, func(tx *sqlx.Tx) error {
 		if _, err := ss.repo.Create(tx, id, userID, expireAt); err != nil {
 			return err
