@@ -66,8 +66,12 @@ func (us *UserService) Create(u *model.UserAPI) (*model.User, error) {
 	return newU, nil
 }
 
-func (us *UserService) CountUser(id string) (int, error) {
-	return us.repo.CountUser(us.db, id)
+func (us *UserService) ExistsUser(id string) (bool, error) {
+	count, err := us.repo.CountUser(us.db, id)
+	if err != nil {
+		return false, err
+	}
+	return count == 1, nil
 }
 
 func (us *UserService) GetIDByRememberMeToken(rememberMeToken string) (string, error) {

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/model"
@@ -53,12 +54,15 @@ func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 	if err := db.Get(&user, `
 		SELECT id, name, name_ruby, password_digest, email_address, remember_me_token FROM user WHERE id = ?
 	`, id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, model.ErrUserNotFound
+		}
 		return nil, err
 	}
 
 	var types []model.UserType
-	if err := db.Select(&types,
-		`SELECT
+	if err := db.Select(&types, `
+		SELECT
 			ut.id as id,
 			ut.name as name
 		FROM
@@ -70,7 +74,8 @@ func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 		WHERE
 			ug.user_id = ?
 		ORDER BY
-			ut.id;`, user.ID); err != nil {
+			ut.id
+		`, user.ID); err != nil {
 		return nil, err
 	}
 
@@ -88,6 +93,9 @@ func (UserRepository) FindDTOByID(db *sqlx.DB, id string) (*model.UserDTO, error
 	if err := db.Get(&user, `
 		SELECT id, name, name_ruby, password_digest, email_address, remember_me_token FROM user WHERE id = ?
 	`, id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, model.ErrUserNotFound
+		}
 		return nil, err
 	}
 
@@ -99,6 +107,9 @@ func (UserRepository) FindDTOByEmailAddress(db *sqlx.DB, e string) (*model.UserD
 	if err := db.Get(&user, `
 		SELECT id, name, name_ruby, password_digest, email_address, remember_me_token FROM user WHERE email_address = ?
 	`, e); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, model.ErrUserNotFound
+		}
 		return nil, err
 	}
 

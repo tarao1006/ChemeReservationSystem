@@ -3,10 +3,13 @@ package model
 import "errors"
 
 var (
+	ErrUserNotFound             = errors.New("user not found")
 	ErrInvalidUserID            = errors.New("user id is invalid")
 	ErrInvalidPassword          = errors.New("password is invalid")
 	ErrInvalidAccessToken       = errors.New("access token is invalid")
 	ErrNewPasswordMustBeChanged = errors.New("new password must be changed")
+	ErrInvalidParameter         = errors.New("data type is invalid")
+	ErrFailedLogin              = errors.New("login failed")
 
 	ErrForbidden               = errors.New("you don't have permission to access this resource")
 	ErrMissingLoginValues      = errors.New("missing Username or Password")

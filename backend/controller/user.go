@@ -83,15 +83,15 @@ func (UserController) ValidateUserID(c *gin.Context) {
 	}
 
 	id := v.UserID
-	count, err := s.CountUser(id)
+	exists, err := s.ExistsUser(id)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	if count == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": model.ErrInvalidUserID})
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": model.ErrInvalidUserID.Error()})
 		return
 	}
 
