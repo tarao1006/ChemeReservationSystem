@@ -77,9 +77,21 @@ func (ac *AuthController) loginWithID(c *gin.Context, a *model.Auth) (string, er
 func (ac *AuthController) LoginHandler(c *gin.Context) {
 	var userID string
 
-	jwtToken, err := jwtFromCookie(c, config.CookieNameRememberMeToken())
-	if err == nil {
-		// RememberMeToken を検証する。
+	var a model.Auth
+	errParam := c.ShouldBindJSON(&a)
+	jwtToken, errToken := jwtFromCookie(c, config.CookieNameRememberMeToken())
+
+	if errParam != nil && errToken != nil { // パラメータとトークンがともに存在しない場合
+		unauthorized(c, http.StatusBadRequest, model.ErrInvalidParameter)
+		return
+	} else if errParam == nil { // パラメータが存在する場合
+		id, err := ac.loginWithID(c, &a)
+		if err != nil {
+			unauthorized(c, http.StatusBadRequest, err)
+			return
+		}
+		userID = id
+	} else if errToken == nil { // トークンが存在する場合
 		token, err := ParseStringToken(jwtToken, config.SecretKeyRememberMeToken())
 		if err != nil {
 			unauthorized(c, http.StatusBadRequest, err)
@@ -88,19 +100,6 @@ func (ac *AuthController) LoginHandler(c *gin.Context) {
 		claims := token.Claims.(jwt.MapClaims)
 		tokenID := claims[config.IdentityKeyRememberMeToken()].(string)
 		id, err := ac.loginWithRememberMeToken(c, tokenID)
-		if err != nil {
-			unauthorized(c, http.StatusBadRequest, err)
-			return
-		}
-		userID = id
-	} else {
-		// user_id と password を検証する。
-		var a model.Auth
-		if err := c.ShouldBindJSON(&a); err != nil {
-			unauthorized(c, http.StatusBadRequest, model.ErrInvalidParameter)
-			return
-		}
-		id, err := ac.loginWithID(c, &a)
 		if err != nil {
 			unauthorized(c, http.StatusBadRequest, err)
 			return
