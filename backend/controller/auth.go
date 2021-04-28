@@ -44,7 +44,6 @@ func (ac *AuthController) LoginWithRememberMeToken(c *gin.Context, token string)
 		return "", err
 	}
 
-	c.Set(config.IdentityKeyRememberMeToken(), rememberMeToken)
 	c.SetCookie(config.CookieNameRememberMeToken(), rememberMeToken, config.MaxAgeRememberMeToken(), "/", "", false, true)
 
 	return session.UserID, nil
@@ -207,7 +206,6 @@ func ParseAccessTokenFromContext(c *gin.Context) (*jwt.Token, error) {
 		if jwt.GetSigningMethod(config.SigningAlgorithm()) != t.Method {
 			return nil, model.ErrInvalidSigningAlgorithm
 		}
-		c.Set("ACCESS_TOKEN", token)
 		return config.SecretKeyAccessToken(), nil
 	})
 }
@@ -222,7 +220,6 @@ func ParseRememberMeTokenFromContext(c *gin.Context) (*jwt.Token, error) {
 		if jwt.GetSigningMethod(config.SigningAlgorithm()) != t.Method {
 			return nil, model.ErrInvalidSigningAlgorithm
 		}
-		c.Set("REMEMBER_ME_TOKEN", token)
 		return config.SecretKeyRememberMeToken(), nil
 	})
 }
