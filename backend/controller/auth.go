@@ -128,7 +128,7 @@ func (ac *AuthController) LoginHandler(c *gin.Context) {
 
 func unauthorized(c *gin.Context, code int, err error) {
 	c.Header("WWW-Authenticate", "JWT realm="+config.Realm())
-	response(c, code, err)
+	errResponse(c, code, err)
 }
 
 func GenerateToken(data jwt.MapClaims, secretKey []byte, timeout time.Duration) (string, time.Time, error) {
@@ -243,13 +243,13 @@ func ParseStringToken(token string, key []byte) (*jwt.Token, error) {
 func (AuthController) LogoutHandler(c *gin.Context) {
 	accessToken, err := ParseAccessToken(c)
 	if err != nil {
-		response(c, http.StatusBadRequest, err)
+		errResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
 	rememberMeToken, err := ParseRememberMeToken(c)
 	if err != nil {
-		response(c, http.StatusBadRequest, err)
+		errResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
@@ -261,7 +261,7 @@ func (AuthController) LogoutHandler(c *gin.Context) {
 
 	s := service.NewAuthService()
 	if err := s.Delete(accessTokenID, rememberMeTokenID); err != nil {
-		response(c, http.StatusBadRequest, err)
+		errResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
@@ -271,7 +271,7 @@ func (AuthController) LogoutHandler(c *gin.Context) {
 	})
 }
 
-func response(c *gin.Context, code int, err error) {
+func errResponse(c *gin.Context, code int, err error) {
 	c.JSON(code, gin.H{
 		"code":    code,
 		"message": err.Error(),
