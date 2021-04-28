@@ -4,6 +4,5 @@ CREATE TABLE IF NOT EXISTS `user` (
   `name_ruby` VARCHAR(255) NOT NULL,
   `password_digest` VARCHAR(255) NOT NULL,
   `email_address` VARCHAR(255) NOT NULL,
-  `remember_me_token` VARCHAR(255) NOT NULL DEFAULT "",
   PRIMARY KEY (`id`)
 );

@@ -20,6 +20,10 @@ func NewRememberMeSessionService() *RememberMeSessionService {
 	}
 }
 
+func (rs *RememberMeSessionService) GetUserIDByID(id string) (string, error) {
+	return rs.repo.GetUserIDByID(rs.db, id)
+}
+
 func (rs *RememberMeSessionService) CreateOrUpdate(userID string, id string, expireAt time.Time) error {
 	if err := db.TXHandler(rs.db, func(tx *sqlx.Tx) error {
 		_, err := rs.repo.Create(tx, id, userID, expireAt)

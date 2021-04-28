@@ -14,50 +14,55 @@ import (
 	"github.com/tarao1006/ChemeReservationSystem/service"
 )
 
-type AuthController struct{}
-
-func NewAuthController() *AuthController {
-	return &AuthController{}
+type AuthController struct {
+	ss *service.SessionService
+	rs *service.RememberMeSessionService
 }
 
-func (AuthController) LoginHandler(c *gin.Context) {
-	ss := service.NewSessionService()
-	rs := service.NewRememberMeSessionService()
-
-	// user_id と password を検証する。
-	var a model.Auth
-	if err := c.ShouldBindJSON(&a); err != nil {
-		unauthorized(c, http.StatusBadRequest, model.ErrInvalidParameter)
-		return
+func NewAuthController() *AuthController {
+	return &AuthController{
+		ss: service.NewSessionService(),
+		rs: service.NewRememberMeSessionService(),
 	}
-	if err := ss.Login(&a); err != nil {
+}
+
+func (ac *AuthController) loginWithRememberMeToken(c *gin.Context, token string) (string, error) {
+	userID, err := ac.rs.GetUserIDByID(token)
+	if err != nil {
+		return "", err
+	}
+
+	rememberMeTokenID, rememberMeToken, rememberMeTokenExpire, err := GenerateRememberMeToken()
+	if err != nil {
+		return "", model.ErrFailedTokenCreation
+	}
+	if err := ac.rs.CreateOrUpdate(userID, rememberMeTokenID, rememberMeTokenExpire); err != nil {
+		return "", err
+	}
+
+	expireCookie := time.Now().Add(config.TimeoutRememberMeToken())
+	maxage := int(expireCookie.Unix() - time.Now().Unix())
+	c.Set(config.IdentityKeyRememberMeToken(), rememberMeToken)
+	c.SetCookie(config.CookieNameRememberMeToken(), rememberMeToken, maxage, "/", "", false, true)
+
+	return userID, nil
+}
+
+func (ac *AuthController) loginWithID(c *gin.Context, a *model.Auth) (string, error) {
+	if err := ac.ss.Login(a); err != nil {
 		if !errors.Is(err, model.ErrInvalidPassword) {
 			err = model.ErrFailedLogin
 		}
-		unauthorized(c, http.StatusUnauthorized, err)
-		return
-	}
-
-	// access token を生成する。
-	accessTokenID, accessToken, accessTokenExpire, err := GenerateAccessToken()
-	if err != nil {
-		unauthorized(c, http.StatusUnauthorized, model.ErrFailedTokenCreation)
-		return
-	}
-	if err := ss.CreateOrUpdate(a.ID, accessTokenID, accessTokenExpire); err != nil {
-		unauthorized(c, http.StatusUnauthorized, err)
-		return
+		return "", err
 	}
 
 	if a.RememberMe {
 		rememberMeTokenID, rememberMeToken, rememberMeTokenExpire, err := GenerateRememberMeToken()
 		if err != nil {
-			unauthorized(c, http.StatusUnauthorized, model.ErrFailedTokenCreation)
-			return
+			return "", model.ErrFailedTokenCreation
 		}
-		if err := rs.CreateOrUpdate(a.ID, rememberMeTokenID, rememberMeTokenExpire); err != nil {
-			unauthorized(c, http.StatusUnauthorized, err)
-			return
+		if err := ac.rs.CreateOrUpdate(a.ID, rememberMeTokenID, rememberMeTokenExpire); err != nil {
+			return "", err
 		}
 
 		expireCookie := time.Now().Add(config.TimeoutRememberMeToken())
@@ -66,10 +71,58 @@ func (AuthController) LoginHandler(c *gin.Context) {
 		c.SetCookie(config.CookieNameRememberMeToken(), rememberMeToken, maxage, "/", "", false, true)
 	}
 
+	return a.ID, nil
+}
+
+func (ac *AuthController) LoginHandler(c *gin.Context) {
+	var userID string
+
+	jwtToken, err := jwtFromCookie(c, config.CookieNameRememberMeToken())
+	if err == nil {
+		// RememberMeToken を検証する。
+		token, err := ParseStringToken(jwtToken, config.SecretKeyRememberMeToken())
+		if err != nil {
+			unauthorized(c, http.StatusBadRequest, err)
+			return
+		}
+		claims := token.Claims.(jwt.MapClaims)
+		tokenID := claims[config.IdentityKeyRememberMeToken()].(string)
+		id, err := ac.loginWithRememberMeToken(c, tokenID)
+		if err != nil {
+			unauthorized(c, http.StatusBadRequest, err)
+			return
+		}
+		userID = id
+	} else {
+		// user_id と password を検証する。
+		var a model.Auth
+		if err := c.ShouldBindJSON(&a); err != nil {
+			unauthorized(c, http.StatusBadRequest, model.ErrInvalidParameter)
+			return
+		}
+		id, err := ac.loginWithID(c, &a)
+		if err != nil {
+			unauthorized(c, http.StatusBadRequest, err)
+			return
+		}
+		userID = id
+	}
+
+	// access token を生成する。
+	accessTokenID, accessToken, accessTokenExpire, err := GenerateAccessToken()
+	if err != nil {
+		unauthorized(c, http.StatusUnauthorized, model.ErrFailedTokenCreation)
+		return
+	}
+	if err := ac.ss.CreateOrUpdate(userID, accessTokenID, accessTokenExpire); err != nil {
+		unauthorized(c, http.StatusUnauthorized, err)
+		return
+	}
+
+	c.Header("Authorization", "Bearer "+accessToken)
+
 	c.JSON(http.StatusOK, gin.H{
-		"code":   http.StatusOK,
-		"token":  accessToken,
-		"expire": accessTokenExpire.Format(time.RFC3339),
+		"code": http.StatusOK,
 	})
 }
 
@@ -175,6 +228,15 @@ func ParseRememberMeToken(c *gin.Context) (*jwt.Token, error) {
 		}
 		c.Set("REMEMBER_ME_TOKEN", token)
 		return config.SecretKeyRememberMeToken(), nil
+	})
+}
+
+func ParseStringToken(token string, key []byte) (*jwt.Token, error) {
+	return jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		if jwt.GetSigningMethod(config.SigningAlgorithm()) != t.Method {
+			return nil, model.ErrInvalidSigningAlgorithm
+		}
+		return key, nil
 	})
 }
 

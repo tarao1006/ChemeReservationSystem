@@ -52,7 +52,7 @@ func (ur *UserRepository) GetAll(db *sqlx.DB) ([]model.User, error) {
 func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 	var user model.UserDTO
 	if err := db.Get(&user, `
-		SELECT id, name, name_ruby, password_digest, email_address, remember_me_token FROM user WHERE id = ?
+		SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE id = ?
 	`, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, model.ErrUserNotFound
@@ -91,7 +91,7 @@ func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 func (UserRepository) FindDTOByID(db *sqlx.DB, id string) (*model.UserDTO, error) {
 	var user model.UserDTO
 	if err := db.Get(&user, `
-		SELECT id, name, name_ruby, password_digest, email_address, remember_me_token FROM user WHERE id = ?
+		SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE id = ?
 	`, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, model.ErrUserNotFound
@@ -105,7 +105,7 @@ func (UserRepository) FindDTOByID(db *sqlx.DB, id string) (*model.UserDTO, error
 func (UserRepository) FindDTOByEmailAddress(db *sqlx.DB, e string) (*model.UserDTO, error) {
 	var user model.UserDTO
 	if err := db.Get(&user, `
-		SELECT id, name, name_ruby, password_digest, email_address, remember_me_token FROM user WHERE email_address = ?
+		SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE email_address = ?
 	`, e); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, model.ErrUserNotFound
@@ -127,20 +127,6 @@ func (UserRepository) CountUser(db *sqlx.DB, id string) (int, error) {
 	return c, nil
 }
 
-func (UserRepository) GetIDByRememberMeToken(db *sqlx.DB, t string) (string, error) {
-	var id string
-	if err := db.Get(&id, `
-		SELECT id FROM user WHERE remember_me_token = ?
-	`, t); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return "", model.ErrInvalidToken
-		}
-		return "", err
-	}
-
-	return id, nil
-}
-
 func (UserRepository) GetRememberMeTokenByID(db *sqlx.DB, id string) ([]byte, error) {
 	var token []byte
 	if err := db.Get(&token, `
@@ -158,11 +144,6 @@ func (UserRepository) GetRememberMeTokenByID(db *sqlx.DB, id string) ([]byte, er
 func (UserRepository) Create(db *sqlx.Tx, param *model.UserDTO) (result sql.Result, err error) {
 	query := `INSERT INTO user (id, name, name_ruby, password_digest, email_address) VALUES (?, ?, ?, ?, ?)`
 	return db.Exec(query, param.ID, param.Name, param.NameRuby, param.PasswordDigest, param.EmailAddress)
-}
-
-func (UserRepository) UpdateRememberMeToken(db *sqlx.Tx, id string, t string) (result sql.Result, err error) {
-	query := `UPDATE user SET remember_me_token = ? WHERE id = ?`
-	return db.Exec(query, t, id)
 }
 
 func (UserRepository) UpdateNameByID(db *sqlx.Tx, id string, n string) (result sql.Result, err error) {

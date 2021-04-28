@@ -74,14 +74,6 @@ func (us *UserService) ExistsUser(id string) (bool, error) {
 	return count == 1, nil
 }
 
-func (us *UserService) GetIDByRememberMeToken(rememberMeToken string) (string, error) {
-	id, err := us.repo.GetIDByRememberMeToken(us.db, rememberMeToken)
-	if err != nil {
-		return "", err
-	}
-	return id, nil
-}
-
 func (us *UserService) UpdateByID(id string, u *model.UserAPI) (*model.User, error) {
 	user, err := us.repo.FindByID(us.db, id)
 	if err != nil {
