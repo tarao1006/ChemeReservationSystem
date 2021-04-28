@@ -32,7 +32,7 @@ func (ac *AuthController) LoginWithRememberMeToken(c *gin.Context, token string)
 		return "", err
 	}
 
-	if session.ExpiresAt.Unix() < config.TimeFunc().Unix() {
+	if session.IsExpired() {
 		return "", model.ErrExpiredToken
 	}
 
