@@ -26,7 +26,7 @@ func NewAuthController() *AuthController {
 	}
 }
 
-func (ac *AuthController) loginWithRememberMeToken(c *gin.Context, token string) (string, error) {
+func (ac *AuthController) LoginWithRememberMeToken(c *gin.Context, token string) (string, error) {
 	session, err := ac.rs.GetByID(token)
 	if err != nil {
 		return "", err
@@ -50,7 +50,7 @@ func (ac *AuthController) loginWithRememberMeToken(c *gin.Context, token string)
 	return session.UserID, nil
 }
 
-func (ac *AuthController) loginWithID(c *gin.Context, a *model.Auth) (string, error) {
+func (ac *AuthController) LoginWithID(c *gin.Context, a *model.Auth) (string, error) {
 	if err := ac.ss.Login(a); err != nil {
 		if !errors.Is(err, model.ErrInvalidPassword) {
 			err = model.ErrFailedLogin
@@ -79,29 +79,29 @@ func (ac *AuthController) LoginHandler(c *gin.Context) {
 
 	var a model.Auth
 	errParam := c.ShouldBindJSON(&a)
-	jwtToken, errToken := jwtFromCookie(c, config.CookieNameRememberMeToken())
+	jwtToken, errToken := JWTFromCookie(c, config.CookieNameRememberMeToken())
 
 	if errParam != nil && errToken != nil { // パラメータとトークンがともに存在しない場合
-		unauthorized(c, http.StatusBadRequest, model.ErrInvalidParameter)
+		Unauthorized(c, http.StatusBadRequest, model.ErrInvalidParameter)
 		return
 	} else if errParam == nil { // パラメータが存在する場合
-		id, err := ac.loginWithID(c, &a)
+		id, err := ac.LoginWithID(c, &a)
 		if err != nil {
-			unauthorized(c, http.StatusBadRequest, err)
+			Unauthorized(c, http.StatusBadRequest, err)
 			return
 		}
 		userID = id
 	} else if errToken == nil { // トークンが存在する場合
 		token, err := ParseStringToken(jwtToken, config.SecretKeyRememberMeToken())
 		if err != nil {
-			unauthorized(c, http.StatusBadRequest, err)
+			Unauthorized(c, http.StatusBadRequest, err)
 			return
 		}
 		claims := token.Claims.(jwt.MapClaims)
 		tokenID := claims[config.IdentityKeyRememberMeToken()].(string)
-		id, err := ac.loginWithRememberMeToken(c, tokenID)
+		id, err := ac.LoginWithRememberMeToken(c, tokenID)
 		if err != nil {
-			unauthorized(c, http.StatusBadRequest, err)
+			Unauthorized(c, http.StatusBadRequest, err)
 			return
 		}
 		userID = id
@@ -110,11 +110,11 @@ func (ac *AuthController) LoginHandler(c *gin.Context) {
 	// access token を生成する。
 	accessTokenID, accessToken, err := GenerateAccessToken()
 	if err != nil {
-		unauthorized(c, http.StatusUnauthorized, model.ErrFailedTokenCreation)
+		Unauthorized(c, http.StatusUnauthorized, model.ErrFailedTokenCreation)
 		return
 	}
 	if err := ac.ss.CreateOrUpdate(userID, accessTokenID, config.TimeFunc().Add(config.TimeoutAccessToken())); err != nil {
-		unauthorized(c, http.StatusUnauthorized, err)
+		Unauthorized(c, http.StatusUnauthorized, err)
 		return
 	}
 
@@ -125,9 +125,9 @@ func (ac *AuthController) LoginHandler(c *gin.Context) {
 	})
 }
 
-func unauthorized(c *gin.Context, code int, err error) {
+func Unauthorized(c *gin.Context, code int, err error) {
 	c.Header("WWW-Authenticate", "JWT realm="+config.Realm())
-	errResponse(c, code, err)
+	ErrResponse(c, code, err)
 }
 
 func GenerateToken(data jwt.MapClaims, secretKey []byte, timeout time.Duration) (string, error) {
@@ -172,7 +172,7 @@ func GenerateRememberMeToken() (string, string, error) {
 	return id, token, nil
 }
 
-func jwtFromHeader(c *gin.Context, key string) (string, error) {
+func JWTFromHeader(c *gin.Context, key string) (string, error) {
 	authHeader := c.Request.Header.Get(key)
 
 	if authHeader == "" {
@@ -187,7 +187,7 @@ func jwtFromHeader(c *gin.Context, key string) (string, error) {
 	return parts[1], nil
 }
 
-func jwtFromCookie(c *gin.Context, key string) (string, error) {
+func JWTFromCookie(c *gin.Context, key string) (string, error) {
 	cookie, _ := c.Cookie(key)
 
 	if cookie == "" {
@@ -198,7 +198,7 @@ func jwtFromCookie(c *gin.Context, key string) (string, error) {
 }
 
 func ParseAccessTokenFromContext(c *gin.Context) (*jwt.Token, error) {
-	token, err := jwtFromHeader(c, "Authorization")
+	token, err := JWTFromHeader(c, "Authorization")
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +213,7 @@ func ParseAccessTokenFromContext(c *gin.Context) (*jwt.Token, error) {
 }
 
 func ParseRememberMeTokenFromContext(c *gin.Context) (*jwt.Token, error) {
-	token, err := jwtFromCookie(c, config.CookieNameRememberMeToken())
+	token, err := JWTFromCookie(c, config.CookieNameRememberMeToken())
 	if err != nil {
 		return nil, err
 	}
@@ -239,13 +239,13 @@ func ParseStringToken(token string, key []byte) (*jwt.Token, error) {
 func (AuthController) LogoutHandler(c *gin.Context) {
 	accessToken, err := ParseAccessTokenFromContext(c)
 	if err != nil {
-		errResponse(c, http.StatusBadRequest, err)
+		ErrResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
 	rememberMeToken, err := ParseRememberMeTokenFromContext(c)
 	if err != nil {
-		errResponse(c, http.StatusBadRequest, err)
+		ErrResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
@@ -257,7 +257,7 @@ func (AuthController) LogoutHandler(c *gin.Context) {
 
 	s := service.NewAuthService()
 	if err := s.Delete(accessTokenID, rememberMeTokenID); err != nil {
-		errResponse(c, http.StatusBadRequest, err)
+		ErrResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
@@ -267,7 +267,7 @@ func (AuthController) LogoutHandler(c *gin.Context) {
 	})
 }
 
-func errResponse(c *gin.Context, code int, err error) {
+func ErrResponse(c *gin.Context, code int, err error) {
 	c.JSON(code, gin.H{
 		"code":    code,
 		"message": err.Error(),
