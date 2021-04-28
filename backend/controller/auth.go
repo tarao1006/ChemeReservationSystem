@@ -257,6 +257,7 @@ func (AuthController) LogoutHandler(c *gin.Context) {
 		return
 	}
 
+	c.SetCookie(config.CookieNameRememberMeToken(), "", -1, "/", "", false, true)
 	code := http.StatusOK
 	c.JSON(code, gin.H{
 		"code": code,
