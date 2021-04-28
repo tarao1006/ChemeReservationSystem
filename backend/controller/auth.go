@@ -271,9 +271,6 @@ func (AuthController) LogoutHandler(c *gin.Context) {
 	})
 }
 
-func (AuthController) RefreshHandler(c *gin.Context) {
-}
-
 func response(c *gin.Context, code int, err error) {
 	c.JSON(code, gin.H{
 		"code":    code,

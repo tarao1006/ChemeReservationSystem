@@ -62,7 +62,6 @@ func (s *Server) Router() error {
 		c := controller.NewAuthController()
 		e.POST("/login", c.LoginHandler)
 		e.POST("/logout", c.LogoutHandler)
-		e.POST("/refresh", c.RefreshHandler)
 	}
 
 	{
