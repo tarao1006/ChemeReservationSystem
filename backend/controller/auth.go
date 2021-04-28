@@ -8,7 +8,6 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/tarao1006/ChemeReservationSystem/config"
 	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/service"
@@ -146,7 +145,7 @@ func GenerateToken(data jwt.MapClaims, secretKey []byte, timeout time.Duration) 
 }
 
 func GenerateAccessToken() (string, string, error) {
-	id := uuid.New().String()
+	id := config.UUID()
 	data := jwt.MapClaims{}
 	data[config.IdentityKeyAccessToken()] = id
 
@@ -159,7 +158,7 @@ func GenerateAccessToken() (string, string, error) {
 }
 
 func GenerateRememberMeToken() (string, string, error) {
-	id := uuid.New().String()
+	id := config.UUID()
 	data := jwt.MapClaims{}
 	data[config.IdentityKeyRememberMeToken()] = id
 

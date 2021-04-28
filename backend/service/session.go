@@ -52,3 +52,33 @@ func (ss *SessionService) CreateOrUpdate(userID string, id string, expireAt time
 	}
 	return nil
 }
+
+func (ss *SessionService) Update(oldID string, newID string, expireAt time.Time) error {
+	session, err := ss.repo.GetByID(ss.db, oldID)
+	if err != nil {
+		return nil
+	}
+
+	if err := db.TXHandler(ss.db, func(tx *sqlx.Tx) error {
+		if _, err := ss.repo.Create(tx, newID, session.UserID, expireAt); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ss *SessionService) DeleteByID(id string) error {
+	if err := db.TXHandler(ss.db, func(tx *sqlx.Tx) error {
+		_, err := ss.repo.Delete(tx, id)
+		if err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return err
+	}
+	return nil
+}

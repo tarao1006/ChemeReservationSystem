@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/controller"
 	"github.com/tarao1006/ChemeReservationSystem/db"
+	"github.com/tarao1006/ChemeReservationSystem/middleware"
 )
 
 type Server struct {
@@ -41,6 +42,7 @@ func PingHandler(c *gin.Context) {
 }
 
 func (s *Server) Router() error {
+	authMiddleware := middleware.NewAuthMiddleware()
 	config := cors.New(cors.Config{
 		AllowHeaders: []string{
 			"Authorization",
@@ -70,6 +72,7 @@ func (s *Server) Router() error {
 	}
 
 	v1 := e.Group("/api/v1")
+	v1.Use(authMiddleware.Middleware())
 	{
 		v1.GET("/ping", PingHandler)
 

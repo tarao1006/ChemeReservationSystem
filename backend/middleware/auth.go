@@ -1,0 +1,159 @@
+package middleware
+
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
+	"github.com/tarao1006/ChemeReservationSystem/config"
+	"github.com/tarao1006/ChemeReservationSystem/controller"
+	"github.com/tarao1006/ChemeReservationSystem/model"
+	"github.com/tarao1006/ChemeReservationSystem/service"
+)
+
+type AuthMiddleware struct {
+	as *service.AuthService
+	ss *service.SessionService
+	rs *service.RememberMeSessionService
+}
+
+func NewAuthMiddleware() *AuthMiddleware {
+	return &AuthMiddleware{
+		as: service.NewAuthService(),
+		ss: service.NewSessionService(),
+		rs: service.NewRememberMeSessionService(),
+	}
+}
+
+func (mw *AuthMiddleware) Middleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// access token と remember me token を取得する
+		oldAccessToken, errAccessToken := controller.ParseAccessTokenFromContext(c)
+		oldRememberMeToken, errRememberMeToken := controller.ParseRememberMeTokenFromContext(c)
+
+		fmt.Printf("errAccessToken: %v\n", errAccessToken)
+		fmt.Printf("oldAccessToken: %v\n", oldAccessToken)
+		fmt.Printf("errRememberMeToken: %v\n", errRememberMeToken)
+		fmt.Printf("oldRememberMeToken: %v\n", oldRememberMeToken)
+
+		var (
+			err                         error
+			oldAccessTokenClaims        jwt.MapClaims
+			oldAccessTokenID            string
+			oldSession                  *model.Session
+			oldSessionExpired           bool
+			oldRememberMeTokenClaims    jwt.MapClaims
+			oldRememberMeTokenID        string
+			oldRememberMeSession        *model.RememberMeSession
+			oldRememberMeSessionExpired bool
+		)
+
+		// access token と remember me token の両方がない場合
+		if errAccessToken != nil && errRememberMeToken != nil {
+			fmt.Println("0")
+			controller.Unauthorized(c, http.StatusForbidden, model.ErrForbidden)
+			c.Abort()
+			return
+		}
+
+		// access token の取得
+		if errAccessToken == nil {
+			oldAccessTokenClaims = oldAccessToken.Claims.(jwt.MapClaims)
+			oldAccessTokenID = oldAccessTokenClaims[config.IdentityKeyAccessToken()].(string)
+			oldSession, err = mw.ss.GetByID(oldAccessTokenID)
+			if err != nil {
+				fmt.Println("1")
+				controller.Unauthorized(c, http.StatusForbidden, model.ErrForbidden)
+				c.Abort()
+				return
+			}
+			oldSessionExpired = oldSession.IsExpired()
+		}
+
+		// remember me token の取得
+		if errRememberMeToken == nil {
+			oldRememberMeTokenClaims = oldRememberMeToken.Claims.(jwt.MapClaims)
+			oldRememberMeTokenID = oldRememberMeTokenClaims[config.IdentityKeyAccessToken()].(string)
+			oldRememberMeSession, err = mw.rs.GetByID(oldRememberMeTokenID)
+			if err != nil {
+				fmt.Println("2")
+				controller.Unauthorized(c, http.StatusForbidden, model.ErrForbidden)
+				c.Abort()
+				return
+			}
+			oldRememberMeSessionExpired = oldRememberMeSession.IsExpired()
+		}
+
+		// remember me token が設定されておらず access token が失効している場合
+		if errAccessToken == nil && errRememberMeToken != nil && oldSessionExpired {
+			fmt.Println("3")
+			if err := mw.ss.DeleteByID(oldAccessTokenID); err != nil {
+				controller.Unauthorized(c, http.StatusUnauthorized, model.ErrExpiredToken)
+				c.Abort()
+				return
+			}
+			controller.Unauthorized(c, http.StatusUnauthorized, model.ErrExpiredToken)
+			c.Abort()
+			return
+		}
+
+		// access token が設定されておらず remember me token が失効している場合
+		if errAccessToken != nil && errRememberMeToken == nil && oldRememberMeSessionExpired {
+			fmt.Println("4")
+			if err := mw.rs.DeleteByID(oldRememberMeTokenID); err != nil {
+				controller.Unauthorized(c, http.StatusUnauthorized, model.ErrExpiredToken)
+				c.Abort()
+				return
+			}
+			controller.Unauthorized(c, http.StatusUnauthorized, model.ErrExpiredToken)
+			c.Abort()
+			return
+		}
+
+		// access token と remember me token が失効している場合
+		if errAccessToken == nil && errRememberMeToken == nil && oldSessionExpired && oldRememberMeSessionExpired {
+			fmt.Println("5")
+			if err := mw.as.Delete(oldAccessTokenID, oldRememberMeTokenID); err != nil {
+				controller.Unauthorized(c, http.StatusUnauthorized, model.ErrExpiredToken)
+				c.Abort()
+				return
+			}
+			controller.Unauthorized(c, http.StatusUnauthorized, model.ErrExpiredToken)
+			c.Abort()
+			return
+		}
+
+		newAccessTokenID, newAccessToken, err := controller.GenerateAccessToken()
+		if err != nil {
+			fmt.Println("6")
+			controller.Unauthorized(c, http.StatusUnauthorized, err)
+			c.Abort()
+			return
+		}
+		if err := mw.ss.Update(oldAccessTokenID, newAccessTokenID, config.TimeFunc().Add(config.TimeoutAccessToken())); err != nil {
+			fmt.Println("7")
+			controller.Unauthorized(c, http.StatusUnauthorized, err)
+			c.Abort()
+			return
+		}
+		c.Header("Authorization", config.TokenHeadName()+" "+newAccessToken)
+
+		if errRememberMeToken == nil {
+			newRememberMeTokenID, newRememberMeToken, err := controller.GenerateRememberMeToken()
+			if err != nil {
+				fmt.Println("8")
+				controller.Unauthorized(c, http.StatusUnauthorized, err)
+				return
+			}
+			if err := mw.rs.CreateOrUpdate(oldRememberMeSession.UserID, newRememberMeTokenID, config.TimeFunc().Add(config.TimeoutRememberMeToken())); err != nil {
+				fmt.Println("9")
+				controller.Unauthorized(c, http.StatusUnauthorized, err)
+				return
+			}
+			c.SetCookie(config.CookieNameRememberMeToken(), newRememberMeToken, config.MaxAgeRememberMeToken(), "/", "", false, true)
+		}
+
+		c.Next()
+	}
+}

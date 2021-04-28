@@ -37,3 +37,16 @@ func (rs *RememberMeSessionService) CreateOrUpdate(userID string, id string, exp
 	}
 	return nil
 }
+
+func (rs *RememberMeSessionService) DeleteByID(id string) error {
+	if err := db.TXHandler(rs.db, func(tx *sqlx.Tx) error {
+		_, err := rs.repo.Delete(tx, id)
+		if err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return err
+	}
+	return nil
+}

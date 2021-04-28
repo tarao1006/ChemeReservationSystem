@@ -34,6 +34,7 @@ func Realm() string {
 }
 
 func TimeoutAccessToken() time.Duration {
+	// return time.Second * 5
 	return time.Hour * 24 * (365*3 + 366)
 }
 
