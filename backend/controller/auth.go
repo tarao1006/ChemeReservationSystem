@@ -27,23 +27,27 @@ func NewAuthController() *AuthController {
 }
 
 func (ac *AuthController) loginWithRememberMeToken(c *gin.Context, token string) (string, error) {
-	userID, err := ac.rs.GetUserIDByID(token)
+	session, err := ac.rs.GetByID(token)
 	if err != nil {
 		return "", err
+	}
+
+	if session.ExpiresAt.Unix() < config.TimeFunc().Unix() {
+		return "", model.ErrExpiredToken
 	}
 
 	rememberMeTokenID, rememberMeToken, err := GenerateRememberMeToken()
 	if err != nil {
 		return "", model.ErrFailedTokenCreation
 	}
-	if err := ac.rs.CreateOrUpdate(userID, rememberMeTokenID, config.TimeFunc().Add(config.TimeoutRememberMeToken())); err != nil {
+	if err := ac.rs.CreateOrUpdate(session.UserID, rememberMeTokenID, config.TimeFunc().Add(config.TimeoutRememberMeToken())); err != nil {
 		return "", err
 	}
 
 	c.Set(config.IdentityKeyRememberMeToken(), rememberMeToken)
 	c.SetCookie(config.CookieNameRememberMeToken(), rememberMeToken, config.MaxAgeRememberMeToken(), "/", "", false, true)
 
-	return userID, nil
+	return session.UserID, nil
 }
 
 func (ac *AuthController) loginWithID(c *gin.Context, a *model.Auth) (string, error) {
