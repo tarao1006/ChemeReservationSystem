@@ -201,7 +201,7 @@ func jwtFromCookie(c *gin.Context, key string) (string, error) {
 	return cookie, nil
 }
 
-func ParseAccessToken(c *gin.Context) (*jwt.Token, error) {
+func ParseAccessTokenFromContext(c *gin.Context) (*jwt.Token, error) {
 	token, err := jwtFromHeader(c, "Authorization")
 	if err != nil {
 		return nil, err
@@ -216,7 +216,7 @@ func ParseAccessToken(c *gin.Context) (*jwt.Token, error) {
 	})
 }
 
-func ParseRememberMeToken(c *gin.Context) (*jwt.Token, error) {
+func ParseRememberMeTokenFromContext(c *gin.Context) (*jwt.Token, error) {
 	token, err := jwtFromCookie(c, config.CookieNameRememberMeToken())
 	if err != nil {
 		return nil, err
@@ -241,13 +241,13 @@ func ParseStringToken(token string, key []byte) (*jwt.Token, error) {
 }
 
 func (AuthController) LogoutHandler(c *gin.Context) {
-	accessToken, err := ParseAccessToken(c)
+	accessToken, err := ParseAccessTokenFromContext(c)
 	if err != nil {
 		errResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
-	rememberMeToken, err := ParseRememberMeToken(c)
+	rememberMeToken, err := ParseRememberMeTokenFromContext(c)
 	if err != nil {
 		errResponse(c, http.StatusBadRequest, err)
 		return
