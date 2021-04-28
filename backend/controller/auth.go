@@ -32,18 +32,16 @@ func (ac *AuthController) loginWithRememberMeToken(c *gin.Context, token string)
 		return "", err
 	}
 
-	rememberMeTokenID, rememberMeToken, rememberMeTokenExpire, err := GenerateRememberMeToken()
+	rememberMeTokenID, rememberMeToken, err := GenerateRememberMeToken()
 	if err != nil {
 		return "", model.ErrFailedTokenCreation
 	}
-	if err := ac.rs.CreateOrUpdate(userID, rememberMeTokenID, rememberMeTokenExpire); err != nil {
+	if err := ac.rs.CreateOrUpdate(userID, rememberMeTokenID, config.TimeFunc().Add(config.TimeoutRememberMeToken())); err != nil {
 		return "", err
 	}
 
-	expireCookie := time.Now().Add(config.TimeoutRememberMeToken())
-	maxage := int(expireCookie.Unix() - time.Now().Unix())
 	c.Set(config.IdentityKeyRememberMeToken(), rememberMeToken)
-	c.SetCookie(config.CookieNameRememberMeToken(), rememberMeToken, maxage, "/", "", false, true)
+	c.SetCookie(config.CookieNameRememberMeToken(), rememberMeToken, config.MaxAgeRememberMeToken(), "/", "", false, true)
 
 	return userID, nil
 }
@@ -57,18 +55,16 @@ func (ac *AuthController) loginWithID(c *gin.Context, a *model.Auth) (string, er
 	}
 
 	if a.RememberMe {
-		rememberMeTokenID, rememberMeToken, rememberMeTokenExpire, err := GenerateRememberMeToken()
+		rememberMeTokenID, rememberMeToken, err := GenerateRememberMeToken()
 		if err != nil {
 			return "", model.ErrFailedTokenCreation
 		}
-		if err := ac.rs.CreateOrUpdate(a.ID, rememberMeTokenID, rememberMeTokenExpire); err != nil {
+		if err := ac.rs.CreateOrUpdate(a.ID, rememberMeTokenID, config.TimeFunc().Add(config.TimeoutRememberMeToken())); err != nil {
 			return "", err
 		}
 
-		expireCookie := time.Now().Add(config.TimeoutRememberMeToken())
-		maxage := int(expireCookie.Unix() - time.Now().Unix())
 		c.Set(config.IdentityKeyRememberMeToken(), rememberMeToken)
-		c.SetCookie(config.CookieNameRememberMeToken(), rememberMeToken, maxage, "/", "", false, true)
+		c.SetCookie(config.CookieNameRememberMeToken(), rememberMeToken, config.MaxAgeRememberMeToken(), "/", "", false, true)
 	}
 
 	return a.ID, nil
@@ -109,12 +105,12 @@ func (ac *AuthController) LoginHandler(c *gin.Context) {
 	}
 
 	// access token を生成する。
-	accessTokenID, accessToken, accessTokenExpire, err := GenerateAccessToken()
+	accessTokenID, accessToken, err := GenerateAccessToken()
 	if err != nil {
 		unauthorized(c, http.StatusUnauthorized, model.ErrFailedTokenCreation)
 		return
 	}
-	if err := ac.ss.CreateOrUpdate(userID, accessTokenID, accessTokenExpire); err != nil {
+	if err := ac.ss.CreateOrUpdate(userID, accessTokenID, config.TimeFunc().Add(config.TimeoutAccessToken())); err != nil {
 		unauthorized(c, http.StatusUnauthorized, err)
 		return
 	}
@@ -131,7 +127,7 @@ func unauthorized(c *gin.Context, code int, err error) {
 	errResponse(c, code, err)
 }
 
-func GenerateToken(data jwt.MapClaims, secretKey []byte, timeout time.Duration) (string, time.Time, error) {
+func GenerateToken(data jwt.MapClaims, secretKey []byte, timeout time.Duration) (string, error) {
 	token := jwt.New(jwt.GetSigningMethod(config.SigningAlgorithm()))
 	claims := token.Claims.(jwt.MapClaims)
 
@@ -139,41 +135,38 @@ func GenerateToken(data jwt.MapClaims, secretKey []byte, timeout time.Duration) 
 		claims[key] = value
 	}
 
-	expire := time.Now().UTC().Add(timeout)
-	claims["exp"] = expire.Unix()
-	claims["orig_iat"] = time.Now().Unix()
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
-		return "", time.Time{}, err
+		return "", err
 	}
 
-	return tokenString, expire, nil
+	return tokenString, nil
 }
 
-func GenerateAccessToken() (string, string, time.Time, error) {
+func GenerateAccessToken() (string, string, error) {
 	id := uuid.New().String()
 	data := jwt.MapClaims{}
 	data[config.IdentityKeyAccessToken()] = id
 
-	token, expire, err := GenerateToken(data, config.SecretKeyAccessToken(), config.TimeoutAccessToken())
+	token, err := GenerateToken(data, config.SecretKeyAccessToken(), config.TimeoutAccessToken())
 	if err != nil {
-		return "", "", time.Time{}, err
+		return "", "", err
 	}
 
-	return id, token, expire, nil
+	return id, token, nil
 }
 
-func GenerateRememberMeToken() (string, string, time.Time, error) {
+func GenerateRememberMeToken() (string, string, error) {
 	id := uuid.New().String()
 	data := jwt.MapClaims{}
 	data[config.IdentityKeyRememberMeToken()] = id
 
-	token, expire, err := GenerateToken(data, config.SecretKeyRememberMeToken(), config.TimeoutRememberMeToken())
+	token, err := GenerateToken(data, config.SecretKeyRememberMeToken(), config.TimeoutRememberMeToken())
 	if err != nil {
-		return "", "", time.Time{}, err
+		return "", "", err
 	}
 
-	return id, token, expire, nil
+	return id, token, nil
 }
 
 func jwtFromHeader(c *gin.Context, key string) (string, error) {

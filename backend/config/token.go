@@ -38,7 +38,12 @@ func TimeoutAccessToken() time.Duration {
 }
 
 func TimeoutRememberMeToken() time.Duration {
-	return time.Hour * 24 * (365*3 + 366)
+	return time.Second * 5
+	// return time.Hour * 24 * (365*3 + 366)
+}
+
+func MaxAgeRememberMeToken() int {
+	return 60 * 60 * 24 * (365*3 + 366) * 5
 }
 
 func SigningAlgorithm() string {
