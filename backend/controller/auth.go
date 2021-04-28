@@ -119,7 +119,7 @@ func (ac *AuthController) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	c.Header("Authorization", "Bearer "+accessToken)
+	c.Header("Authorization", config.TokenHeadName()+" "+accessToken)
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": http.StatusOK,
@@ -184,7 +184,7 @@ func jwtFromHeader(c *gin.Context, key string) (string, error) {
 	}
 
 	parts := strings.SplitN(authHeader, " ", 2)
-	if !(len(parts) == 2 && parts[0] == "Bearer") {
+	if !(len(parts) == 2 && parts[0] == config.TokenHeadName()) {
 		return "", model.ErrInvalidAuthHeader
 	}
 
