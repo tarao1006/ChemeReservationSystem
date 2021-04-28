@@ -41,14 +41,6 @@ func TimeoutRememberMeToken() time.Duration {
 	return time.Hour * 24 * (365*3 + 366)
 }
 
-func MaxRefreshAccessToken() time.Duration {
-	return time.Hour * 24 * (365*3 + 366)
-}
-
-func MaxRefreshRememberMeToken() time.Duration {
-	return time.Hour * 24 * (365*3 + 366)
-}
-
 func SigningAlgorithm() string {
 	return "HS256"
 }
