@@ -38,8 +38,8 @@ func TimeoutAccessToken() time.Duration {
 }
 
 func TimeoutRememberMeToken() time.Duration {
-	return time.Second * 5
-	// return time.Hour * 24 * (365*3 + 366)
+	// return time.Second * 5
+	return time.Hour * 24 * (365*3 + 366)
 }
 
 func MaxAgeRememberMeToken() int {
@@ -60,4 +60,9 @@ func TokenHeadName() string {
 
 func TimeFunc() time.Time {
 	return time.Now()
+}
+
+func UUID() string {
+	return "01234567-89ab-cdef-0123-456789abcdef"
+	// return uuid.New().String()
 }
