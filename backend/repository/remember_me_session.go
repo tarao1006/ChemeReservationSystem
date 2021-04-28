@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 )
 
 type RememberMeSessionRepository struct{}
@@ -13,18 +14,18 @@ func NewRememberMeSessionRepository() *RememberMeSessionRepository {
 	return &RememberMeSessionRepository{}
 }
 
-func (RememberMeSessionRepository) GetUserIDByID(db *sqlx.DB, id string) (string, error) {
-	var userID string
-	if err := db.Get(&userID, `
-		SELECT user_id FROM remember_me_session WHERE id = ?
+func (RememberMeSessionRepository) GetByID(db *sqlx.DB, id string) (*model.RememberMeSession, error) {
+	var session model.RememberMeSession
+	if err := db.Get(&session, `
+		SELECT id, user_id, expires_at FROM remember_me_session WHERE id = ?
 	`, id); err != nil {
-		return "", err
+		return nil, err
 	}
-	return userID, nil
+	return &session, nil
 }
 
 func (RememberMeSessionRepository) Create(db *sqlx.Tx, id string, userID string, expireAt time.Time) (result sql.Result, err error) {
-	query := `INSERT INTO remember_me_session (id, user_id, expire_at) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, expire_at = ?`
+	query := `INSERT INTO remember_me_session (id, user_id, expires_at) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, expires_at = ?`
 	return db.Exec(query, id, userID, expireAt, id, expireAt)
 }
 

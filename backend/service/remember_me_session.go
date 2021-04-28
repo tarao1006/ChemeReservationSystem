@@ -5,6 +5,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/db"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 	"github.com/tarao1006/ChemeReservationSystem/repository"
 )
 
@@ -20,8 +21,8 @@ func NewRememberMeSessionService() *RememberMeSessionService {
 	}
 }
 
-func (rs *RememberMeSessionService) GetUserIDByID(id string) (string, error) {
-	return rs.repo.GetUserIDByID(rs.db, id)
+func (rs *RememberMeSessionService) GetByID(id string) (*model.RememberMeSession, error) {
+	return rs.repo.GetByID(rs.db, id)
 }
 
 func (rs *RememberMeSessionService) CreateOrUpdate(userID string, id string, expireAt time.Time) error {

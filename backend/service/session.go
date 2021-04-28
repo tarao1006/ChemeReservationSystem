@@ -37,8 +37,8 @@ func (ss *SessionService) Login(auth *model.Auth) error {
 	return nil
 }
 
-func (ss *SessionService) GetUserIDByID(id string) (string, error) {
-	return ss.repo.GetUserIDByID(ss.db, id)
+func (ss *SessionService) GetByID(id string) (*model.Session, error) {
+	return ss.repo.GetByID(ss.db, id)
 }
 
 func (ss *SessionService) CreateOrUpdate(userID string, id string, expireAt time.Time) error {

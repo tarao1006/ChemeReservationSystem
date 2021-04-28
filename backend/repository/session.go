@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/tarao1006/ChemeReservationSystem/model"
 )
 
 type SessionRepository struct{}
@@ -13,18 +14,18 @@ func NewSessionRepository() *SessionRepository {
 	return &SessionRepository{}
 }
 
-func (SessionRepository) GetUserIDByID(db *sqlx.DB, id string) (string, error) {
-	var userID string
-	if err := db.Get(&userID, `
-		SELECT user_id FROM session WHERE id = ?
+func (SessionRepository) GetByID(db *sqlx.DB, id string) (*model.Session, error) {
+	var session model.Session
+	if err := db.Get(&session, `
+		SELECT id, user_id, expires_at FROM session WHERE id = ?
 	`, id); err != nil {
-		return "", err
+		return nil, err
 	}
-	return userID, nil
+	return &session, nil
 }
 
 func (SessionRepository) Create(db *sqlx.Tx, id string, userID string, expireAt time.Time) (result sql.Result, err error) {
-	query := `INSERT INTO session (id, user_id, expire_at) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, expire_at = ?`
+	query := `INSERT INTO session (id, user_id, expires_at) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, expires_at = ?`
 	return db.Exec(query, id, userID, expireAt, id, expireAt)
 }
 
