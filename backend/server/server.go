@@ -18,7 +18,7 @@ func NewServer() *Server {
 
 func (s *Server) Init(dsn string) error {
 	if err := db.Init(dsn); err != nil {
-		return fmt.Errorf("failed init db. %s", err)
+		return fmt.Errorf("failed to initialize db. %s", err)
 	}
 
 	s.router = NewRouter()

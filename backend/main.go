@@ -15,9 +15,9 @@ func main() {
 
 	s := server.NewServer()
 	if err := s.Init(dsn); err != nil {
-		log.Fatalf("failed init server. %s", err)
+		log.Fatalf("failed to initialize server. %s", err)
 	}
 	if err := s.Run(port); err != nil {
-		log.Fatalf("failed run. %s", err)
+		log.Fatalf("failed to run. %s", err)
 	}
 }
