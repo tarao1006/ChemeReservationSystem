@@ -134,7 +134,8 @@ func (ac *AuthController) LoginHandler(c *gin.Context) {
 	SetAccessToken(c, accessToken)
 
 	c.JSON(http.StatusOK, gin.H{
-		"code": http.StatusOK,
+		"code":    http.StatusOK,
+		"message": "ok",
 	})
 }
 

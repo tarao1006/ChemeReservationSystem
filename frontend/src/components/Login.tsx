@@ -54,31 +54,44 @@ const useStyles = makeStyles((theme) => ({
 
 export const Login = () => {
   const classes = useStyles()
-  const { setToken, setCurrentUser } = useContext(AuthContext)
-  const [userId, setUserId] = useState<string>(testUserId)
-  const [password, setPassword] = useState<string>(testUserPassword)
+  const { setCurrentUser } = useContext(AuthContext)
+  const [userId, setUserId] = useState<string>("")
+  const [password, setPassword] = useState<string>("")
   const [checked, setChecked] = useState<boolean>(false)
   const [isValidUserId, setIsValidUserId] = useState<boolean>(false)
+  const [isInvalidUserId, setIsInvalidUserId] = useState<boolean>(false)
+  const [isInvalidPassword, setIsInvalidPassword] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const location = useLocation()
   let history = useHistory()
 
   const login = async (userId: string, password: string, rememberMe: boolean): Promise<void> => {
     setIsLoading(true)
-    const token = await loginAPI(userId, password, rememberMe)
-    const u = await getMe(token)
-    setToken(token)
-    setCurrentUser(u)
-    localStorage.setItem('remember-me', rememberMe ? 'yes': 'no')
-    setIsLoading(false)
-    history.push(location.pathname)
+    const res = await loginAPI(userId, password, rememberMe)
+    if (res.code == 200) {
+      const u = await getMe()
+      setCurrentUser(u)
+      localStorage.setItem('remember-me', rememberMe ? 'yes': 'no')
+      setIsInvalidPassword(false)
+      setIsLoading(false)
+      history.push(location.pathname)
+    } else {
+      setIsInvalidPassword(true)
+      setIsLoading(false)
+    }
   }
 
   const validate = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
     setIsLoading(true)
-    const r = await validateAPI(userId)
-    setIsValidUserId(r.valid)
+    const res = await validateAPI(userId)
+    if (res.code == 200) {
+      setIsValidUserId(true)
+      setIsInvalidUserId(false)
+    } else {
+      setIsValidUserId(false)
+      setIsInvalidUserId(true)
+    }
     setIsLoading(false)
   }
 
@@ -109,7 +122,7 @@ export const Login = () => {
 
   const LoadingIcon = () => {
     return (
-      <InputAdornment position="start" className={classes.circularProgress}>
+      <InputAdornment position="end" className={classes.circularProgress}>
         <IconButton size="small" disabled disableFocusRipple disableRipple>
           <CircularProgress size={25} />
         </IconButton>
@@ -119,7 +132,7 @@ export const Login = () => {
 
   const UserIdInputAdornment = () => {
     return (
-      <InputAdornment position="start">
+      <InputAdornment position="end">
         <IconButton disabled={userId === ""} size="small" type="submit">
           <ArrowForwardIcon />
         </IconButton>
@@ -129,7 +142,7 @@ export const Login = () => {
 
   const PasswordInputAdornment = () => {
     return (
-      <InputAdornment position="start">
+      <InputAdornment position="end">
         <IconButton disabled={password === ""} size="small" type="submit">
           <ArrowForwardIcon />
         </IconButton>
@@ -156,7 +169,7 @@ export const Login = () => {
             required
             fullWidth
             id="userId"
-            label="User ID"
+            placeholder="ユーザーID"
             name="username"
             autoComplete="username"
             autoFocus
@@ -168,6 +181,8 @@ export const Login = () => {
                 ? <LoadingIcon />
                 : <UserIdInputAdornment />
             }}
+            error={isInvalidUserId}
+            helperText={isInvalidUserId ? "ユーザーIDが不正です": ""}
           />
           <TextField
             style={{visibility: isValidUserId ? 'visible' : 'hidden'}}
@@ -178,7 +193,7 @@ export const Login = () => {
             required
             fullWidth
             name="password"
-            label="Password"
+            placeholder="パスワード"
             type="password"
             id="password"
             autoComplete="current-password"
@@ -190,6 +205,8 @@ export const Login = () => {
                 ? <LoadingIcon />
                 : <PasswordInputAdornment />
             }}
+            error={isInvalidPassword}
+            helperText={isInvalidPassword ? "パスワードが不正です": ""}
           />
           <FormControlLabel
             control={<Checkbox checked={checked} onChange={handleChecked} color="primary" />}

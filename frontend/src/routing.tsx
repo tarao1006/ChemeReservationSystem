@@ -8,19 +8,16 @@ import { loginWithRememberToken as loginAPI, getMe } from '@api'
 
 const RedirectComponent = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { currentUser, setToken, setCurrentUser } = useContext(AuthContext)
+  const { currentUser, setCurrentUser } = useContext(AuthContext)
 
   useEffect(() => {
     const login = async () => {
       setIsLoading(true)
       if (currentUser == undefined) {
         if (localStorage.getItem('remember-me') == 'yes') {
-          const token = await loginAPI()
-          if (token != "") {
-            const u = await getMe(token)
-            setToken(token)
-            setCurrentUser(u)
-          }
+          await loginAPI()
+          const u = await getMe()
+          setCurrentUser(u)
         }
       }
       setIsLoading(false)

@@ -75,24 +75,27 @@ func (UserController) ValidateUserID(c *gin.Context) {
 
 	var v ValidationData
 	if err := c.BindJSON(&v); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ErrResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
 	id := v.UserID
 	exists, err := s.ExistsUser(id)
-
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ErrResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
 	if !exists {
-		c.JSON(http.StatusBadRequest, gin.H{"error": model.ErrInvalidUserID.Error()})
+		ErrResponse(c, http.StatusBadRequest, model.ErrInvalidUserID)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"valid": true})
+	code := http.StatusOK
+	c.JSON(code, gin.H{
+		"code":    code,
+		"message": "valid",
+	})
 }
 
 func (UserController) Update(c *gin.Context) {

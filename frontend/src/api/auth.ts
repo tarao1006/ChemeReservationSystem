@@ -1,37 +1,35 @@
 import { backendInstance, CodeResponse, ValidateResult } from '.';
 
-export const login = async (userId: string, password: string, rememberMe: boolean): Promise<string> => {
+export const login = async (userId: string, password: string, rememberMe: boolean): Promise<CodeResponse> => {
   return backendInstance.post<CodeResponse>('/login', {
     id: userId,
     password: password,
     remember_me: rememberMe,
   }).then(res => {
-    return res.headers['authorization'].split(' ')[1]
-  }).catch(() => {
-    return ""
+    return res.data
+  }).catch(err => {
+    return null
   })
 }
 
-export const loginWithRememberToken = async (): Promise<string> => {
+export const loginWithRememberToken = async (): Promise<CodeResponse> => {
   return backendInstance.post<CodeResponse>('/login').then(res => {
-    return res.headers['authorization'].split(' ')[1]
+    return res.data
   }).catch(() => {
-    return ""
+    return null
   })
 }
 
-export const logout = async (token: string): Promise<void> => {
-  await backendInstance.post('/logout', {}, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
+export const logout = async (): Promise<void> => {
+  await backendInstance.post('/logout')
 }
 
-export const validate = async (userId: string) => {
-  const res = await backendInstance.post<ValidateResult>('/validate', {
+export const validate = async (userId: string): Promise<CodeResponse> => {
+  return backendInstance.post<ValidateResult>('/validate', {
     user_id: userId,
+  }).then(res => {
+    return res.data
+  }).catch(() => {
+    return null
   })
-
-  return res.data
 }
