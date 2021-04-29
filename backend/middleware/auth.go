@@ -28,6 +28,52 @@ func NewAuthMiddleware() *AuthMiddleware {
 
 func (mw *AuthMiddleware) Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		oldAccessToken, err := controller.ParseAccessTokenFromContext(c)
+		if err != nil {
+			controller.Unauthorized(c, http.StatusForbidden, model.ErrForbidden)
+			c.Abort()
+			return
+		}
+
+		oldAccessTokenClaims := oldAccessToken.Claims.(jwt.MapClaims)
+		oldAccessTokenID := oldAccessTokenClaims[config.IdentityKeyAccessToken()].(string)
+		oldSession, err := mw.ss.GetByID(oldAccessTokenID)
+		if err != nil {
+			controller.Unauthorized(c, http.StatusForbidden, model.ErrForbidden)
+			c.Abort()
+			return
+		}
+
+		if oldSession.IsExpired() {
+			if err := mw.ss.DeleteByID(oldAccessTokenID); err != nil {
+				controller.Unauthorized(c, http.StatusForbidden, model.ErrExpiredToken)
+				c.Abort()
+				return
+			}
+			controller.Unauthorized(c, http.StatusForbidden, model.ErrExpiredToken)
+			c.Abort()
+			return
+		}
+
+		newAccessTokenID, newAccessToken, err := controller.GenerateAccessToken()
+		if err != nil {
+			controller.Unauthorized(c, http.StatusUnauthorized, err)
+			c.Abort()
+			return
+		}
+		if err := mw.ss.Update(oldAccessTokenID, newAccessTokenID, config.TimeFunc().Add(config.TimeoutAccessToken())); err != nil {
+			controller.Unauthorized(c, http.StatusUnauthorized, err)
+			c.Abort()
+			return
+		}
+		c.Header("Authorization", config.TokenHeadName()+" "+newAccessToken)
+
+		c.Next()
+	}
+}
+
+func (mw *AuthMiddleware) MiddlewareWithRememberMeToken() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		// access token と remember me token を取得する
 		oldAccessToken, errAccessToken := controller.ParseAccessTokenFromContext(c)
 		oldRememberMeToken, errRememberMeToken := controller.ParseRememberMeTokenFromContext(c)
