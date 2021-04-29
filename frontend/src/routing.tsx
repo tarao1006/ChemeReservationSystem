@@ -26,14 +26,14 @@ const RedirectComponent = ({ children }) => {
     const login = async () => {
       setIsLoading(true)
       if (currentUser == undefined) {
-        const res = await getMe()
-        if (res.status == 200) {
-          setCurrentUser(res.data)
+        const me = await getMe()
+        if (me) {
+          setCurrentUser(me)
         } else {
           const loginRes = await loginAPI()
           if (loginRes.code == 200) {
-            const res = await getMe()
-            setCurrentUser(res.data)
+            const me = await getMe()
+            setCurrentUser(me)
           }
         }
       }

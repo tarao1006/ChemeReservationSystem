@@ -67,8 +67,8 @@ export const Login = () => {
     setIsLoading(true)
     const res = await loginAPI(userId, password, rememberMe)
     if (res.code == 200) {
-      const res = await getMe()
-      setCurrentUser(res.data)
+      const me = await getMe()
+      setCurrentUser(me)
       setIsInvalidPassword(false)
       setIsLoading(false)
       history.push(location.pathname)
