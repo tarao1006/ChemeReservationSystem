@@ -6,8 +6,6 @@ import TextField from '@material-ui/core/TextField'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import Link from '@material-ui/core/Link'
-import Grid from '@material-ui/core/Grid'
-import Divider from '@material-ui/core/Divider'
 import Box from '@material-ui/core/Box'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
@@ -61,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const Login = () => {
   const classes = useStyles()
-  const { currentUser, setToken, setCurrentUser } = useContext(AuthContext)
+  const { setToken, setCurrentUser } = useContext(AuthContext)
   const [userId, setUserId] = useState<string>(testUserId)
   const [password, setPassword] = useState<string>(testUserPassword)
   const [checked, setChecked] = useState<boolean>(false)
