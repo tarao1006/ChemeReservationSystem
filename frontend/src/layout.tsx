@@ -3,7 +3,6 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import Container from '@material-ui/core/Container';
 import { AuthProvider } from '@contexts'
 import { Header } from './components/Header'
-import { Copyright } from './components/Copyright'
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
