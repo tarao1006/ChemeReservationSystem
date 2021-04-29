@@ -1,4 +1,4 @@
-import { backendInstance, CodeResponse, ValidateResult } from '.';
+import { backendInstance, CodeResponse } from '.';
 
 export const login = async (userId: string, password: string, rememberMe: boolean): Promise<CodeResponse> => {
   return backendInstance.post<CodeResponse>('/login', {
@@ -25,7 +25,7 @@ export const logout = async (): Promise<void> => {
 }
 
 export const validate = async (userId: string): Promise<CodeResponse> => {
-  return backendInstance.post<ValidateResult>('/validate', {
+  return backendInstance.post<CodeResponse>('/validate', {
     user_id: userId,
   }).then(res => {
     return res.data
