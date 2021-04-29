@@ -68,6 +68,22 @@ func (ac *AuthController) LoginWithID(c *gin.Context, a *model.Auth) (string, er
 	return a.ID, nil
 }
 
+func SetAccessToken(c *gin.Context, token string) {
+	c.SetCookie(config.CookieNameAccessToken(), token, config.MaxAgeAccessToken(), "/", "", false, true)
+}
+
+func UnsetAccessToken(c *gin.Context) {
+	c.SetCookie(config.CookieNameAccessToken(), "", -1, "/", "", false, true)
+}
+
+func SetRememberMeToken(c *gin.Context, token string) {
+	c.SetCookie(config.CookieNameRememberMeToken(), token, config.MaxAgeRememberMeToken(), "/", "", false, true)
+}
+
+func UnsetRememberMeToken(c *gin.Context) {
+	c.SetCookie(config.CookieNameRememberMeToken(), "", -1, "/", "", false, true)
+}
+
 func (ac *AuthController) LoginHandler(c *gin.Context) {
 	var userID string
 
@@ -115,7 +131,7 @@ func (ac *AuthController) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	c.Header("Authorization", config.TokenHeadName()+" "+accessToken)
+	SetAccessToken(c, accessToken)
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": http.StatusOK,
@@ -195,7 +211,7 @@ func JWTFromCookie(c *gin.Context, key string) (string, error) {
 }
 
 func ParseAccessTokenFromContext(c *gin.Context) (*jwt.Token, error) {
-	token, err := JWTFromHeader(c, "Authorization")
+	token, err := JWTFromCookie(c, config.CookieNameAccessToken())
 	if err != nil {
 		return nil, err
 	}
@@ -246,6 +262,8 @@ func (AuthController) LogoutHandler(c *gin.Context) {
 		return
 	}
 
+	UnsetAccessToken(c)
+
 	rememberMeToken, err := ParseRememberMeTokenFromContext(c)
 	if err == nil {
 		rememberMeTokenClaims := rememberMeToken.Claims.(jwt.MapClaims)
@@ -257,7 +275,7 @@ func (AuthController) LogoutHandler(c *gin.Context) {
 			return
 		}
 
-		c.SetCookie(config.CookieNameRememberMeToken(), "", -1, "/", "", false, true)
+		UnsetRememberMeToken(c)
 	}
 
 	code := http.StatusOK

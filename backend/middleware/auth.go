@@ -32,6 +32,8 @@ func (mw *AuthMiddleware) Middleware() gin.HandlerFunc {
 		oldAccessToken, errAccessToken := controller.ParseAccessTokenFromContext(c)
 		oldRememberMeToken, errRememberMeToken := controller.ParseRememberMeTokenFromContext(c)
 
+		fmt.Println(errAccessToken)
+
 		var (
 			err                         error
 			oldAccessTokenClaims        jwt.MapClaims
@@ -97,7 +99,7 @@ func (mw *AuthMiddleware) Middleware() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			c.SetCookie(config.CookieNameRememberMeToken(), "", -1, "/", "", false, true)
+			controller.UnsetRememberMeToken(c)
 			controller.Unauthorized(c, http.StatusUnauthorized, model.ErrExpiredToken)
 			c.Abort()
 			return
@@ -110,7 +112,8 @@ func (mw *AuthMiddleware) Middleware() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			c.SetCookie(config.CookieNameRememberMeToken(), "", -1, "/", "", false, true)
+			controller.UnsetAccessToken(c)
+			controller.UnsetRememberMeToken(c)
 			controller.Unauthorized(c, http.StatusUnauthorized, model.ErrExpiredToken)
 			c.Abort()
 			return
@@ -128,7 +131,8 @@ func (mw *AuthMiddleware) Middleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.Header("Authorization", config.TokenHeadName()+" "+newAccessToken)
+
+		controller.SetAccessToken(c, newAccessToken)
 
 		if errRememberMeToken == nil {
 			newRememberMeTokenID, newRememberMeToken, err := controller.GenerateRememberMeToken()
@@ -140,7 +144,7 @@ func (mw *AuthMiddleware) Middleware() gin.HandlerFunc {
 				controller.Unauthorized(c, http.StatusUnauthorized, err)
 				return
 			}
-			c.SetCookie(config.CookieNameRememberMeToken(), newRememberMeToken, config.MaxAgeRememberMeToken(), "/", "", false, true)
+			controller.SetRememberMeToken(c, newRememberMeToken)
 		}
 
 		c.Set("USER_ID", newSession.UserID)

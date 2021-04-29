@@ -49,6 +49,10 @@ func TimeoutRememberMeToken() time.Duration {
 	return time.Hour * 24 * (365*3 + 366) * 4
 }
 
+func MaxAgeAccessToken() int {
+	return 60 * 60 * 24 * (365*3 + 366) * 5
+}
+
 func MaxAgeRememberMeToken() int {
 	return 60 * 60 * 24 * (365*3 + 366) * 5
 }
