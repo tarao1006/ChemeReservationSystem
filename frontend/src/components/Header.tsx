@@ -11,6 +11,7 @@ import Menu from '@material-ui/core/Menu'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import { AuthContext } from '@contexts'
+import { logout } from '@api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 export const Header = () => {
-  const { currentUser, setToken, setCurrentUser } = useContext(AuthContext)
+  const { currentUser, token, setToken, setCurrentUser } = useContext(AuthContext)
   const location = useLocation()
 
   const classes = useStyles()
@@ -43,7 +44,9 @@ export const Header = () => {
     setAnchorEl(null)
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logout(token)
+    localStorage.removeItem('remember-me')
     setToken('')
     setCurrentUser(undefined)
     handleClose()

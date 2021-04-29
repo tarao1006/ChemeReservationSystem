@@ -72,11 +72,11 @@ export const Login = () => {
 
   const login = async (userId: string, password: string, rememberMe: boolean): Promise<void> => {
     setIsLoading(true)
-    const jwt = await loginAPI(userId, password, rememberMe)
-    const t = jwt.token
-    const u = await getMe(t)
-    setToken(t)
+    const token = await loginAPI(userId, password, rememberMe)
+    const u = await getMe(token)
+    setToken(token)
     setCurrentUser(u)
+    localStorage.setItem('remember-me', rememberMe ? 'yes': 'no')
     setIsLoading(false)
     history.push(location.pathname)
   }

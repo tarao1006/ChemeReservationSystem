@@ -1,14 +1,36 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { Home } from './components/Home'
 import { Login } from './components/Login'
 import { Layout } from './layout'
 import { AuthContext } from '@contexts'
+import { loginWithRememberToken as loginAPI, getMe } from '@api'
 
 const RedirectComponent = ({ children }) => {
-  const { currentUser } = useContext(AuthContext)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { currentUser, setToken, setCurrentUser } = useContext(AuthContext)
 
-  return (currentUser === undefined
+  useEffect(() => {
+    const login = async () => {
+      setIsLoading(true)
+      if (currentUser == undefined) {
+        if (localStorage.getItem('remember-me') == 'yes') {
+          const token = await loginAPI()
+          if (token != "") {
+            const u = await getMe(token)
+            setToken(token)
+            setCurrentUser(u)
+          }
+        }
+      }
+      setIsLoading(false)
+    }
+    login()
+  }, [currentUser])
+
+  return (isLoading
+    ? <>hoge</>
+    : currentUser === undefined
     ? <Login />
     : <>{children}</>
   )

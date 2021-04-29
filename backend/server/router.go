@@ -25,6 +25,9 @@ func NewRouter() *gin.Engine {
 			"Access-Control-Allow-Origin",
 			"Content-Type",
 		},
+		ExposeHeaders: []string{
+			"Authorization",
+		},
 		AllowOrigins: []string{
 			"http://localhost:8080",
 		},

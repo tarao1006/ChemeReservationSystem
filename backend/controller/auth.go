@@ -237,26 +237,29 @@ func (AuthController) LogoutHandler(c *gin.Context) {
 		ErrResponse(c, http.StatusBadRequest, err)
 		return
 	}
+	accessTokenClaims := accessToken.Claims.(jwt.MapClaims)
+	accessTokenID := accessTokenClaims[config.IdentityKeyAccessToken()].(string)
+
+	ss := service.NewSessionService()
+	if err := ss.DeleteByID(accessTokenID); err != nil {
+		ErrResponse(c, http.StatusBadRequest, err)
+		return
+	}
 
 	rememberMeToken, err := ParseRememberMeTokenFromContext(c)
-	if err != nil {
-		ErrResponse(c, http.StatusBadRequest, err)
-		return
+	if err == nil {
+		rememberMeTokenClaims := rememberMeToken.Claims.(jwt.MapClaims)
+		rememberMeTokenID := rememberMeTokenClaims[config.IdentityKeyRememberMeToken()].(string)
+
+		rs := service.NewRememberMeSessionService()
+		if err := rs.DeleteByID(rememberMeTokenID); err != nil {
+			ErrResponse(c, http.StatusBadRequest, err)
+			return
+		}
+
+		c.SetCookie(config.CookieNameRememberMeToken(), "", -1, "/", "", false, true)
 	}
 
-	accessTokenClaims := accessToken.Claims.(jwt.MapClaims)
-	rememberMeTokenClaims := rememberMeToken.Claims.(jwt.MapClaims)
-
-	accessTokenID := accessTokenClaims[config.IdentityKeyAccessToken()].(string)
-	rememberMeTokenID := rememberMeTokenClaims[config.IdentityKeyRememberMeToken()].(string)
-
-	s := service.NewAuthService()
-	if err := s.Delete(accessTokenID, rememberMeTokenID); err != nil {
-		ErrResponse(c, http.StatusBadRequest, err)
-		return
-	}
-
-	c.SetCookie(config.CookieNameRememberMeToken(), "", -1, "/", "", false, true)
 	code := http.StatusOK
 	c.JSON(code, gin.H{
 		"code": code,

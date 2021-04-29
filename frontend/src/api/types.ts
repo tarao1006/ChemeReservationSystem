@@ -9,6 +9,10 @@ export interface Facility {
   types: FacilityType[]
 }
 
+export interface CodeResponse {
+  code: number
+}
+
 export interface JWT {
   code: number
   expire: number
