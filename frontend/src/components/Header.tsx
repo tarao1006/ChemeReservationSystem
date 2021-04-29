@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 export const Header = () => {
-  const { currentUser, token, setToken, setCurrentUser } = useContext(AuthContext)
+  const { currentUser, setCurrentUser } = useContext(AuthContext)
   const location = useLocation()
 
   const classes = useStyles()
@@ -45,9 +45,8 @@ export const Header = () => {
   }
 
   const handleLogout = async () => {
-    await logout(token)
+    await logout()
     localStorage.removeItem('remember-me')
-    setToken('')
     setCurrentUser(undefined)
     handleClose()
   }

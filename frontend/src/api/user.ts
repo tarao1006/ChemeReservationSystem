@@ -1,7 +1,10 @@
 import { baseInstance, User } from '.'
+import { AxiosResponse } from 'axios'
 
-export const getMe = async (): Promise<User> => {
-  const res = await baseInstance.get<User>('/me')
-
-  return res.data
+export const getMe = async (): Promise<AxiosResponse<User>> => {
+  return baseInstance.get<User>('/me').then(res => {
+    return res
+  }).catch(err => {
+    return null
+  })
 }
