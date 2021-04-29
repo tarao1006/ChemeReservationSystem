@@ -32,8 +32,6 @@ func (mw *AuthMiddleware) Middleware() gin.HandlerFunc {
 		oldAccessToken, errAccessToken := controller.ParseAccessTokenFromContext(c)
 		oldRememberMeToken, errRememberMeToken := controller.ParseRememberMeTokenFromContext(c)
 
-		fmt.Println(errAccessToken)
-
 		var (
 			err                         error
 			oldAccessTokenClaims        jwt.MapClaims
