@@ -122,7 +122,8 @@ func (mw *AuthMiddleware) Middleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if err := mw.ss.Update(oldAccessTokenID, newAccessTokenID, config.TimeFunc().Add(config.TimeoutAccessToken())); err != nil {
+		newSession, err := mw.ss.Update(oldAccessTokenID, newAccessTokenID, config.TimeFunc().Add(config.TimeoutAccessToken()))
+		if err != nil {
 			controller.Unauthorized(c, http.StatusUnauthorized, err)
 			c.Abort()
 			return
@@ -141,6 +142,8 @@ func (mw *AuthMiddleware) Middleware() gin.HandlerFunc {
 			}
 			c.SetCookie(config.CookieNameRememberMeToken(), newRememberMeToken, config.MaxAgeRememberMeToken(), "/", "", false, true)
 		}
+
+		c.Set("USER_ID", newSession.UserID)
 
 		c.Next()
 	}

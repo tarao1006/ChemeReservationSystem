@@ -53,10 +53,10 @@ func (ss *SessionService) CreateOrUpdate(userID string, id string, expireAt time
 	return nil
 }
 
-func (ss *SessionService) Update(oldID string, newID string, expireAt time.Time) error {
+func (ss *SessionService) Update(oldID string, newID string, expireAt time.Time) (*model.Session, error) {
 	session, err := ss.repo.GetByID(ss.db, oldID)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	if err := db.TXHandler(ss.db, func(tx *sqlx.Tx) error {
@@ -65,9 +65,14 @@ func (ss *SessionService) Update(oldID string, newID string, expireAt time.Time)
 		}
 		return nil
 	}); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	newSession, err := ss.repo.GetByID(ss.db, newID)
+	if err != nil {
+		return nil, err
+	}
+
+	return newSession, nil
 }
 
 func (ss *SessionService) DeleteByID(id string) error {
