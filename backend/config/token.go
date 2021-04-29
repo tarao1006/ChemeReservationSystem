@@ -3,6 +3,8 @@ package config
 import (
 	"os"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func SecretKeyAccessToken() []byte {
@@ -64,6 +66,8 @@ func TimeFunc() time.Time {
 }
 
 func UUID() string {
-	return "01234567-89ab-cdef-0123-456789abcdef"
-	// return uuid.New().String()
+	if Mode() == "development" {
+		return "01234567-89ab-cdef-0123-456789abcdef"
+	}
+	return uuid.New().String()
 }
