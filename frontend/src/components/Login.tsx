@@ -27,11 +27,19 @@ function Copyright() {
 }
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingRight: 0,
+  },
   circularProgress: {
     display: 'flex',
     '& > * + *': {
       marginLeft: theme.spacing(2),
     },
+  },
+  iconButton: {
+    marginRight: theme.spacing(1),
   },
   paper: {
     marginTop: theme.spacing(8),
@@ -122,7 +130,7 @@ export const Login = () => {
   const LoadingIcon = () => {
     return (
       <InputAdornment position="end" className={classes.circularProgress}>
-        <IconButton size="small" disabled disableFocusRipple disableRipple>
+        <IconButton className={classes.iconButton} size="small" disabled disableFocusRipple disableRipple>
           <CircularProgress size={25} />
         </IconButton>
       </InputAdornment>
@@ -132,7 +140,7 @@ export const Login = () => {
   const UserIdInputAdornment = () => {
     return (
       <InputAdornment position="end">
-        <IconButton disabled={userId === ""} size="small" type="submit">
+        <IconButton className={classes.iconButton} disabled={userId === ""} size="small" type="submit">
           <ArrowForwardIcon />
         </IconButton>
       </InputAdornment>
@@ -142,7 +150,7 @@ export const Login = () => {
   const PasswordInputAdornment = () => {
     return (
       <InputAdornment position="end">
-        <IconButton disabled={password === ""} size="small" type="submit">
+        <IconButton className={classes.iconButton} disabled={password === ""} size="small" type="submit">
           <ArrowForwardIcon />
         </IconButton>
       </InputAdornment>
@@ -173,12 +181,8 @@ export const Login = () => {
             autoComplete="username"
             autoFocus
             InputProps={{
-              endAdornment:
-                isValidUserId
-                ? <></>
-                : isLoading
-                ? <LoadingIcon />
-                : <UserIdInputAdornment />
+              endAdornment: isValidUserId ? <></> : isLoading ? <LoadingIcon /> : <UserIdInputAdornment />,
+              className: classes.root
             }}
             error={isInvalidUserId}
             helperText={isInvalidUserId ? "ユーザーIDが不正です": ""}
@@ -197,12 +201,8 @@ export const Login = () => {
             id="password"
             autoComplete="current-password"
             InputProps={{
-              endAdornment:
-                !isValidUserId
-                ? <></>
-                :isLoading
-                ? <LoadingIcon />
-                : <PasswordInputAdornment />
+              endAdornment: !isValidUserId ? <></> :isLoading ? <LoadingIcon /> : <PasswordInputAdornment />,
+              className: classes.root
             }}
             error={isInvalidPassword}
             helperText={isInvalidPassword ? "パスワードが不正です": ""}
