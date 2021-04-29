@@ -19,6 +19,9 @@ func (SessionRepository) GetByID(db *sqlx.DB, id string) (*model.Session, error)
 	if err := db.Get(&session, `
 		SELECT id, user_id, expires_at FROM session WHERE id = ?
 	`, id); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, model.ErrSessionNotFound
+		}
 		return nil, err
 	}
 	return &session, nil

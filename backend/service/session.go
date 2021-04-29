@@ -31,7 +31,7 @@ func (ss *SessionService) Login(auth *model.Auth) error {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordDigest), []byte(auth.Password)); err != nil {
-		return err
+		return model.ErrInvalidPassword
 	}
 
 	return nil

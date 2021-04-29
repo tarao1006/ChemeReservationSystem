@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 	"time"
@@ -40,7 +39,7 @@ func (ac *AuthController) LoginWithRememberMeToken(c *gin.Context, token string)
 		return "", model.ErrFailedTokenCreation
 	}
 	if err := ac.rs.CreateOrUpdate(session.UserID, rememberMeTokenID, config.TimeFunc().Add(config.TimeoutRememberMeToken())); err != nil {
-		return "", err
+		return "", model.ErrFailedTokenCreation
 	}
 
 	c.SetCookie(config.CookieNameRememberMeToken(), rememberMeToken, config.MaxAgeRememberMeToken(), "/", "", false, true)
@@ -50,9 +49,6 @@ func (ac *AuthController) LoginWithRememberMeToken(c *gin.Context, token string)
 
 func (ac *AuthController) LoginWithID(c *gin.Context, a *model.Auth) (string, error) {
 	if err := ac.ss.Login(a); err != nil {
-		if !errors.Is(err, model.ErrInvalidPassword) {
-			err = model.ErrFailedLogin
-		}
 		return "", err
 	}
 
@@ -62,7 +58,7 @@ func (ac *AuthController) LoginWithID(c *gin.Context, a *model.Auth) (string, er
 			return "", model.ErrFailedTokenCreation
 		}
 		if err := ac.rs.CreateOrUpdate(a.ID, rememberMeTokenID, config.TimeFunc().Add(config.TimeoutRememberMeToken())); err != nil {
-			return "", err
+			return "", model.ErrFailedTokenCreation
 		}
 
 		c.Set(config.IdentityKeyRememberMeToken(), rememberMeToken)
@@ -79,17 +75,20 @@ func (ac *AuthController) LoginHandler(c *gin.Context) {
 	errParam := c.ShouldBindJSON(&a)
 	jwtToken, errToken := JWTFromCookie(c, config.CookieNameRememberMeToken())
 
-	if errParam != nil && errToken != nil { // パラメータとトークンがともに存在しない場合
+	// パラメータとトークンがともに存在しない場合
+	if errParam != nil && errToken != nil {
 		Unauthorized(c, http.StatusBadRequest, model.ErrInvalidParameter)
 		return
-	} else if errParam == nil { // パラメータが存在する場合
+	}
+
+	if errParam == nil { // パラメータが存在する場合
 		id, err := ac.LoginWithID(c, &a)
 		if err != nil {
 			Unauthorized(c, http.StatusBadRequest, err)
 			return
 		}
 		userID = id
-	} else if errToken == nil { // トークンが存在する場合
+	} else { // トークンが存在する場合
 		token, err := ParseStringToken(jwtToken, config.SecretKeyRememberMeToken())
 		if err != nil {
 			Unauthorized(c, http.StatusBadRequest, err)
