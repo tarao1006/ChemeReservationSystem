@@ -17,5 +17,7 @@ func main() {
 	if err := s.Init(dsn); err != nil {
 		log.Fatalf("failed init server. %s", err)
 	}
-	s.Run(port)
+	if err := s.Run(port); err != nil {
+		log.Fatalf("failed run. %s", err)
+	}
 }
