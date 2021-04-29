@@ -21,12 +21,7 @@ import { AuthContext } from '@contexts'
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Taiga Katarao
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
+      {`Copyright © Taiga Katarao ${new Date().getFullYear()}.`}
     </Typography>
   )
 }
