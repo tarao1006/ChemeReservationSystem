@@ -81,7 +81,8 @@ export const Login = () => {
     history.push(location.pathname)
   }
 
-  const validate = async (): Promise<void> => {
+  const validate = async (e: React.FormEvent): Promise<void> => {
+    e.preventDefault()
     setIsLoading(true)
     const r = await validateAPI(userId)
     setIsValidUserId(r.valid)
@@ -126,7 +127,7 @@ export const Login = () => {
   const UserIdInputAdornment = () => {
     return (
       <InputAdornment position="start">
-        <IconButton disabled={userId === ""} size="small" onClick={validate}>
+        <IconButton disabled={userId === ""} size="small" type="submit">
           <ArrowForwardIcon />
         </IconButton>
       </InputAdornment>
@@ -153,7 +154,7 @@ export const Login = () => {
         <Typography component="h1" variant="h5">
           ログイン
         </Typography>
-        <form className={classes.form} noValidate onSubmit={handleSubmit}>
+        <form className={classes.form} noValidate onSubmit={isValidUserId ? handleSubmit : validate}>
           <TextField
             value={userId}
             onChange={handleUserId}
