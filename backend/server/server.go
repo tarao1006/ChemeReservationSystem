@@ -2,7 +2,6 @@ package server
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/db"
@@ -30,10 +29,4 @@ func (s *Server) Run(port string) error {
 		return err
 	}
 	return nil
-}
-
-func PingHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
-	})
 }

@@ -1,6 +1,8 @@
 package server
 
 import (
+	"net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/controller"
@@ -8,6 +10,13 @@ import (
 )
 
 type Router struct{}
+
+func PingHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"message": "pong",
+	})
+}
 
 func NewRouter() *gin.Engine {
 	authMiddleware := middleware.NewAuthMiddleware()
