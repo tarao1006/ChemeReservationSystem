@@ -12,11 +12,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import { AuthContext } from '@contexts'
 import { logout } from '@api'
+import { headerHeight } from '@config'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     toolbar: {
-      minHeight: `56px`,
+      minHeight: `${headerHeight}`,
     },
     grow: {
       flexGrow: 1,

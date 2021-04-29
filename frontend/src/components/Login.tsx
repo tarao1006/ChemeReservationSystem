@@ -13,7 +13,7 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
-import { getMe, login as loginAPI, validate as validateAPI, testUserId, testUserPassword } from '@api'
+import { getMe, login as loginAPI, validate as validateAPI } from '@api'
 import { AuthContext } from '@contexts'
 
 const useStyles = makeStyles((theme) => ({

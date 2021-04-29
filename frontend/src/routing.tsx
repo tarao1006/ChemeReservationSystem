@@ -3,12 +3,10 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Backdrop from '@material-ui/core/Backdrop'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { makeStyles, createStyles } from '@material-ui/core/styles'
-import { Home } from './components/Home'
-import { Login } from './components/Login'
-import { Layout } from './layout'
+import { Home, Login } from '@components'
 import { AuthContext } from '@contexts'
 import { loginWithRememberToken as loginAPI, getMe } from '@api'
-
+import { Layout } from './layout'
 
 const useStyles = makeStyles(() =>
   createStyles({
