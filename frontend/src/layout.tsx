@@ -30,11 +30,6 @@ export const Layout = ({ children }) => {
         <Container component="main">
           {children}
         </Container>
-        <footer className={classes.footer}>
-          <Container maxWidth="sm">
-            <Copyright />
-          </Container>
-        </footer>
       </div>
     </AuthProvider>
   )
