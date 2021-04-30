@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tarao1006/ChemeReservationSystem/model"
@@ -16,15 +17,52 @@ func NewReservationController() *ReservationController {
 	return &ReservationController{}
 }
 
+func parseQuery(r *model.RangeAPI) (*model.DateRange, error) {
+	layout := "2006-01-02"
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	f, err := time.ParseInLocation(layout, r.From, loc)
+	if err != nil {
+		return nil, err
+	}
+	t, err := time.ParseInLocation(layout, r.To, loc)
+	if err != nil {
+		return nil, err
+	}
+
+	if f.After(t) {
+		return nil, model.ErrInvalidValue
+	}
+
+	return &model.DateRange{
+		From: f,
+		To:   t,
+	}, nil
+}
+
 func (ReservationController) Index(c *gin.Context) {
 	s := service.NewReservationService()
-	reservations, err := s.GetAll()
 
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
+	var r model.RangeAPI
+	if err := c.ShouldBindQuery(&r); err != nil {
+		reservations, err := s.GetAll()
+		if err != nil {
+			ErrResponse(c, http.StatusNotFound, err)
+			return
+		}
+		c.JSON(http.StatusOK, reservations)
+	} else {
+		res, err := parseQuery(&r)
+		if err != nil {
+			ErrResponse(c, http.StatusBadRequest, model.ErrInvalidQuery)
+			return
+		}
+		reservations, err := s.GetAllInRange(res)
+		if err != nil {
+			ErrResponse(c, http.StatusNotFound, err)
+			return
+		}
+		c.JSON(http.StatusOK, reservations)
 	}
-	c.JSON(http.StatusOK, reservations)
 }
 
 func (ReservationController) Create(c *gin.Context) {

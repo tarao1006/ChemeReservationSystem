@@ -36,3 +36,13 @@ type ReservationDTO struct {
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
 }
+
+type RangeAPI struct {
+	From string `form:"from"`
+	To   string `form:"to"`
+}
+
+type DateRange struct {
+	From time.Time
+	To   time.Time
+}

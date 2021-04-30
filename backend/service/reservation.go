@@ -25,6 +25,10 @@ func (rs *ReservationService) GetAll() ([]model.Reservation, error) {
 	return rs.repo.GetAll(rs.db)
 }
 
+func (rs *ReservationService) GetAllInRange(r *model.DateRange) ([]model.Reservation, error) {
+	return rs.repo.GetAllInRange(rs.db, r)
+}
+
 func (rs *ReservationService) GetByID(id int64) (*model.Reservation, error) {
 	return rs.repo.FindByID(rs.db, id)
 }
