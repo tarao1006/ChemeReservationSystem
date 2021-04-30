@@ -34,17 +34,13 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: theme.spacing(0.2),
       overflow: 'hidden',
       whiteSpace: 'nowrap',
-      display: 'block',
     },
-    weekCell: {
+    cell: {
       paddingTop: theme.spacing(0.5),
       paddingBottom: theme.spacing(2.0),
-      minWidth: `150px`,
-      maxWidth: `150px`,
     },
     button: {
       margin: theme.spacing(1.0),
-      textTransform: 'none',
     },
   }),
 )
@@ -141,18 +137,24 @@ export const Home = () => {
           <TableHead>
             <TableRow>
               <TableCell></TableCell>
-              {dates.map(d => <TableCell key={d.format('MM/DD (dd)')} align='center'>{d.format('MM/DD (dd)')}</TableCell>)}
+              {dates.map(d =>
+                (
+                  <TableCell key={d.format('MM/DD (dd)')} align='center'>
+                    {d.format('MM/DD (dd)')}
+                  </TableCell>)
+                )
+              }
             </TableRow>
           </TableHead>
           <TableBody>
             {
               facilities.map(facility => (
                 <TableRow key={facility.id}>
-                  <TableCell>{facility.name}</TableCell>
+                  <TableCell style={{ whiteSpace: 'nowrap' }}>{facility.name}</TableCell>
                   {
                     dates.map(d => {
                       return (
-                        <TableCell key={d.format()} className={classes.weekCell} onClick={handleClick}>
+                        <TableCell key={d.format()} onClick={handleClick} className={classes.cell}>
                             <div className={classes.plans}>
                               {
                                 reservations.filter(r => r.startAt.isSame(d, 'day')).filter(r => r.facilities.some(f => f.id == facility.id)).map((r, i, a) =>
