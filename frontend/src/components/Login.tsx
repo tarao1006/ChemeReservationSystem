@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import Avatar from '@material-ui/core/Avatar'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
 export const Login = () => {
   const classes = useStyles()
   const { setCurrentUser } = useContext(AuthContext)
+  const passwordInputEl = useRef(null)
   const [userId, setUserId] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [checked, setChecked] = useState<boolean>(false)
@@ -85,6 +86,7 @@ export const Login = () => {
     if (res.code == 200) {
       setIsValidUserId(true)
       setIsInvalidUserId(false)
+      passwordInputEl.current.focus()
     } else {
       setIsValidUserId(false)
       setIsInvalidUserId(true)
@@ -178,6 +180,7 @@ export const Login = () => {
             helperText={isInvalidUserId ? "ユーザーIDが不正です": ""}
           />
           <TextField
+            inputRef={passwordInputEl}
             style={{visibility: isValidUserId ? 'visible' : 'hidden'}}
             value={password}
             onChange={handlePassword}
