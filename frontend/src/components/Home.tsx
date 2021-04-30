@@ -13,12 +13,17 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { getAllReservationsInRange, Reservation, getAllFacilities, Facility, DateRange, inRange } from '@api'
 import { AuthContext, ReservationContext } from '@contexts'
+import { Loading } from '.'
+
 import dayjs from 'dayjs'
 import 'dayjs/locale/ja'
 dayjs.locale('ja')
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: {
+      zIndex: theme.zIndex.drawer + 1,
+    },
     plans: {
       fontSize: '12px',
       display: 'flex',
@@ -74,6 +79,7 @@ export const Home = () => {
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [startOfCurrentWeek, setStartOfCurrentWeek] = useState<dayjs.Dayjs>(dayjs())
   const [dates, setDates] = useState<dayjs.Dayjs[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const classes = useStyles()
   const params = useParams()
   const history = useHistory()
@@ -90,6 +96,7 @@ export const Home = () => {
         setFacilities(f)
 
         if (reservations.length === 0 || !inRange(fetchedDateRange, d)) {
+          setIsLoading(true)
           const targetDateRange = {
             from: d.add(-6, 'month').format('YYYY-MM-DD'),
             to: d.add(6, 'month').format('YYYY-MM-DD'),
@@ -103,6 +110,7 @@ export const Home = () => {
           setReservations(r)
         }
       }
+      setIsLoading(false)
     }
     fetch()
   }, [params]);
@@ -124,7 +132,8 @@ export const Home = () => {
   }
 
   return (
-    <div>
+    <>
+      {isLoading && <Loading isLoading={isLoading} />}
       <Button onClick={goBackToday} variant="outlined">
         今日
       </Button>
@@ -181,33 +190,33 @@ export const Home = () => {
             }
           </TableBody>
         </Table>
+        </TableContainer>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell align="center">ID</TableCell>
+              <TableCell align="center">用途</TableCell>
+              <TableCell align="center">使用施設</TableCell>
+              <TableCell align="center">作成者</TableCell>
+              <TableCell align="center">参加者</TableCell>
+              <TableCell align="center">時刻</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {reservations.filter(reservation => !reservation.startAt.isBefore(startOfCurrentWeek, 'hour') && !reservation.startAt.isAfter(startOfCurrentWeek.add(7, 'day'), 'hour')).map(reservation => (
+                <TableRow key={reservation.id}>
+                  <TableCell align="center">{reservation.id}</TableCell>
+                  <TableCell align="center">{reservation.plan.name}</TableCell>
+                  <TableCell align="center">{reservation.facilities.map(facility => `${facility.name} `)}</TableCell>
+                  <TableCell align="center">{reservation.creator.id}</TableCell>
+                  <TableCell align="center">{reservation.attendees.map(attendee => `${attendee.name} `)}</TableCell>
+                  <TableCell align="center">{formatDateAndTime(reservation.startAt)} - {formatTime(reservation.endAt)}</TableCell>
+                </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </TableContainer>
-    <TableContainer>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell align="center">ID</TableCell>
-            <TableCell align="center">用途</TableCell>
-            <TableCell align="center">使用施設</TableCell>
-            <TableCell align="center">作成者</TableCell>
-            <TableCell align="center">参加者</TableCell>
-            <TableCell align="center">時刻</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {reservations.filter(reservation => !reservation.startAt.isBefore(startOfCurrentWeek, 'hour') && !reservation.startAt.isAfter(startOfCurrentWeek.add(7, 'day'), 'hour')).map(reservation => (
-              <TableRow key={reservation.id}>
-                <TableCell align="center">{reservation.id}</TableCell>
-                <TableCell align="center">{reservation.plan.name}</TableCell>
-                <TableCell align="center">{reservation.facilities.map(facility => `${facility.name} `)}</TableCell>
-                <TableCell align="center">{reservation.creator.id}</TableCell>
-                <TableCell align="center">{reservation.attendees.map(attendee => `${attendee.name} `)}</TableCell>
-                <TableCell align="center">{formatDateAndTime(reservation.startAt)} - {formatTime(reservation.endAt)}</TableCell>
-              </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-    </div>
+  </>
   )
 }

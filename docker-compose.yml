@@ -41,6 +41,7 @@ services:
     volumes:
       - datavolume:/var/lib/mysql
       - ./db/reset.sql:/reset.sql
+      - ./db/reservation.sql:/reservation.sql
       - ./db/reset:/reset
       - ./docker/db/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
 
