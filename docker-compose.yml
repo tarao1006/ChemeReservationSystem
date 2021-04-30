@@ -20,7 +20,7 @@ services:
       dockerfile: ../docker/frontend/Dockerfile
     command: yarn start
     ports:
-      - 8080:8080
+      - 1234:1234
     volumes:
       - ./frontend:/app
       - node_modules-volume:/app/node_modules
@@ -33,7 +33,7 @@ services:
       context: ./docker/db
     restart: always
     ports:
-      - 3306:3306
+      - 13306:3306
     environment:
       MYSQL_ROOT_PASSWORD: password
     cap_add:

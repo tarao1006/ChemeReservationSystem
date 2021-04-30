@@ -9,3 +9,7 @@ func Port() string {
 func Mode() string {
 	return os.Getenv("MODE")
 }
+
+func FrontendURL() string {
+	return os.Getenv("FRONTEND_URL")
+}

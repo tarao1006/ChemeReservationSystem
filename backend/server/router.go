@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/tarao1006/ChemeReservationSystem/config"
 	"github.com/tarao1006/ChemeReservationSystem/controller"
 	"github.com/tarao1006/ChemeReservationSystem/middleware"
 )
@@ -29,7 +30,7 @@ func NewRouter() *gin.Engine {
 			"Authorization",
 		},
 		AllowOrigins: []string{
-			"http://localhost:8080",
+			config.FrontendURL(),
 		},
 		AllowCredentials: true,
 	})
