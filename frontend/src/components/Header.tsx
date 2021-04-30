@@ -10,12 +10,17 @@ import AccountCircle from '@material-ui/icons/AccountCircle'
 import Menu from '@material-ui/core/Menu'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
+import EventNoteIcon from '@material-ui/icons/EventNote'
 import { AuthContext } from '@contexts'
 import { logout } from '@api'
 import { headerHeight } from '@config'
+import { IconButton } from '@material-ui/core'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    title: {
+      marginRight: theme.spacing(3.0),
+    },
     toolbar: {
       minHeight: `${headerHeight}`,
     },
@@ -100,9 +105,12 @@ export const Header = () => {
     <div className={classes.grow}>
       <AppBar position="static">
         <Toolbar className={classes.toolbar}>
-          <Typography variant="h6" noWrap>
+          <Typography variant="h6" noWrap className={classes.title}>
             施設予約
           </Typography>
+          <IconButton color="inherit">
+            <EventNoteIcon />
+          </IconButton>
           <div className={classes.grow} />
           {currentUser !== undefined && (
             <>
