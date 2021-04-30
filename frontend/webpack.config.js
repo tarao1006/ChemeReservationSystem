@@ -31,6 +31,7 @@ module.exports = {
     port: 1234,
     historyApiFallback: true,
   },
+  devtool: "source-map",
   plugins: [
     new webpack.EnvironmentPlugin([
       'TOKEN',
