@@ -42,13 +42,30 @@ const RedirectComponent = ({ children }) => {
     login()
   }, [currentUser])
 
-  return (isLoading
-    ? <Backdrop classes={{ root: classes.root }} open={isLoading}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    : currentUser === undefined
-    ? <Login />
-    : <>{children}</>
+  return (
+    <>
+      {
+        isLoading
+        ?
+          <Backdrop classes={{ root: classes.root }} open={isLoading}>
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        : currentUser === undefined
+        ? <Login />
+        : children
+      }
+    </>
+  )
+}
+
+const RedirectRoute = ({ path, exact, component }) => {
+
+  return (
+    <Route path={path} exact={exact}>
+      <RedirectComponent>
+        {React.createElement(component)}
+      </RedirectComponent>
+    </Route>
   )
 }
 
@@ -56,16 +73,16 @@ export const Routing = () => {
   return (
     <Router>
       <Layout>
-        <Route path='/' exact>
-          <RedirectComponent>
-            <Home />
-          </RedirectComponent>
-        </Route>
-        <Route path='/home' exact>
-          <RedirectComponent>
-            <Home />
-          </RedirectComponent>
-        </Route>
+        <RedirectRoute
+          path='/'
+          exact
+          component={Home}
+        />
+        <RedirectRoute
+          path='/home'
+          exact
+          component={Home}
+        />
       </Layout>
     </Router>
   )
