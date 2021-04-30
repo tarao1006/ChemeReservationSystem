@@ -44,6 +44,12 @@ func (ReservationController) Index(c *gin.Context) {
 
 	var r model.RangeAPI
 	if err := c.ShouldBindQuery(&r); err != nil {
+		ErrResponse(c, http.StatusNotFound, err)
+		return
+	}
+
+	res, err := parseQuery(&r)
+	if err != nil {
 		reservations, err := s.GetAll()
 		if err != nil {
 			ErrResponse(c, http.StatusNotFound, err)
@@ -51,11 +57,6 @@ func (ReservationController) Index(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, reservations)
 	} else {
-		res, err := parseQuery(&r)
-		if err != nil {
-			ErrResponse(c, http.StatusBadRequest, model.ErrInvalidQuery)
-			return
-		}
 		reservations, err := s.GetAllInRange(res)
 		if err != nil {
 			ErrResponse(c, http.StatusNotFound, err)
