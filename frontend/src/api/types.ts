@@ -75,6 +75,16 @@ export interface DateRange {
   to: string
 }
 
+export const inRange = (r: DateRange, d: dayjs.Dayjs): boolean => {
+  const f = dayjs(r.from)
+  const t = dayjs(r.to)
+  const dateBefore = d.add(-6, 'month')
+  const dateAfter = d.add(6, 'month')
+
+  if (dateBefore.isBefore(f) || dateAfter.isAfter(t)) return false
+  return true
+}
+
 export const convertToUser = (u: UserDTO): User => {
   return {
     id: u.id,

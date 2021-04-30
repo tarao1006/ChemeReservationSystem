@@ -1,22 +1,26 @@
 import React, { createContext, useState } from "react"
-import { Reservation } from '@api'
-
+import { Reservation, DateRange } from '@api'
 
 interface IReservationContext {
   reservations: Reservation[]
+  fetchedDateRange: DateRange
   setReservations: React.Dispatch<React.SetStateAction<Reservation[]>>
+  setFetchedDateRange: React.Dispatch<React.SetStateAction<DateRange>>
 }
 
 export const ReservationContext = createContext<IReservationContext>({
   reservations: [],
-  setReservations: () => {}
+  fetchedDateRange: { from: "", to: "" },
+  setReservations: () => {},
+  setFetchedDateRange: () => {}
 })
 
 export const ReservationProvider = ({ children }) => {
   const [reservations, setReservations] = useState<Reservation[]>([])
+  const [fetchedDateRange, setFetchedDateRange] = useState<DateRange>({ from: "", to: "" })
 
   return (
-    <ReservationContext.Provider value={{ reservations, setReservations }}>
+    <ReservationContext.Provider value={{ reservations, fetchedDateRange, setReservations, setFetchedDateRange }}>
       {children}
     </ReservationContext.Provider>
   )

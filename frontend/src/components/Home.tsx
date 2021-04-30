@@ -11,7 +11,7 @@ import Button from '@material-ui/core/Button'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { getAllReservationsInRange, Reservation, getAllFacilities, Facility, DateRange } from '@api'
+import { getAllReservationsInRange, Reservation, getAllFacilities, Facility, DateRange, inRange } from '@api'
 import { AuthContext, ReservationContext } from '@contexts'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ja'
@@ -70,9 +70,8 @@ const formatReservation = (r: Reservation): string => {
 
 export const Home = () => {
   const { currentUser } = useContext(AuthContext)
-  const { reservations, setReservations } = useContext(ReservationContext)
+  const { reservations, fetchedDateRange, setReservations, setFetchedDateRange } = useContext(ReservationContext)
   const [facilities, setFacilities] = useState<Facility[]>([])
-  const [startOfThisWeek, setStartOfThisWeek] = useState<dayjs.Dayjs>(dayjs())
   const [startOfCurrentWeek, setStartOfCurrentWeek] = useState<dayjs.Dayjs>(dayjs())
   const [dates, setDates] = useState<dayjs.Dayjs[]>([])
   const classes = useStyles()
@@ -82,21 +81,21 @@ export const Home = () => {
   useEffect(() => {
     const fetch = async () => {
       if (currentUser) {
-        const t = dayjs(params["date"]).startOf('day')
-        const day = t.day()
-        const s = t.add(-day, 'day')
-        setStartOfThisWeek(s)
+        const d = dayjs(params["date"]).startOf('day')
+        const s = d.add(-d.day(), 'day')
         setStartOfCurrentWeek(s)
         setDates(new Array<dayjs.Dayjs>(7).fill(s).map((d, i) => d.add(i, 'day')))
 
         const f = await getAllFacilities()
         setFacilities(f)
 
-        if (reservations.length === 0) {
-          const r = await getAllReservationsInRange({
-            from: t.add(-6, 'month').format('YYYY-MM-DD'),
-            to: t.add(6, 'month').format('YYYY-MM-DD'),
-          })
+        if (reservations.length === 0 || !inRange(fetchedDateRange, d)) {
+          const targetDateRange = {
+            from: d.add(-6, 'month').format('YYYY-MM-DD'),
+            to: d.add(6, 'month').format('YYYY-MM-DD'),
+          }
+          const r = await getAllReservationsInRange(targetDateRange)
+          setFetchedDateRange(targetDateRange)
           r.sort((l, r) => {
             if (l.startAt.isAfter(r.startAt)) return 1
             else return -1
