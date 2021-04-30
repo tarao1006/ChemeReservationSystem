@@ -5,7 +5,10 @@ import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { getAllReservations, Reservation, getAllFacilities, Facility } from '@api'
 import { AuthContext } from '@contexts'
@@ -24,7 +27,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     plan: {
       width: '100%',
-      backgroundColor: 'lightgreen',
       paddingLeft: theme.spacing(0.4),
       paddingRight: 0,
       paddingTop: 0,
@@ -37,6 +39,12 @@ const useStyles = makeStyles((theme: Theme) =>
     weekCell: {
       paddingTop: theme.spacing(0.5),
       paddingBottom: theme.spacing(2.0),
+      minWidth: `150px`,
+      maxWidth: `150px`,
+    },
+    button: {
+      margin: theme.spacing(1.0),
+      textTransform: 'none',
     },
   }),
 )
@@ -65,13 +73,18 @@ export const Home = () => {
   const { currentUser } = useContext(AuthContext)
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [reservations, setReservations] = useState<Reservation[]>([])
+  const [startOfThisWeek, setStartOfThisWeek] = useState<dayjs.Dayjs>(dayjs())
+  const [startOfCurrentWeek, setStartOfCurrentWeek] = useState<dayjs.Dayjs>(dayjs())
   const [dates, setDates] = useState<dayjs.Dayjs[]>([])
   const classes = useStyles()
 
   useEffect(() => {
-    const today = dayjs().add(-21, 'day')
-    const day = today.day()
-    setDates(new Array<dayjs.Dayjs>(7).fill(today).map((d, i) => d.add(i-day, 'day')))
+    const t = dayjs().startOf('day').add(-21, 'day')
+    const day = t.day()
+    const s = t.add(-day, 'day')
+    setStartOfThisWeek(s)
+    setStartOfCurrentWeek(s)
+    setDates(new Array<dayjs.Dayjs>(7).fill(s).map((d, i) => d.add(i, 'day')))
   }, [])
 
   useEffect(() => {
@@ -91,12 +104,38 @@ export const Home = () => {
     fetch()
   }, []);
 
+  const forwardDay = () => {
+    const nextDate = startOfCurrentWeek.add(7, 'day')
+    setStartOfCurrentWeek(nextDate)
+    setDates(new Array<dayjs.Dayjs>(7).fill(nextDate).map((d, i) => d.add(i, 'day')))
+  }
+
+  const backDay = () => {
+    const previousDate = startOfCurrentWeek.add(-7, 'day')
+    setStartOfCurrentWeek(previousDate)
+    setDates(new Array<dayjs.Dayjs>(7).fill(previousDate).map((d, i) => d.add(i, 'day')))
+  }
+
+  const goBackToday = () => {
+    setStartOfCurrentWeek(startOfThisWeek)
+    setDates(new Array<dayjs.Dayjs>(7).fill(startOfThisWeek).map((d, i) => d.add(i, 'day')))
+  }
+
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     console.log(e.target)
   }
 
   return (
     <div>
+      <Button onClick={goBackToday} variant="outlined">
+        今日
+      </Button>
+      <IconButton onClick={backDay} size="medium" className={classes.button}>
+        <ArrowBackIosIcon fontSize="small" />
+      </IconButton>
+      <IconButton onClick={forwardDay} size="medium" className={classes.button}>
+        <ArrowForwardIosIcon fontSize="small" />
+      </IconButton>
       <TableContainer>
         <Table>
           <TableHead>
@@ -120,11 +159,11 @@ export const Home = () => {
                                 (
                                   (i < 2
                                   ?
-                                    <Button key={r.id} className={classes.plan} component="span">
+                                    <Button key={r.id} color="primary" className={classes.plan} component="span">
                                       {formatReservation(r)}
                                     </Button>
                                   : i == 2
-                                  ? <span key={r.id}>他{a.length - i}件</span>
+                                  ? <Button key={r.id} className={classes.plan} component='span'>他{a.length - i}件</Button>
                                   : <span key={r.id} style={{ display: 'hidden' }}></span>
                                   )
                                 )
@@ -152,7 +191,7 @@ export const Home = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {reservations.map(reservation => (
+          {reservations.filter(reservation => !reservation.startAt.isBefore(startOfCurrentWeek, 'hour') && !reservation.startAt.isAfter(startOfCurrentWeek.add(7, 'day'), 'hour')).map(reservation => (
               <TableRow key={reservation.id}>
                 <TableCell align="center">{reservation.id}</TableCell>
                 <TableCell align="center">{reservation.plan.name}</TableCell>

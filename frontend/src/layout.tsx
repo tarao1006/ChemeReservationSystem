@@ -1,13 +1,14 @@
 import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Container from '@material-ui/core/Container';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import { AuthProvider } from '@contexts'
 import { Header } from '@components'
 import { headerHeight } from '@config'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
+    marginTop: theme.spacing(2.0),
     display: 'flex',
     flexDirection: 'column',
     minHeight: `calc(100vh - ${headerHeight})`,
