@@ -77,7 +77,7 @@ export const Routing = () => {
     <Router>
       <Layout>
         <Route path="/" exact>
-          <Redirect to={`/calendar/week/${dayjs().startOf('day').format('YYYY-MM-DD')}`} />
+          <Redirect to={`/calendar/week/${dayjs().startOf('day').add(-21, 'day').format('YYYY-MM-DD')}`} />
         </Route>
         <RedirectRoute
           path='/calendar/week/:date'

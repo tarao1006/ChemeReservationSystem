@@ -70,6 +70,11 @@ export interface Reservation {
 	facilities: Facility[]
 }
 
+export interface DateRange {
+  from: string
+  to: string
+}
+
 export const convertToUser = (u: UserDTO): User => {
   return {
     id: u.id,

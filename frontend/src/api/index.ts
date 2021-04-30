@@ -26,5 +26,5 @@ export const baseInstance = axios.create({
 export { login, loginWithRememberToken, logout, validate } from './auth'
 export { getAllFacilities } from './facility'
 export { getMe } from './user'
-export { getAllReservations } from './reservation'
-export { CodeResponse, Facility, User, UserDTO, ReservationDTO, Reservation, Plan, convertToUser, convertToReservation } from './types'
+export { getAllReservations, getAllReservationsInRange } from './reservation'
+export { CodeResponse, Facility, User, UserDTO, ReservationDTO, Reservation, Plan, DateRange, convertToUser, convertToReservation } from './types'
