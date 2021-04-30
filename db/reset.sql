@@ -158,7 +158,7 @@ INSERT INTO `reservation` (
 INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (15, 5, "professor002");
 INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (16, 5, "professor001");
 INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (17, 5, "professor003");
-INSERT INTO `reservation_facility` (`id`, `reservation_id`, `facility_id`) VALUES (5, 5, 4);
+INSERT INTO `reservation_facility` (`id`, `reservation_id`, `facility_id`) VALUES (5, 5, 3);
 
 INSERT INTO `reservation` (
   `id`, `creator_id`, `start_at`, `end_at`, `plan_id`, `plan_memo`
@@ -167,7 +167,7 @@ INSERT INTO `reservation` (
 );
 INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (18, 6, "professor002");
 INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (19, 6, "student004");
-INSERT INTO `reservation_facility` (`id`, `reservation_id`, `facility_id`) VALUES (6, 6, 1);
+INSERT INTO `reservation_facility` (`id`, `reservation_id`, `facility_id`) VALUES (6, 6, 2);
 
 INSERT INTO `reservation` (
   `id`, `creator_id`, `start_at`, `end_at`, `plan_id`, `plan_memo`
@@ -213,3 +213,54 @@ INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (34, 1
 INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (35, 10, "student003");
 INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (36, 10, "student004");
 INSERT INTO `reservation_facility` (`id`, `reservation_id`, `facility_id`) VALUES (10, 10, 4);
+
+INSERT INTO `reservation` (
+  `id`, `creator_id`, `start_at`, `end_at`, `plan_id`, `plan_memo`
+) VALUES (
+  11, "professor004", "2021-04-06 18:00:00", "2021-04-06 19:00:00", 1, ""
+);
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (37, 11, "professor004");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (38, 11, "professor002");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (49, 11, "student004");
+INSERT INTO `reservation_facility` (`id`, `reservation_id`, `facility_id`) VALUES (11, 11, 4);
+
+INSERT INTO `reservation` (
+  `id`, `creator_id`, `start_at`, `end_at`, `plan_id`, `plan_memo`
+) VALUES (
+  12, "professor003", "2021-04-07 13:00:00", "2021-04-07 15:00:00", 2, ""
+);
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (50, 12, "professor003");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (51, 12, "professor004");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (52, 12, "student001");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (53, 12, "student002");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (54, 12, "student003");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (55, 12, "student004");
+INSERT INTO `reservation_facility` (`id`, `reservation_id`, `facility_id`) VALUES (12, 12, 1);
+
+INSERT INTO `reservation` (
+  `id`, `creator_id`, `start_at`, `end_at`, `plan_id`, `plan_memo`
+) VALUES (
+  13, "professor002", "2021-04-09 10:00:00", "2021-04-09 14:00:00", 2, ""
+);
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (56, 13, "professor002");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (57, 13, "student004");
+INSERT INTO `reservation_facility` (`id`, `reservation_id`, `facility_id`) VALUES (13, 13, 3);
+
+INSERT INTO `reservation` (
+  `id`, `creator_id`, `start_at`, `end_at`, `plan_id`, `plan_memo`
+) VALUES (
+  14, "professor002", "2021-04-05 17:00:00", "2021-04-05 18:00:00", 2, ""
+);
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (58, 14, "professor002");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (59, 14, "professor001");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (60, 14, "professor003");
+INSERT INTO `reservation_facility` (`id`, `reservation_id`, `facility_id`) VALUES (14, 14, 3);
+
+INSERT INTO `reservation` (
+  `id`, `creator_id`, `start_at`, `end_at`, `plan_id`, `plan_memo`
+) VALUES (
+  18, "professor002", "2021-04-05 19:00:00", "2021-04-05 21:00:00", 1, ""
+);
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (61, 18, "professor002");
+INSERT INTO `reservation_user` (`id`, `reservation_id`, `user_id`) VALUES (62, 18, "professor001");
+INSERT INTO `reservation_facility` (`id`, `reservation_id`, `facility_id`) VALUES (18, 18, 3);

@@ -1,3 +1,7 @@
+import dayjs from 'dayjs'
+import 'dayjs/locale/ja'
+dayjs.locale('ja')
+
 export interface CodeResponse {
   code: number
   message: string
@@ -56,13 +60,13 @@ export interface ReservationDTO {
 export interface Reservation {
   id: number
 	creator: User
-	startAt: Date
-  endAt: Date
+	startAt: dayjs.Dayjs
+  endAt: dayjs.Dayjs
 	plan: Plan
 	planMemo: string
-	createdAt: Date
-	updatedAt: Date
-	attendees:  User[]
+	createdAt: dayjs.Dayjs
+	updatedAt: dayjs.Dayjs
+	attendees: User[]
 	facilities: Facility[]
 }
 
@@ -80,12 +84,12 @@ export const convertToReservation = (r: ReservationDTO): Reservation => {
   return {
     id: r.id,
     creator: convertToUser(r.creator),
-    startAt: new Date(r.start_at),
-    endAt: new Date(r.end_at),
+    startAt: dayjs(r.start_at),
+    endAt: dayjs(r.end_at),
     plan: r.plan,
     planMemo: r.plan_memo,
-    createdAt: new Date(r.created_at),
-    updatedAt: new Date(r.updated_at),
+    createdAt: dayjs(r.created_at),
+    updatedAt: dayjs(r.updated_at),
     attendees: r.attendees.map(u => convertToUser(u)),
     facilities: r.facilities,
   }

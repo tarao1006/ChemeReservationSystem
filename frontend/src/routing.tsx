@@ -79,7 +79,7 @@ export const Routing = () => {
           component={Home}
         />
         <RedirectRoute
-          path='/home'
+          path='/calendar/week'
           exact
           component={Home}
         />
