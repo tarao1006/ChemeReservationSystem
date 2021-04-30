@@ -2,7 +2,7 @@ import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Container from '@material-ui/core/Container';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { AuthProvider } from '@contexts'
+import { AuthProvider, ReservationProvider } from '@contexts'
 import { Header } from '@components'
 import { headerHeight } from '@config'
 
@@ -25,6 +25,7 @@ export const Layout = ({ children }) => {
 
   return (
     <AuthProvider>
+    <ReservationProvider>
       <CssBaseline />
       <Header />
       <div className={classes.root}>
@@ -32,6 +33,7 @@ export const Layout = ({ children }) => {
           {children}
         </Container>
       </div>
+    </ReservationProvider>
     </AuthProvider>
   )
 }
