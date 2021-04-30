@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom'
 import Backdrop from '@material-ui/core/Backdrop'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { makeStyles, createStyles } from '@material-ui/core/styles'
@@ -7,6 +7,9 @@ import { Home, Login } from '@components'
 import { AuthContext } from '@contexts'
 import { loginWithRememberToken as loginAPI, getMe } from '@api'
 import { Layout } from './layout'
+import dayjs from 'dayjs'
+import 'dayjs/locale/ja'
+dayjs.locale('ja');
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -25,13 +28,13 @@ const RedirectComponent = ({ children }) => {
   useEffect(() => {
     const login = async () => {
       setIsLoading(true)
-      if (currentUser == undefined) {
+      if (currentUser === undefined) {
         const me = await getMe()
         if (me) {
           setCurrentUser(me)
         } else {
           const loginRes = await loginAPI()
-          if (loginRes.code == 200) {
+          if (loginRes.code === 200) {
             const me = await getMe()
             setCurrentUser(me)
           }
@@ -73,13 +76,11 @@ export const Routing = () => {
   return (
     <Router>
       <Layout>
+        <Route path="/" exact>
+          <Redirect to={`/calendar/week/${dayjs().startOf('day').format('YYYY-MM-DD')}`} />
+        </Route>
         <RedirectRoute
-          path='/'
-          exact
-          component={Home}
-        />
-        <RedirectRoute
-          path='/calendar/week'
+          path='/calendar/week/:date'
           exact
           component={Home}
         />

@@ -67,7 +67,7 @@ export const Login = () => {
   const login = async (userId: string, password: string, rememberMe: boolean): Promise<void> => {
     setIsLoading(true)
     const res = await loginAPI(userId, password, rememberMe)
-    if (res.code == 200) {
+    if (res.code === 200) {
       const me = await getMe()
       setCurrentUser(me)
       setIsInvalidPassword(false)
@@ -83,7 +83,7 @@ export const Login = () => {
     e.preventDefault()
     setIsLoading(true)
     const res = await validateAPI(userId)
-    if (res.code == 200) {
+    if (res.code === 200) {
       setIsValidUserId(true)
       setIsInvalidUserId(false)
       passwordInputEl.current.focus()
