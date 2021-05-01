@@ -106,6 +106,66 @@ func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 	}, nil
 }
 
+func (UserRepository) FindByIDs(db *sqlx.DB, ids []string) ([]*model.User, error) {
+	var users []model.UserDTOWithType
+	query := `
+		SELECT
+			u.id, u.name, u.name_ruby, u.password_digest, u.email_address, ut.id as type_id, ut.name as type_name
+		FROM
+			user as u
+		INNER JOIN
+			user_group as ug
+		ON
+			ug.user_id = u.id
+		INNER JOIN
+			user_type as ut
+		ON
+			ug.user_type_id = ut.id
+		WHERE u.id IN (?)
+	`
+
+	query, params, err := sqlx.In(query, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.Select(&users, query, params...); err != nil {
+		return nil, err
+	}
+
+	res := []*model.User{}
+	userIDs := []string{}
+	mapTypes := map[string][]model.UserType{}
+	mapUser := map[string]*model.User{}
+
+	for _, user := range users {
+		mapTypes[user.ID] = append(mapTypes[user.ID], model.UserType{
+			ID:   user.TypeID,
+			Name: user.TypeName,
+		})
+		if _, ok := mapUser[user.ID]; !ok {
+			userIDs = append(userIDs, user.ID)
+			mapUser[user.ID] = &model.User{
+				ID:           user.ID,
+				Name:         user.Name,
+				NameRuby:     user.NameRuby,
+				EmailAddress: user.EmailAddress,
+				Types:        []model.UserType{},
+			}
+		}
+	}
+
+	for _, id := range userIDs {
+		mapUser[id].Types = mapTypes[id]
+	}
+
+	for _, v := range mapUser {
+		res = append(res, v)
+	}
+
+	return res, nil
+}
+
 func (UserRepository) FindDTOByID(db *sqlx.DB, id string) (*model.UserDTO, error) {
 	var user model.UserDTO
 	query := `SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE id = ?`

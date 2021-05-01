@@ -13,15 +13,33 @@ type ReservationRepository struct{}
 func NewReservationRepository() *ReservationRepository {
 	return &ReservationRepository{}
 }
-
 func (ur *ReservationRepository) GetAll(db *sqlx.DB) ([]model.Reservation, error) {
-	reservations := []model.ReservationDTO{}
-	if err := db.Select(&reservations,
-		`SELECT
-			id, creator_id, start_at, end_at, plan_id, plan_memo, created_at, updated_at
+	var reservations []model.ReservationDTOWithStruct
+	query := `
+		SELECT
+			r.id,
+			r.creator_id,
+			r.start_at,
+			r.end_at,
+			r.plan_id,
+			r.plan_memo,
+			r.created_at,
+			r.updated_at,
+			ru.user_id as user_id,
+			rf.facility_id as facility_id
 		FROM
-			reservation
-		ORDER BY id`); err != nil {
+			reservation as r
+		INNER JOIN
+			reservation_user as ru
+		ON
+			r.id = ru.reservation_id
+		INNER JOIN
+			reservation_facility as rf
+		ON
+			r.id = rf.reservation_id
+		ORDER BY r.id
+	`
+	if err := db.Select(&reservations, query); err != nil {
 		return nil, err
 	}
 
@@ -29,87 +47,103 @@ func (ur *ReservationRepository) GetAll(db *sqlx.DB) ([]model.Reservation, error
 	userRepo := NewUserRepository()
 	planRepo := NewPlanRepository()
 	facilityRepo := NewFacilityRepository()
-	for _, reservation := range reservations {
-		var (
-			err         error
-			creator     *model.User
-			plan        *model.Plan
-			userIDs     []string
-			facilityIDs []int64
-			users       []*model.User
-			facilities  []*model.Facility
-		)
 
-		creator, err = userRepo.FindByID(db, reservation.CreatorID)
-		if err != nil {
-			return nil, err
+	mapReservationIDs := map[int64]int64{}
+	reservationIDs := []int64{}
+	mapReservations := map[int64]*model.Reservation{}
+	mapUserIDs := map[int64][]string{}
+	mapFacilityIDs := map[int64][]int64{}
+
+	for _, r := range reservations {
+		exists := false
+
+		if _, ok := mapReservationIDs[r.ID]; ok {
+			exists = true
 		}
 
-		plan, err = planRepo.FindByID(db, reservation.PlanID)
-		if err != nil {
-			return nil, err
-		}
+		if !exists {
+			mapReservationIDs[r.ID] = 1
+			reservationIDs = append(reservationIDs, r.ID)
 
-		if err = db.Select(&userIDs,
-			`SELECT
-				user_id
-			FROM
-				reservation_user
-			WHERE
-				reservation_id = ?;`, reservation.ID); err != nil {
-			return nil, err
-		}
-		for _, id := range userIDs {
-			user, err := userRepo.FindByID(db, id)
+			creator, err := userRepo.FindByID(db, r.CreatorID)
 			if err != nil {
 				return nil, err
 			}
-			users = append(users, user)
-		}
 
-		if err = db.Select(&facilityIDs,
-			`SELECT
-				facility_id
-			FROM
-				reservation_facility
-			WHERE
-				reservation_id = ?;`, reservation.ID); err != nil {
-			return nil, err
-		}
-		for _, id := range facilityIDs {
-			facility, err := facilityRepo.FindByID(db, id)
+			plan, err := planRepo.FindByID(db, r.PlanID)
 			if err != nil {
 				return nil, err
 			}
-			facilities = append(facilities, facility)
-		}
 
-		res = append(res, model.Reservation{
-			ID:         reservation.ID,
-			Creator:    creator,
-			StartAt:    reservation.StartAt,
-			EndAt:      reservation.EndAt,
-			Plan:       plan,
-			PlanMemo:   reservation.PlanMemo,
-			CreatedAt:  reservation.CreatedAt,
-			UpdatedAt:  reservation.UpdatedAt,
-			Attendees:  users,
-			Facilities: facilities,
-		})
+			mapReservations[r.ID] = &model.Reservation{
+				ID:        r.ID,
+				Creator:   creator,
+				StartAt:   r.StartAt,
+				EndAt:     r.EndAt,
+				Plan:      plan,
+				PlanMemo:  r.PlanMemo,
+				CreatedAt: r.CreatedAt,
+			}
+		}
 	}
+
+	for _, r := range reservations {
+		mapUserIDs[r.ID] = append(mapUserIDs[r.ID], r.UserID)
+		mapFacilityIDs[r.ID] = append(mapFacilityIDs[r.ID], r.FacilityID)
+	}
+
+	for _, id := range reservationIDs {
+		userIDs := mapUserIDs[id]
+		facilityIDs := mapFacilityIDs[id]
+
+		users, err := userRepo.FindByIDs(db, userIDs)
+		if err != nil {
+			return nil, err
+		}
+
+		facilities, err := facilityRepo.FindByIDs(db, facilityIDs)
+		if err != nil {
+			return nil, err
+		}
+
+		r := mapReservations[id]
+		r.Attendees = users
+		r.Facilities = facilities
+
+		res = append(res, *r)
+	}
+
 	return res, nil
 }
 
-func (ur *ReservationRepository) GetAllInRange(db *sqlx.DB, r *model.DateRange) ([]model.Reservation, error) {
-	reservations := []model.ReservationDTO{}
-	if err := db.Select(&reservations, `
+func (ur *ReservationRepository) GetAllInRange(db *sqlx.DB, dr *model.DateRange) ([]model.Reservation, error) {
+	var reservations []model.ReservationDTOWithStruct
+	query := `
 		SELECT
-			id, creator_id, start_at, end_at, plan_id, plan_memo, created_at, updated_at
+			r.id,
+			r.creator_id,
+			r.start_at,
+			r.end_at,
+			r.plan_id,
+			r.plan_memo,
+			r.created_at,
+			r.updated_at,
+			ru.user_id as user_id,
+			rf.facility_id as facility_id
 		FROM
-			reservation
+			reservation as r
+		INNER JOIN
+			reservation_user as ru
+		ON
+			r.id = ru.reservation_id
+		INNER JOIN
+			reservation_facility as rf
+		ON
+			r.id = rf.reservation_id
 		WHERE start_at BETWEEN ? AND ?
-		ORDER BY id
-	`, r.From, r.To); err != nil {
+		ORDER BY r.id
+	`
+	if err := db.Select(&reservations, query, dr.From, dr.To); err != nil {
 		return nil, err
 	}
 
@@ -117,154 +151,146 @@ func (ur *ReservationRepository) GetAllInRange(db *sqlx.DB, r *model.DateRange) 
 	userRepo := NewUserRepository()
 	planRepo := NewPlanRepository()
 	facilityRepo := NewFacilityRepository()
-	for _, reservation := range reservations {
-		var (
-			err         error
-			creator     *model.User
-			plan        *model.Plan
-			userIDs     []string
-			facilityIDs []int64
-			users       []*model.User
-			facilities  []*model.Facility
-		)
 
-		creator, err = userRepo.FindByID(db, reservation.CreatorID)
-		if err != nil {
-			return nil, err
+	mapReservationIDs := map[int64]int64{}
+	reservationIDs := []int64{}
+	mapReservations := map[int64]*model.Reservation{}
+	mapUserIDs := map[int64][]string{}
+	mapFacilityIDs := map[int64][]int64{}
+
+	for _, r := range reservations {
+		exists := false
+
+		if _, ok := mapReservationIDs[r.ID]; ok {
+			exists = true
 		}
 
-		plan, err = planRepo.FindByID(db, reservation.PlanID)
-		if err != nil {
-			return nil, err
-		}
+		if !exists {
+			mapReservationIDs[r.ID] = 1
+			reservationIDs = append(reservationIDs, r.ID)
 
-		if err = db.Select(&userIDs,
-			`SELECT
-				user_id
-			FROM
-				reservation_user
-			WHERE
-				reservation_id = ?;`, reservation.ID); err != nil {
-			return nil, err
-		}
-		for _, id := range userIDs {
-			user, err := userRepo.FindByID(db, id)
+			creator, err := userRepo.FindByID(db, r.CreatorID)
 			if err != nil {
 				return nil, err
 			}
-			users = append(users, user)
-		}
 
-		if err = db.Select(&facilityIDs,
-			`SELECT
-				facility_id
-			FROM
-				reservation_facility
-			WHERE
-				reservation_id = ?;`, reservation.ID); err != nil {
-			return nil, err
-		}
-		for _, id := range facilityIDs {
-			facility, err := facilityRepo.FindByID(db, id)
+			plan, err := planRepo.FindByID(db, r.PlanID)
 			if err != nil {
 				return nil, err
 			}
-			facilities = append(facilities, facility)
-		}
 
-		res = append(res, model.Reservation{
-			ID:         reservation.ID,
-			Creator:    creator,
-			StartAt:    reservation.StartAt,
-			EndAt:      reservation.EndAt,
-			Plan:       plan,
-			PlanMemo:   reservation.PlanMemo,
-			CreatedAt:  reservation.CreatedAt,
-			UpdatedAt:  reservation.UpdatedAt,
-			Attendees:  users,
-			Facilities: facilities,
-		})
+			mapReservations[r.ID] = &model.Reservation{
+				ID:        r.ID,
+				Creator:   creator,
+				StartAt:   r.StartAt,
+				EndAt:     r.EndAt,
+				Plan:      plan,
+				PlanMemo:  r.PlanMemo,
+				CreatedAt: r.CreatedAt,
+			}
+		}
 	}
+
+	for _, r := range reservations {
+		mapUserIDs[r.ID] = append(mapUserIDs[r.ID], r.UserID)
+		mapFacilityIDs[r.ID] = append(mapFacilityIDs[r.ID], r.FacilityID)
+	}
+
+	for _, id := range reservationIDs {
+		userIDs := mapUserIDs[id]
+		facilityIDs := mapFacilityIDs[id]
+
+		users, err := userRepo.FindByIDs(db, userIDs)
+		if err != nil {
+			return nil, err
+		}
+
+		facilities, err := facilityRepo.FindByIDs(db, facilityIDs)
+		if err != nil {
+			return nil, err
+		}
+
+		r := mapReservations[id]
+		r.Attendees = users
+		r.Facilities = facilities
+
+		res = append(res, *r)
+	}
+
 	return res, nil
 }
 
 func (ReservationRepository) FindByID(db *sqlx.DB, id int64) (*model.Reservation, error) {
-	var reservation model.ReservationDTO
-	if err := db.Get(&reservation,
-		`SELECT
-			id, creator_id, start_at, end_at, plan_id, plan_memo, created_at, updated_at
+	var reservations []model.ReservationDTOWithStruct
+	query := `
+		SELECT
+			r.id,
+			r.creator_id,
+			r.start_at,
+			r.end_at,
+			r.plan_id,
+			r.plan_memo,
+			r.created_at,
+			r.updated_at,
+			ru.user_id as user_id,
+			rf.facility_id as facility_id
 		FROM
-			reservation
-		WHERE id = ?`, id); err != nil {
+			reservation as r
+		INNER JOIN
+			reservation_user as ru
+		ON
+			r.id = ru.reservation_id
+		INNER JOIN
+			reservation_facility as rf
+		ON
+			r.id = rf.reservation_id
+		WHERE r.id = ?
+	`
+	if err := db.Select(&reservations, query, id); err != nil {
 		return nil, err
 	}
 
 	userRepo := NewUserRepository()
 	planRepo := NewPlanRepository()
 	facilityRepo := NewFacilityRepository()
-	var (
-		err         error
-		creator     *model.User
-		plan        *model.Plan
-		userIDs     []string
-		facilityIDs []int64
-		users       []*model.User
-		facilities  []*model.Facility
-	)
 
-	creator, err = userRepo.FindByID(db, reservation.CreatorID)
+	creator, err := userRepo.FindByID(db, reservations[0].CreatorID)
 	if err != nil {
 		return nil, err
 	}
 
-	plan, err = planRepo.FindByID(db, reservation.PlanID)
+	plan, err := planRepo.FindByID(db, reservations[0].PlanID)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = db.Select(&userIDs,
-		`SELECT
-			user_id
-		FROM
-			reservation_user
-		WHERE
-			reservation_id = ?;`, reservation.ID); err != nil {
-		return nil, err
-	}
-	for _, id := range userIDs {
-		user, err := userRepo.FindByID(db, id)
-		if err != nil {
-			return nil, err
-		}
-		users = append(users, user)
+	userIDs := []string{}
+	facilityIDs := []int64{}
+
+	for _, r := range reservations {
+		userIDs = append(userIDs, r.UserID)
+		facilityIDs = append(facilityIDs, r.FacilityID)
 	}
 
-	if err := db.Select(&facilityIDs,
-		`SELECT
-			facility_id
-		FROM
-			reservation_facility
-		WHERE
-			reservation_id = ?;`, reservation.ID); err != nil {
+	users, err := userRepo.FindByIDs(db, userIDs)
+	if err != nil {
 		return nil, err
 	}
-	for _, id := range facilityIDs {
-		facility, err := facilityRepo.FindByID(db, id)
-		if err != nil {
-			return nil, err
-		}
-		facilities = append(facilities, facility)
+
+	facilities, err := facilityRepo.FindByIDs(db, facilityIDs)
+	if err != nil {
+		return nil, err
 	}
 
 	return &model.Reservation{
-		ID:         reservation.ID,
+		ID:         reservations[0].ID,
 		Creator:    creator,
-		StartAt:    reservation.StartAt,
-		EndAt:      reservation.EndAt,
+		StartAt:    reservations[0].StartAt,
+		EndAt:      reservations[0].EndAt,
 		Plan:       plan,
-		PlanMemo:   reservation.PlanMemo,
-		CreatedAt:  reservation.CreatedAt,
-		UpdatedAt:  reservation.UpdatedAt,
+		PlanMemo:   reservations[0].PlanMemo,
+		CreatedAt:  reservations[0].CreatedAt,
+		UpdatedAt:  reservations[0].UpdatedAt,
 		Attendees:  users,
 		Facilities: facilities,
 	}, nil

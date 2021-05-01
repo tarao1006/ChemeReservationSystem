@@ -108,6 +108,65 @@ func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, erro
 	}, nil
 }
 
+func (FacilityRepository) FindByIDs(db *sqlx.DB, ids []int64) ([]*model.Facility, error) {
+	var facilities []model.FacilityDTOWithType
+	query := `
+		SELECT
+			f.id, f.name, ft.id as type_id, ft.name as type_name
+		FROM
+			facility as f
+		INNER JOIN
+			facility_group as fg
+		ON
+			fg.facility_id = f.id
+		INNER JOIN
+			facility_type as ft
+		ON
+			fg.facility_type_id = ft.id
+		WHERE f.id IN (?)
+	`
+
+	query, params, err := sqlx.In(query, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.Select(&facilities, query, params...); err != nil {
+		return nil, err
+	}
+
+	res := []*model.Facility{}
+
+	userIDs := []int64{}
+	mapTypes := map[int64][]model.FacilityType{}
+	mapFacility := map[int64]*model.Facility{}
+
+	for _, facility := range facilities {
+		mapTypes[facility.ID] = append(mapTypes[facility.ID], model.FacilityType{
+			ID:   facility.TypeID,
+			Name: facility.TypeName,
+		})
+		if _, ok := mapFacility[facility.ID]; !ok {
+			userIDs = append(userIDs, facility.ID)
+			mapFacility[facility.ID] = &model.Facility{
+				ID:    facility.ID,
+				Name:  facility.Name,
+				Types: []model.FacilityType{},
+			}
+		}
+	}
+
+	for _, id := range userIDs {
+		mapFacility[id].Types = mapTypes[id]
+	}
+
+	for _, v := range mapFacility {
+		res = append(res, v)
+	}
+
+	return res, nil
+}
+
 func (FacilityRepository) Create(db *sqlx.Tx, param *model.FacilityDTO) (result sql.Result, err error) {
 	query := `INSERT INTO facility (name) VALUES (?)`
 	return db.Exec(query, param.Name)
