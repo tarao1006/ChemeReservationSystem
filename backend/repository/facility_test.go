@@ -19,8 +19,7 @@ func TestShouldGetAllFacilities(t *testing.T) {
 
 	sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
 
-	mock.ExpectQuery("^SELECT (.*) FROM facility").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "new_facility"))
-	mock.ExpectQuery("^SELECT ft.id as id, ft.name as name FROM facility_group as fg INNER JOIN facility_type as ft ON fg.facility_type_id = ft.id WHERE").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+	mock.ExpectQuery("^SELECT (.*) FROM facility as f INNER JOIN facility_group as fg ON fg.facility_id = f.id INNER JOIN facility_type as ft ON fg.facility_type_id = ft.id").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "type_id", "type_name"}).AddRow(1, "new_facility", 1, "facility_type_name"))
 
 	if _, err := r.GetAll(sqlxDB); err != nil {
 		t.Error(err)
@@ -41,8 +40,7 @@ func TestShouldGetFacilityByID(t *testing.T) {
 
 	sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
 
-	mock.ExpectQuery("^SELECT (.*) FROM facility WHERE id = ?").WithArgs(1).WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "new_facility_type"))
-	mock.ExpectQuery("^SELECT ft.id as id, ft.name as name FROM facility_group as fg INNER JOIN facility_type as ft ON fg.facility_type_id = ft.id WHERE").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+	mock.ExpectQuery("^SELECT (.*) FROM facility as f INNER JOIN facility_group as fg ON fg.facility_id = f.id INNER JOIN facility_type as ft ON fg.facility_type_id = ft.id WHERE").WithArgs(1).WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "new_facility_type"))
 
 	_, err = r.FindByID(sqlxDB, 1)
 	if err != nil {

@@ -19,8 +19,7 @@ func TestShouldGetAllUsers(t *testing.T) {
 
 	sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
 
-	mock.ExpectQuery("^SELECT (.*) FROM user").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "new_facility"))
-	mock.ExpectQuery("^SELECT ut.id as id, ut.name as name FROM user_group as ug INNER JOIN user_type as ut ON ug.user_type_id = ut.id WHERE").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+	mock.ExpectQuery("^SELECT (.*) FROM user as u INNER JOIN user_group as ug ON ug.user_id = u.id INNER JOIN user_type as ut ON ug.user_type_id = ut.id").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "name_ruby", "password_digest", "email_address", "type_id", "type_name"}).AddRow("user_001", "user_001", "user_001", "password", "test@test.com", 1, "user_type_name"))
 
 	if _, err := r.GetAll(sqlxDB); err != nil {
 		t.Error(err)
@@ -41,8 +40,7 @@ func TestShouldGetUserByID(t *testing.T) {
 
 	sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
 
-	mock.ExpectQuery("^SELECT (.*) FROM user WHERE id = ?").WithArgs("user_001").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow("user_001", "user_001"))
-	mock.ExpectQuery("^SELECT ut.id as id, ut.name as name FROM user_group as ug INNER JOIN user_type as ut ON ug.user_type_id = ut.id WHERE").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+	mock.ExpectQuery("^SELECT (.*) FROM user as u INNER JOIN user_group as ug ON ug.user_id = u.id INNER JOIN user_type as ut ON ug.user_type_id = ut.id WHERE").WithArgs("user_001").WillReturnRows(sqlmock.NewRows([]string{"id", "name", "name_ruby", "password_digest", "email_address", "type_id", "type_name"}).AddRow("user_001", "user_001", "user_001", "password", "test@test.com", 1, "user_type_name"))
 
 	_, err = r.FindByID(sqlxDB, "user_001")
 	if err != nil {
