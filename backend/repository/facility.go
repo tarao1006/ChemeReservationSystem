@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"sort"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/tarao1006/ChemeReservationSystem/model"
@@ -67,6 +68,8 @@ func (fr *FacilityRepository) GetAll(db *sqlx.DB) ([]model.Facility, error) {
 	for _, v := range mapFacility {
 		res = append(res, *v)
 	}
+
+	sort.Slice(res, func(i, j int) bool { return res[i].ID < res[j].ID })
 
 	return res, nil
 }
@@ -163,6 +166,8 @@ func (FacilityRepository) FindByIDs(db *sqlx.DB, ids []int64) ([]*model.Facility
 	for _, v := range mapFacility {
 		res = append(res, v)
 	}
+
+	sort.Slice(res, func(i, j int) bool { return res[i].ID < res[j].ID })
 
 	return res, nil
 }

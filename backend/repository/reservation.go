@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"sort"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -113,6 +114,8 @@ func (ur *ReservationRepository) GetAll(db *sqlx.DB) ([]model.Reservation, error
 		res = append(res, *r)
 	}
 
+	sort.Slice(res, func(i, j int) bool { return res[i].ID < res[j].ID })
+
 	return res, nil
 }
 
@@ -216,6 +219,8 @@ func (ur *ReservationRepository) GetAllInRange(db *sqlx.DB, dr *model.DateRange)
 
 		res = append(res, *r)
 	}
+
+	sort.Slice(res, func(i, j int) bool { return res[i].ID < res[j].ID })
 
 	return res, nil
 }
