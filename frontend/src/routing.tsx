@@ -4,10 +4,7 @@ import { Home, Login, Loading } from '@components'
 import { AuthContext } from '@contexts'
 import { loginWithRememberToken as loginAPI, getMe } from '@api'
 import { Layout } from './layout'
-
 import dayjs from 'dayjs'
-import 'dayjs/locale/ja'
-dayjs.locale('ja');
 
 const RedirectComponent = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -62,7 +59,7 @@ export const Routing = () => {
     <Router>
       <Layout>
         <Route path="/" exact>
-          <Redirect to={`/calendar/week/${dayjs().startOf('day').add(-21, 'day').format('YYYY-MM-DD')}`} />
+          <Redirect to={`/calendar/week/${dayjs().startOf('day').format('YYYY-MM-DD')}`} />
         </Route>
         <RedirectRoute
           path='/calendar/week/:date'
