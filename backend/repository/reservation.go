@@ -36,8 +36,8 @@ func (ur *ReservationRepository) GetAll(db *sqlx.DB) ([]model.Reservation, error
 			plan        *model.Plan
 			userIDs     []string
 			facilityIDs []int64
-			users       []model.User
-			facilities  []model.Facility
+			users       []*model.User
+			facilities  []*model.Facility
 		)
 
 		creator, err = userRepo.FindByID(db, reservation.CreatorID)
@@ -64,7 +64,7 @@ func (ur *ReservationRepository) GetAll(db *sqlx.DB) ([]model.Reservation, error
 			if err != nil {
 				return nil, err
 			}
-			users = append(users, *user)
+			users = append(users, user)
 		}
 
 		if err = db.Select(&facilityIDs,
@@ -81,15 +81,15 @@ func (ur *ReservationRepository) GetAll(db *sqlx.DB) ([]model.Reservation, error
 			if err != nil {
 				return nil, err
 			}
-			facilities = append(facilities, *facility)
+			facilities = append(facilities, facility)
 		}
 
 		res = append(res, model.Reservation{
 			ID:         reservation.ID,
-			Creator:    *creator,
+			Creator:    creator,
 			StartAt:    reservation.StartAt,
 			EndAt:      reservation.EndAt,
-			Plan:       *plan,
+			Plan:       plan,
 			PlanMemo:   reservation.PlanMemo,
 			CreatedAt:  reservation.CreatedAt,
 			UpdatedAt:  reservation.UpdatedAt,
@@ -124,8 +124,8 @@ func (ur *ReservationRepository) GetAllInRange(db *sqlx.DB, r *model.DateRange) 
 			plan        *model.Plan
 			userIDs     []string
 			facilityIDs []int64
-			users       []model.User
-			facilities  []model.Facility
+			users       []*model.User
+			facilities  []*model.Facility
 		)
 
 		creator, err = userRepo.FindByID(db, reservation.CreatorID)
@@ -152,7 +152,7 @@ func (ur *ReservationRepository) GetAllInRange(db *sqlx.DB, r *model.DateRange) 
 			if err != nil {
 				return nil, err
 			}
-			users = append(users, *user)
+			users = append(users, user)
 		}
 
 		if err = db.Select(&facilityIDs,
@@ -169,15 +169,15 @@ func (ur *ReservationRepository) GetAllInRange(db *sqlx.DB, r *model.DateRange) 
 			if err != nil {
 				return nil, err
 			}
-			facilities = append(facilities, *facility)
+			facilities = append(facilities, facility)
 		}
 
 		res = append(res, model.Reservation{
 			ID:         reservation.ID,
-			Creator:    *creator,
+			Creator:    creator,
 			StartAt:    reservation.StartAt,
 			EndAt:      reservation.EndAt,
-			Plan:       *plan,
+			Plan:       plan,
 			PlanMemo:   reservation.PlanMemo,
 			CreatedAt:  reservation.CreatedAt,
 			UpdatedAt:  reservation.UpdatedAt,
@@ -208,8 +208,8 @@ func (ReservationRepository) FindByID(db *sqlx.DB, id int64) (*model.Reservation
 		plan        *model.Plan
 		userIDs     []string
 		facilityIDs []int64
-		users       []model.User
-		facilities  []model.Facility
+		users       []*model.User
+		facilities  []*model.Facility
 	)
 
 	creator, err = userRepo.FindByID(db, reservation.CreatorID)
@@ -236,7 +236,7 @@ func (ReservationRepository) FindByID(db *sqlx.DB, id int64) (*model.Reservation
 		if err != nil {
 			return nil, err
 		}
-		users = append(users, *user)
+		users = append(users, user)
 	}
 
 	if err := db.Select(&facilityIDs,
@@ -253,15 +253,15 @@ func (ReservationRepository) FindByID(db *sqlx.DB, id int64) (*model.Reservation
 		if err != nil {
 			return nil, err
 		}
-		facilities = append(facilities, *facility)
+		facilities = append(facilities, facility)
 	}
 
 	return &model.Reservation{
 		ID:         reservation.ID,
-		Creator:    *creator,
+		Creator:    creator,
 		StartAt:    reservation.StartAt,
 		EndAt:      reservation.EndAt,
-		Plan:       *plan,
+		Plan:       plan,
 		PlanMemo:   reservation.PlanMemo,
 		CreatedAt:  reservation.CreatedAt,
 		UpdatedAt:  reservation.UpdatedAt,

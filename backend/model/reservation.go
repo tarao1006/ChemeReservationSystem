@@ -14,16 +14,16 @@ type ReservationAPI struct {
 }
 
 type Reservation struct {
-	ID         int64      `json:"id"`
-	Creator    User       `json:"creator"`
-	StartAt    time.Time  `json:"start_at"`
-	EndAt      time.Time  `json:"end_at"`
-	Plan       Plan       `json:"plan"`
-	PlanMemo   string     `json:"plan_memo"`
-	CreatedAt  time.Time  `json:"created_at"`
-	UpdatedAt  time.Time  `json:"updated_at"`
-	Attendees  []User     `json:"attendees"`
-	Facilities []Facility `json:"facilities"`
+	ID         int64       `json:"id"`
+	Creator    *User       `json:"creator"`
+	StartAt    time.Time   `json:"start_at"`
+	EndAt      time.Time   `json:"end_at"`
+	Plan       *Plan       `json:"plan"`
+	PlanMemo   string      `json:"plan_memo"`
+	CreatedAt  time.Time   `json:"created_at"`
+	UpdatedAt  time.Time   `json:"updated_at"`
+	Attendees  []*User     `json:"attendees"`
+	Facilities []*Facility `json:"facilities"`
 }
 
 type ReservationDTO struct {
