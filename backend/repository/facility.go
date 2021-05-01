@@ -18,8 +18,8 @@ func NewFacilityRepository() *FacilityRepository {
 }
 
 func (fr *FacilityRepository) GetAll(db *sqlx.DB) ([]model.Facility, error) {
-	facilities := []model.FacilityDTOWithType{}
-	if err := db.Select(&facilities, `
+	var facilities []model.FacilityDTOWithType
+	query := `
 		SELECT
 			f.id, f.name, ft.id as type_id, ft.name as type_name
 		FROM
@@ -32,7 +32,10 @@ func (fr *FacilityRepository) GetAll(db *sqlx.DB) ([]model.Facility, error) {
 			facility_type as ft
 		ON
 			fg.facility_type_id = ft.id
-		ORDER BY id`); err != nil {
+		ORDER BY id
+	`
+
+	if err := db.Select(&facilities, query); err != nil {
 		return nil, err
 	}
 
@@ -69,8 +72,8 @@ func (fr *FacilityRepository) GetAll(db *sqlx.DB) ([]model.Facility, error) {
 }
 
 func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, error) {
-	facilities := []model.FacilityDTOWithType{}
-	if err := db.Select(&facilities, `
+	var facilities []model.FacilityDTOWithType
+	query := `
 		SELECT
 			f.id, f.name, ft.id as type_id, ft.name as type_name
 		FROM
@@ -84,7 +87,9 @@ func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, erro
 		ON
 			fg.facility_type_id = ft.id
 		WHERE f.id = ?
-	`, id); err != nil {
+	`
+
+	if err := db.Select(&facilities, query, id); err != nil {
 		return nil, err
 	}
 

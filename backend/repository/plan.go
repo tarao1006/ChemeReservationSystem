@@ -14,8 +14,9 @@ func NewPlanRepository() *PlanRepository {
 }
 
 func (PlanRepository) GetAll(db *sqlx.DB) ([]model.Plan, error) {
-	plans := []model.Plan{}
-	if err := db.Select(&plans, `SELECT id, name FROM plan ORDER BY id`); err != nil {
+	var plans []model.Plan
+	query := `SELECT id, name FROM plan ORDER BY id`
+	if err := db.Select(&plans, query); err != nil {
 		return nil, err
 	}
 	return plans, nil
@@ -23,9 +24,8 @@ func (PlanRepository) GetAll(db *sqlx.DB) ([]model.Plan, error) {
 
 func (PlanRepository) FindByID(db *sqlx.DB, id int64) (*model.Plan, error) {
 	var plan model.Plan
-	if err := db.Get(&plan, `
-		SELECT id, name FROM plan WHERE id = ?
-	`, id); err != nil {
+	query := `SELECT id, name FROM plan WHERE id = ?`
+	if err := db.Get(&plan, query, id); err != nil {
 		return nil, err
 	}
 	return &plan, nil

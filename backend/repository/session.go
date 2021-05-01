@@ -16,9 +16,8 @@ func NewSessionRepository() *SessionRepository {
 
 func (SessionRepository) GetByID(db *sqlx.DB, id string) (*model.Session, error) {
 	var session model.Session
-	if err := db.Get(&session, `
-		SELECT id, user_id, expires_at FROM session WHERE id = ?
-	`, id); err != nil {
+	query := `SELECT id, user_id, expires_at FROM session WHERE id = ?`
+	if err := db.Get(&session, query, id); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, model.ErrSessionNotFound
 		}

@@ -14,8 +14,9 @@ func NewUserTypeRepository() *UserTypeRepository {
 }
 
 func (UserTypeRepository) GetAll(db *sqlx.DB) ([]model.UserType, error) {
-	userTypes := []model.UserType{}
-	if err := db.Select(&userTypes, `SELECT id, name FROM user_type ORDER BY id`); err != nil {
+	var userTypes []model.UserType
+	query := `SELECT id, name FROM user_type ORDER BY id`
+	if err := db.Select(&userTypes, query); err != nil {
 		return nil, err
 	}
 	return userTypes, nil
@@ -23,9 +24,8 @@ func (UserTypeRepository) GetAll(db *sqlx.DB) ([]model.UserType, error) {
 
 func (UserTypeRepository) FindByID(db *sqlx.DB, id int64) (*model.UserType, error) {
 	var userType model.UserType
-	if err := db.Get(&userType, `
-		SELECT id, name FROM user_type WHERE id = ?
-	`, id); err != nil {
+	query := `SELECT id, name FROM user_type WHERE id = ?`
+	if err := db.Get(&userType, query, id); err != nil {
 		return nil, err
 	}
 	return &userType, nil

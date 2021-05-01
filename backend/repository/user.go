@@ -15,8 +15,8 @@ func NewUserRepository() *UserRepository {
 }
 
 func (ur *UserRepository) GetAll(db *sqlx.DB) ([]model.User, error) {
-	users := []model.UserDTOWithType{}
-	if err := db.Select(&users, `
+	var users []model.UserDTOWithType
+	query := `
 		SELECT
 			u.id, u.name, u.name_ruby, u.password_digest, u.email_address, ut.id as type_id, ut.name as type_name
 		FROM
@@ -29,12 +29,13 @@ func (ur *UserRepository) GetAll(db *sqlx.DB) ([]model.User, error) {
 			user_type as ut
 		ON
 			ug.user_type_id = ut.id
-		ORDER BY u.id`); err != nil {
+		ORDER BY u.id
+	`
+	if err := db.Select(&users, query); err != nil {
 		return nil, err
 	}
 
 	res := []model.User{}
-
 	userIDs := []string{}
 	mapTypes := map[string][]model.UserType{}
 	mapUser := map[string]*model.User{}
@@ -68,8 +69,8 @@ func (ur *UserRepository) GetAll(db *sqlx.DB) ([]model.User, error) {
 }
 
 func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
-	users := []model.UserDTOWithType{}
-	if err := db.Select(&users, `
+	var users []model.UserDTOWithType
+	query := `
 		SELECT
 			u.id, u.name, u.name_ruby, u.password_digest, u.email_address, ut.id as type_id, ut.name as type_name
 		FROM
@@ -83,7 +84,8 @@ func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 		ON
 			ug.user_type_id = ut.id
 		WHERE u.id = ?
-	`, id); err != nil {
+	`
+	if err := db.Select(&users, query, id); err != nil {
 		return nil, err
 	}
 
@@ -106,9 +108,8 @@ func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
 
 func (UserRepository) FindDTOByID(db *sqlx.DB, id string) (*model.UserDTO, error) {
 	var user model.UserDTO
-	if err := db.Get(&user, `
-		SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE id = ?
-	`, id); err != nil {
+	query := `SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE id = ?`
+	if err := db.Get(&user, query, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, model.ErrUserNotFound
 		}
@@ -120,9 +121,8 @@ func (UserRepository) FindDTOByID(db *sqlx.DB, id string) (*model.UserDTO, error
 
 func (UserRepository) FindDTOByEmailAddress(db *sqlx.DB, e string) (*model.UserDTO, error) {
 	var user model.UserDTO
-	if err := db.Get(&user, `
-		SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE email_address = ?
-	`, e); err != nil {
+	query := `SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE email_address = ?`
+	if err := db.Get(&user, query, e); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, model.ErrUserNotFound
 		}
@@ -134,9 +134,8 @@ func (UserRepository) FindDTOByEmailAddress(db *sqlx.DB, e string) (*model.UserD
 
 func (UserRepository) CountUser(db *sqlx.DB, id string) (int, error) {
 	var c int
-	if err := db.Get(&c, `
-		SELECT COUNT(*) FROM user WHERE id = ?
-	`, id); err != nil {
+	query := `SELECT COUNT(*) FROM user WHERE id = ?`
+	if err := db.Get(&c, query, id); err != nil {
 		return 0, err
 	}
 
@@ -145,9 +144,8 @@ func (UserRepository) CountUser(db *sqlx.DB, id string) (int, error) {
 
 func (UserRepository) GetRememberMeTokenByID(db *sqlx.DB, id string) ([]byte, error) {
 	var token []byte
-	if err := db.Get(&token, `
-		SELECT remember_me_token FROM user WHERE id = ?
-	`, id); err != nil {
+	query := `SELECT remember_me_token FROM user WHERE id = ?`
+	if err := db.Get(&token, query, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, model.ErrInvalidID
 		}

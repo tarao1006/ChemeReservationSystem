@@ -16,9 +16,8 @@ func NewRememberMeSessionRepository() *RememberMeSessionRepository {
 
 func (RememberMeSessionRepository) GetByID(db *sqlx.DB, id string) (*model.RememberMeSession, error) {
 	var session model.RememberMeSession
-	if err := db.Get(&session, `
-		SELECT id, user_id, expires_at FROM remember_me_session WHERE id = ?
-	`, id); err != nil {
+	query := `SELECT id, user_id, expires_at FROM remember_me_session WHERE id = ?`
+	if err := db.Get(&session, query, id); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, model.ErrRememberMeSessionNotFound
 		}
