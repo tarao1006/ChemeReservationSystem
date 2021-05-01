@@ -15,75 +15,91 @@ func NewUserRepository() *UserRepository {
 }
 
 func (ur *UserRepository) GetAll(db *sqlx.DB) ([]model.User, error) {
-	users := []model.UserDTO{}
-	if err := db.Select(&users, `SELECT id, name, name_ruby, password_digest, email_address FROM user ORDER BY id`); err != nil {
+	users := []model.UserDTOWithType{}
+	if err := db.Select(&users, `
+		SELECT
+			u.id, u.name, u.name_ruby, u.password_digest, u.email_address, ut.id as type_id, ut.name as type_name
+		FROM
+			user as u
+		INNER JOIN
+			user_group as ug
+		ON
+			ug.user_id = u.id
+		INNER JOIN
+			user_type as ut
+		ON
+			ug.user_type_id = ut.id
+		ORDER BY u.id`); err != nil {
 		return nil, err
 	}
 
 	res := []model.User{}
+
+	userIDs := []string{}
+	mapTypes := map[string][]model.UserType{}
+	mapUser := map[string]*model.User{}
+
 	for _, user := range users {
-		var types []model.UserType
-		if err := db.Select(&types,
-			`SELECT
-				ut.id as id,
-				ut.name as name
-			FROM
-				user_group as ug
-			INNER JOIN
-				user_type as ut
-			ON
-				ug.user_type_id = ut.id
-			WHERE
-				ug.user_id = ?;`, user.ID); err != nil {
-			return nil, err
-		}
-		res = append(res, model.User{
-			ID:           user.ID,
-			Name:         user.Name,
-			NameRuby:     user.NameRuby,
-			EmailAddress: user.EmailAddress,
-			Types:        types,
+		mapTypes[user.ID] = append(mapTypes[user.ID], model.UserType{
+			ID:   user.TypeID,
+			Name: user.TypeName,
 		})
+		if _, ok := mapUser[user.ID]; !ok {
+			userIDs = append(userIDs, user.ID)
+			mapUser[user.ID] = &model.User{
+				ID:           user.ID,
+				Name:         user.Name,
+				NameRuby:     user.NameRuby,
+				EmailAddress: user.EmailAddress,
+				Types:        []model.UserType{},
+			}
+		}
+	}
+
+	for _, id := range userIDs {
+		mapUser[id].Types = mapTypes[id]
+	}
+
+	for _, v := range mapUser {
+		res = append(res, *v)
 	}
 
 	return res, nil
 }
 
 func (UserRepository) FindByID(db *sqlx.DB, id string) (*model.User, error) {
-	var user model.UserDTO
-	if err := db.Get(&user, `
-		SELECT id, name, name_ruby, password_digest, email_address FROM user WHERE id = ?
-	`, id); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, model.ErrUserNotFound
-		}
-		return nil, err
-	}
-
-	var types []model.UserType
-	if err := db.Select(&types, `
+	users := []model.UserDTOWithType{}
+	if err := db.Select(&users, `
 		SELECT
-			ut.id as id,
-			ut.name as name
+			u.id, u.name, u.name_ruby, u.password_digest, u.email_address, ut.id as type_id, ut.name as type_name
 		FROM
+			user as u
+		INNER JOIN
 			user_group as ug
+		ON
+			ug.user_id = u.id
 		INNER JOIN
 			user_type as ut
 		ON
 			ug.user_type_id = ut.id
-		WHERE
-			ug.user_id = ?
-		ORDER BY
-			ut.id
-		`, user.ID); err != nil {
+		WHERE u.id = ?
+	`, id); err != nil {
 		return nil, err
 	}
 
+	types := []model.UserType{}
+	for _, user := range users {
+		types = append(types, model.UserType{
+			ID:   user.TypeID,
+			Name: user.TypeName,
+		})
+	}
+
 	return &model.User{
-		ID:           user.ID,
-		Name:         user.Name,
-		NameRuby:     user.NameRuby,
-		EmailAddress: user.EmailAddress,
+		ID:           users[0].ID,
+		Name:         users[0].Name,
+		NameRuby:     users[0].NameRuby,
+		EmailAddress: users[0].EmailAddress,
 		Types:        types,
 	}, nil
 }

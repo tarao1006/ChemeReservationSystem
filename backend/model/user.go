@@ -25,3 +25,13 @@ type UserDTO struct {
 	EmailAddress    string `db:"email_address"`
 	RememberMeToken []byte `db:"remember_me_token"`
 }
+
+type UserDTOWithType struct {
+	ID             string `db:"id"`
+	Name           string `db:"name"`
+	NameRuby       string `db:"name_ruby"`
+	PasswordDigest []byte `db:"password_digest"`
+	EmailAddress   string `db:"email_address"`
+	TypeID         int64  `db:"type_id"`
+	TypeName       string `db:"type_name"`
+}
