@@ -18,69 +18,87 @@ func NewFacilityRepository() *FacilityRepository {
 }
 
 func (fr *FacilityRepository) GetAll(db *sqlx.DB) ([]model.Facility, error) {
-	facilities := []model.FacilityDTO{}
-	if err := db.Select(&facilities, `SELECT id, name FROM facility ORDER BY id`); err != nil {
+	facilities := []model.FacilityDTOWithType{}
+	if err := db.Select(&facilities, `
+		SELECT
+			f.id, f.name, ft.id as type_id, ft.name as type_name
+		FROM
+			facility as f
+		INNER JOIN
+			facility_group as fg
+		ON
+			fg.facility_id = f.id
+		INNER JOIN
+			facility_type as ft
+		ON
+			fg.facility_type_id = ft.id
+		ORDER BY id`); err != nil {
 		return nil, err
 	}
 
 	res := []model.Facility{}
-	for _, facility := range facilities {
-		var types []model.FacilityType
 
-		if err := db.Select(&types,
-			`SELECT
-				ft.id as id,
-				ft.name as name
-			FROM
-				facility_group as fg
-			INNER JOIN
-				facility_type as ft
-			ON
-				fg.facility_type_id = ft.id
-			WHERE
-				fg.facility_id = ?;`, facility.ID); err != nil {
-			return nil, err
-		}
-		res = append(res, model.Facility{
-			ID:    facility.ID,
-			Name:  facility.Name,
-			Types: types,
+	userIDs := []int64{}
+	mapTypes := map[int64][]model.FacilityType{}
+	mapFacility := map[int64]*model.Facility{}
+
+	for _, facility := range facilities {
+		mapTypes[facility.ID] = append(mapTypes[facility.ID], model.FacilityType{
+			ID:   facility.TypeID,
+			Name: facility.TypeName,
 		})
+		if _, ok := mapFacility[facility.ID]; !ok {
+			userIDs = append(userIDs, facility.ID)
+			mapFacility[facility.ID] = &model.Facility{
+				ID:    facility.ID,
+				Name:  facility.Name,
+				Types: []model.FacilityType{},
+			}
+		}
+	}
+
+	for _, id := range userIDs {
+		mapFacility[id].Types = mapTypes[id]
+	}
+
+	for _, v := range mapFacility {
+		res = append(res, *v)
 	}
 
 	return res, nil
 }
 
 func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, error) {
-	var facility model.FacilityDTO
-	if err := db.Get(&facility, `
-		SELECT id, name FROM facility WHERE id = ?
-	`, id); err != nil {
-		return nil, err
-	}
-
-	var types []model.FacilityType
-
-	if err := db.Select(&types,
-		`SELECT
-			ft.id as id,
-			ft.name as name
+	facilities := []model.FacilityDTOWithType{}
+	if err := db.Select(&facilities, `
+		SELECT
+			f.id, f.name, ft.id as type_id, ft.name as type_name
 		FROM
+			facility as f
+		INNER JOIN
 			facility_group as fg
+		ON
+			fg.facility_id = f.id
 		INNER JOIN
 			facility_type as ft
 		ON
 			fg.facility_type_id = ft.id
-		WHERE
-			fg.facility_id = ?
-		ORDER BY
-			ft.id;`, facility.ID); err != nil {
+		WHERE f.id = ?
+	`, id); err != nil {
 		return nil, err
 	}
 
+	types := []model.FacilityType{}
+	for _, facility := range facilities {
+		types = append(types, model.FacilityType{
+			ID:   facility.TypeID,
+			Name: facility.TypeName,
+		})
+	}
+
 	return &model.Facility{
-		ID:    facility.ID,
-		Name:  facility.Name,
+		ID:    facilities[0].ID,
+		Name:  facilities[0].Name,
 		Types: types,
 	}, nil
 }

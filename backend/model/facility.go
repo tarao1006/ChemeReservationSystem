@@ -15,3 +15,10 @@ type FacilityDTO struct {
 	ID   int64  `db:"id"`
 	Name string `db:"name"`
 }
+
+type FacilityDTOWithType struct {
+	ID       int64  `db:"id"`
+	Name     string `db:"name"`
+	TypeID   int64  `db:"type_id"`
+	TypeName string `db:"type_name"`
+}
