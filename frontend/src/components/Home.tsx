@@ -14,10 +14,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { getAllReservationsInRange, Reservation, getAllFacilities, Facility, inRange } from '@api'
 import { AuthContext, ReservationContext } from '@contexts'
-
 import dayjs from 'dayjs'
-import 'dayjs/locale/ja'
-dayjs.locale('ja')
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,6 +70,110 @@ const formatReservation = (r: Reservation): string => {
   return `${formatTime(r.startAt)} ${r.plan.name} by ${r.creator.name}`
 }
 
+const WeeklyCalendarTableHead = ({ dates }: { dates: dayjs.Dayjs[] }) => {
+
+  return (
+    <TableHead>
+      <TableRow>
+        <TableCell></TableCell>
+        {dates.map(date => (
+          <TableCell key={date.format()} align='center'>
+            {date.format('MM/DD (dd)')}
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  )
+}
+
+const WeeklyCalendarTableCell = ({ reservations }: { reservations: Reservation[] }) => {
+  const classes = useStyles()
+
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e.target)
+  }
+
+  const PlanButton = ({ r }: { r: Reservation }) => (
+    <Button key={r.id} color="primary" className={classes.plan} component="span">
+      {formatReservation(r)}
+    </Button>
+  )
+
+  const OtherButton = ({
+    r,
+    count,
+  }: {
+    r: Reservation
+    count: number
+  }) => (
+    <Button key={r.id} className={classes.plan} component='span'>
+      他{count}件
+    </Button>
+  )
+
+  return (
+    <TableCell onClick={handleClick} className={classes.cell}>
+      <div className={classes.plans}>
+        {reservations.map((r, i, a) => ((
+          i < 2 ? <PlanButton key={i} r={r} />
+          : i === 2 ? <OtherButton key={i} r={r} count={a.length - i} />
+          : <span key={i} style={{ display: 'hidden' }}></span>
+        )))}
+      </div>
+    </TableCell>
+  )
+}
+
+const WeeklyCalendarTableBody = ({
+  dates,
+  facilities,
+}: {
+  dates: dayjs.Dayjs[]
+  facilities: Facility[]
+}) => {
+  const { reservations } = useContext(ReservationContext)
+
+  return (
+    <TableBody>
+      {
+        facilities.map(facility => (
+          <TableRow key={facility.id}>
+            <TableCell style={{ whiteSpace: 'nowrap' }}>{facility.name}</TableCell>
+            {dates.map(date => {
+              return (
+                <WeeklyCalendarTableCell
+                  key={date.format()}
+                  reservations={reservations.filter(
+                    r => r.startAt.isSame(date, 'day')
+                  ).filter(
+                    r => r.facilities.some(f => f.id === facility.id)
+                  )}
+                />
+              )
+            })}
+          </TableRow>
+        ))
+      }
+    </TableBody>
+  )
+}
+
+const WeeklyCalendarTable = ({
+  dates,
+  facilities,
+}: {
+  dates: dayjs.Dayjs[]
+  facilities: Facility[]
+}) => {
+
+  return (
+    <Table>
+      <WeeklyCalendarTableHead dates={dates} />
+      <WeeklyCalendarTableBody dates={dates} facilities={facilities} />
+    </Table>
+  )
+}
+
 export const Home = () => {
   const { currentUser } = useContext(AuthContext)
   const { reservations, fetchedDateRange, setReservations, setFetchedDateRange } = useContext(ReservationContext)
@@ -100,8 +201,8 @@ export const Home = () => {
             setIsLoading(true)
           }
           const targetDateRange = {
-            from: d.add(-6, 'month').format('YYYY-MM-DD'),
-            to: d.add(6, 'month').format('YYYY-MM-DD'),
+            from: d.add(-3, 'month').format('YYYY-MM-DD'),
+            to: d.add(3, 'month').format('YYYY-MM-DD'),
           }
           const r = await getAllReservationsInRange(targetDateRange)
           setFetchedDateRange(targetDateRange)
@@ -126,11 +227,7 @@ export const Home = () => {
   }
 
   const goBackToday = () => {
-    history.push(`/calendar/week/${dayjs().add(-21, 'day').format('YYYY-MM-DD')}`)
-  }
-
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(e.target)
+    history.push(`/calendar/week/${dayjs().format('YYYY-MM-DD')}`)
   }
 
   return (
@@ -147,55 +244,9 @@ export const Home = () => {
       {isLoading &&<IconButton size="small" disabled disableFocusRipple disableRipple>
         <CircularProgress size={25} />
       </IconButton>}
-
       <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell></TableCell>
-              {dates.map(d =>
-                (
-                  <TableCell key={d.format('MM/DD (dd)')} align='center'>
-                    {d.format('MM/DD (dd)')}
-                  </TableCell>)
-                )
-              }
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {
-              facilities.map(facility => (
-                <TableRow key={facility.id}>
-                  <TableCell style={{ whiteSpace: 'nowrap' }}>{facility.name}</TableCell>
-                  {
-                    dates.map(d => {
-                      return (
-                        <TableCell key={d.format()} onClick={handleClick} className={classes.cell}>
-                            <div className={classes.plans}>
-                              {
-                                reservations.filter(r => r.startAt.isSame(d, 'day')).filter(r => r.facilities.some(f => f.id === facility.id)).map((r, i, a) =>
-                                (
-                                  (i < 2
-                                  ?
-                                    <Button key={r.id} color="primary" className={classes.plan} component="span">
-                                      {formatReservation(r)}
-                                    </Button>
-                                  : i === 2
-                                  ? <Button key={r.id} className={classes.plan} component='span'>他{a.length - i}件</Button>
-                                  : <span key={r.id} style={{ display: 'hidden' }}></span>
-                                  )
-                                )
-                              )}
-                            </div>
-                        </TableCell>
-                      )
-                    })
-                  }
-                </TableRow>))
-            }
-          </TableBody>
-        </Table>
-        </TableContainer>
+        <WeeklyCalendarTable dates={dates} facilities={facilities} />
+      </TableContainer>
       <TableContainer>
         <Table>
           <TableHead>
