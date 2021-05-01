@@ -8,12 +8,12 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { getAllReservationsInRange, Reservation, getAllFacilities, Facility, DateRange, inRange } from '@api'
+import { getAllReservationsInRange, Reservation, getAllFacilities, Facility, inRange } from '@api'
 import { AuthContext, ReservationContext } from '@contexts'
-import { Loading } from '.'
 
 import dayjs from 'dayjs'
 import 'dayjs/locale/ja'
@@ -96,7 +96,9 @@ export const Home = () => {
         setFacilities(f)
 
         if (reservations.length === 0 || !inRange(fetchedDateRange, d)) {
-          setIsLoading(true)
+          if (reservations.length === 0) {
+            setIsLoading(true)
+          }
           const targetDateRange = {
             from: d.add(-6, 'month').format('YYYY-MM-DD'),
             to: d.add(6, 'month').format('YYYY-MM-DD'),
@@ -133,7 +135,6 @@ export const Home = () => {
 
   return (
     <>
-      {isLoading && <Loading isLoading={isLoading} />}
       <Button onClick={goBackToday} variant="outlined">
         今日
       </Button>
@@ -143,6 +144,10 @@ export const Home = () => {
       <IconButton onClick={forwardDay} size="medium" className={classes.button}>
         <ArrowForwardIosIcon fontSize="small" />
       </IconButton>
+      {isLoading &&<IconButton size="small" disabled disableFocusRipple disableRipple>
+        <CircularProgress size={25} />
+      </IconButton>}
+
       <TableContainer>
         <Table>
           <TableHead>
