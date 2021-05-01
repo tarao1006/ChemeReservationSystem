@@ -36,6 +36,8 @@ func TestShouldGetAllReservations(t *testing.T) {
 		"plan_memo",
 		"created_at",
 		"updated_at",
+		"user_id",
+		"facility_id",
 	}).AddRow(
 		1,
 		"test001",
@@ -45,29 +47,126 @@ func TestShouldGetAllReservations(t *testing.T) {
 		"",
 		stringToTime("2021-04-16 00:28:44"),
 		stringToTime("2021-04-16 00:28:44"),
+		"user001",
+		1,
 	)
-	userIDRows := sqlmock.NewRows([]string{"user_id"}).AddRow("test001").AddRow("test002")
-	facilityIDRows := sqlmock.NewRows([]string{"facility_id"}).AddRow(1).AddRow(2)
 
-	mock.ExpectQuery("^SELECT (.+) FROM reservation").WillReturnRows(reservationRows)
+	mock.ExpectQuery(`
+		^SELECT
+			(.+)
+		FROM
+			reservation as r
+		INNER JOIN
+			reservation_user as ru
+		ON
+			r.id = ru.reservation_id
+		INNER JOIN
+			reservation_facility as rf
+		ON
+			r.id = rf.reservation_id
+	`).WillReturnRows(reservationRows)
 
-	mock.ExpectQuery("^SELECT (.+) FROM user").WithArgs("test001").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "test001"))
-	mock.ExpectQuery("^SELECT (.+) as name FROM user_group as ug INNER JOIN user_type as ut (.+)").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+	mock.ExpectQuery(`
+		^SELECT
+			(.*)
+		FROM
+			user as u
+		INNER JOIN
+			user_group as ug
+		ON
+			ug.user_id = u.id
+		INNER JOIN
+			user_type as ut
+		ON
+			ug.user_type_id = ut.id
+	`).WillReturnRows(sqlmock.NewRows([]string{
+		"id",
+		"name",
+		"name_ruby",
+		"password_digest",
+		"email_address",
+		"type_id",
+		"type_name",
+	}).AddRow(
+		"user_001",
+		"user_001",
+		"user_001",
+		"password",
+		"test@test.com",
+		1,
+		"user_type_name",
+	))
 
-	mock.ExpectQuery("^SELECT (.+) FROM plan").WithArgs(2).WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "plan001"))
-	mock.ExpectQuery("^SELECT (.+) FROM reservation_user").WithArgs(1).WillReturnRows(userIDRows)
+	mock.ExpectQuery(`
+		^SELECT
+			(.+)
+		FROM
+			plan
+	`).WillReturnRows(sqlmock.NewRows([]string{
+		"id",
+		"name",
+	}).AddRow(
+		1,
+		"plan001",
+	))
 
-	mock.ExpectQuery("^SELECT (.+) FROM user").WithArgs("test001").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "test001"))
-	mock.ExpectQuery("^SELECT (.+) FROM user_group as ug INNER JOIN user_type as ut (.+)").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
-	mock.ExpectQuery("^SELECT (.+) FROM user").WithArgs("test002").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "test002"))
-	mock.ExpectQuery("^SELECT (.+) FROM user_group as ug INNER JOIN user_type as ut (.+)").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+	mock.ExpectQuery(`
+		^SELECT
+			(.+)
+		FROM
+			user as u
+		INNER JOIN
+			user_group as ug
+		ON
+			ug.user_id = u.id
+		INNER JOIN
+			user_type as ut
+		ON
+			ug.user_type_id = ut.id
+		WHERE
+	`).WillReturnRows(sqlmock.NewRows([]string{
+		"id",
+		"name",
+		"name_ruby",
+		"password_digest",
+		"email_address",
+		"type_id",
+		"type_name",
+	}).AddRow(
+		"user_001",
+		"user_001",
+		"user_001",
+		"password",
+		"test@test.com",
+		1,
+		"user_type_name",
+	))
 
-	mock.ExpectQuery("^SELECT (.+) FROM reservation_facility").WithArgs(1).WillReturnRows(facilityIDRows)
-
-	mock.ExpectQuery("^SELECT (.+) FROM facility").WithArgs(1).WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "facility001"))
-	mock.ExpectQuery("^SELECT (.+) FROM facility_group as fg INNER JOIN facility_type as ft (.+)").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
-	mock.ExpectQuery("^SELECT (.+) FROM facility").WithArgs(2).WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(2, "facility001"))
-	mock.ExpectQuery("^SELECT (.+) FROM facility_group as fg INNER JOIN facility_type as ft (.+)").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+	mock.ExpectQuery(`
+		^SELECT
+			(.+)
+		FROM
+			facility as f
+		INNER JOIN
+			facility_group as fg
+		ON
+			fg.facility_id = f.id
+		INNER JOIN
+			facility_type as ft
+		ON
+			fg.facility_type_id = ft.id
+		WHERE
+	`).WillReturnRows(sqlmock.NewRows([]string{
+		"id",
+		"name",
+		"type_id",
+		"type_name",
+	}).AddRow(
+		1,
+		"new_facility",
+		1,
+		"facility_type_name",
+	))
 
 	if _, err := r.GetAll(sqlxDB); err != nil {
 		t.Error(err)
@@ -97,6 +196,8 @@ func TestShouldGetReservationByID(t *testing.T) {
 		"plan_memo",
 		"created_at",
 		"updated_at",
+		"user_id",
+		"facility_id",
 	}).AddRow(
 		1,
 		"test001",
@@ -106,29 +207,126 @@ func TestShouldGetReservationByID(t *testing.T) {
 		"",
 		stringToTime("2021-04-16 00:28:44"),
 		stringToTime("2021-04-16 00:28:44"),
+		"user001",
+		1,
 	)
-	userIDRows := sqlmock.NewRows([]string{"user_id"}).AddRow("test001").AddRow("test002")
-	facilityIDRows := sqlmock.NewRows([]string{"facility_id"}).AddRow(1).AddRow(2)
 
-	mock.ExpectQuery("^SELECT (.+) FROM reservation").WithArgs(1).WillReturnRows(reservationRows)
+	mock.ExpectQuery(`
+		^SELECT
+			(.+)
+		FROM
+			reservation as r
+		INNER JOIN
+			reservation_user as ru
+		ON
+			r.id = ru.reservation_id
+		INNER JOIN
+			reservation_facility as rf
+		ON
+			r.id = rf.reservation_id
+	`).WillReturnRows(reservationRows)
 
-	mock.ExpectQuery("^SELECT (.+) FROM user").WithArgs("test001").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "test001"))
-	mock.ExpectQuery("^SELECT ut.id as id, ut.name as name FROM user_group as ug INNER JOIN user_type as ut (.+)").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+	mock.ExpectQuery(`
+		^SELECT
+			(.*)
+		FROM
+			user as u
+		INNER JOIN
+			user_group as ug
+		ON
+			ug.user_id = u.id
+		INNER JOIN
+			user_type as ut
+		ON
+			ug.user_type_id = ut.id
+	`).WillReturnRows(sqlmock.NewRows([]string{
+		"id",
+		"name",
+		"name_ruby",
+		"password_digest",
+		"email_address",
+		"type_id",
+		"type_name",
+	}).AddRow(
+		"user_001",
+		"user_001",
+		"user_001",
+		"password",
+		"test@test.com",
+		1,
+		"user_type_name",
+	))
 
-	mock.ExpectQuery("^SELECT (.+) FROM plan").WithArgs(2).WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "plan001"))
-	mock.ExpectQuery("^SELECT (.+) FROM reservation_user").WithArgs(1).WillReturnRows(userIDRows)
+	mock.ExpectQuery(`
+		^SELECT
+			(.+)
+		FROM
+			plan
+	`).WillReturnRows(sqlmock.NewRows([]string{
+		"id",
+		"name",
+	}).AddRow(
+		1,
+		"plan001",
+	))
 
-	mock.ExpectQuery("^SELECT (.+) FROM user").WithArgs("test001").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "test001"))
-	mock.ExpectQuery("^SELECT (.+) FROM user_group as ug INNER JOIN user_type as ut (.+)").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
-	mock.ExpectQuery("^SELECT (.+) FROM user").WithArgs("test002").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "test002"))
-	mock.ExpectQuery("^SELECT (.+) FROM user_group as ug INNER JOIN user_type as ut (.+)").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+	mock.ExpectQuery(`
+		^SELECT
+			(.+)
+		FROM
+			user as u
+		INNER JOIN
+			user_group as ug
+		ON
+			ug.user_id = u.id
+		INNER JOIN
+			user_type as ut
+		ON
+			ug.user_type_id = ut.id
+		WHERE
+	`).WillReturnRows(sqlmock.NewRows([]string{
+		"id",
+		"name",
+		"name_ruby",
+		"password_digest",
+		"email_address",
+		"type_id",
+		"type_name",
+	}).AddRow(
+		"user_001",
+		"user_001",
+		"user_001",
+		"password",
+		"test@test.com",
+		1,
+		"user_type_name",
+	))
 
-	mock.ExpectQuery("^SELECT (.+) FROM reservation_facility").WithArgs(1).WillReturnRows(facilityIDRows)
-
-	mock.ExpectQuery("^SELECT (.+) FROM facility").WithArgs(1).WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "facility001"))
-	mock.ExpectQuery("^SELECT (.+) FROM facility_group as fg INNER JOIN facility_type as ft (.+)").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
-	mock.ExpectQuery("^SELECT (.+) FROM facility").WithArgs(2).WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(2, "facility001"))
-	mock.ExpectQuery("^SELECT (.+) FROM facility_group as fg INNER JOIN facility_type as ft (.+)").WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+	mock.ExpectQuery(`
+		^SELECT
+			(.+)
+		FROM
+			facility as f
+		INNER JOIN
+			facility_group as fg
+		ON
+			fg.facility_id = f.id
+		INNER JOIN
+			facility_type as ft
+		ON
+			fg.facility_type_id = ft.id
+		WHERE
+	`).WillReturnRows(sqlmock.NewRows([]string{
+		"id",
+		"name",
+		"type_id",
+		"type_name",
+	}).AddRow(
+		1,
+		"new_facility",
+		1,
+		"facility_type_name",
+	))
 
 	if _, err := r.FindByID(sqlxDB, 1); err != nil {
 		t.Error(err)
