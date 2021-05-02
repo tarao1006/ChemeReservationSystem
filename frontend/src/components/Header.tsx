@@ -1,13 +1,15 @@
-import React, { useContext } from 'react'
-import { Link as RouterLink, useLocation } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
-import MenuItem from '@material-ui/core/MenuItem'
+import Paper from '@material-ui/core/Paper'
+import Fade from '@material-ui/core/Fade'
 import AccountCircle from '@material-ui/icons/AccountCircle'
-import Menu from '@material-ui/core/Menu'
+import ClickAwayListener from '@material-ui/core/ClickAwayListener'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import EventNoteIcon from '@material-ui/icons/EventNote'
@@ -21,111 +23,103 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       marginRight: theme.spacing(3.0),
     },
+    appIcon: {
+      marginRight: theme.spacing(3.0),
+      marginLeft: theme.spacing(3.0),
+    },
     toolbar: {
-      minHeight: `${headerHeight}`,
+      [theme.breakpoints.up('sm')]: {
+        minHeight: `${headerHeight}`,
+      },
     },
     grow: {
       flexGrow: 1,
     },
-    popover: {
-      marginTop: theme.spacing(8),
+    dialog: {
+      position: 'absolute',
+      top: `${headerHeight}`,
+      right: theme.spacing(1.0),
+      display: 'flex',
+      flexDirection: 'column',
     },
+    dialogPaper: {
+      marginTop: theme.spacing(0.5),
+      width: theme.spacing(16),
+      height: theme.spacing(12),
+      color: 'black',
+      display: 'flex',
+      alignItems: 'center',
+      border: '#dadce0 1px solid',
+    },
+    dialogList: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      width: '100%',
+      '& * >': {
+        with: '100%',
+      }
+    }
   }),
 )
 
 export const Header = () => {
-  const { currentUser, setCurrentUser } = useContext(AuthContext)
-  const location = useLocation()
-
   const classes = useStyles()
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const { currentUser, setCurrentUser } = useContext(AuthContext)
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(true)
 
-  const isOpen = Boolean(anchorEl)
-
-  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  };
+  const handleClick = () => {
+    setIsDialogOpen(prev => !prev)
+  }
 
   const handleClose = () => {
-    setAnchorEl(null)
+    setIsDialogOpen(false)
   }
 
   const handleLogout = async () => {
     await logout()
-    localStorage.removeItem('remember-me')
     setCurrentUser(undefined)
     handleClose()
   }
 
-  const renderMenu = (
-    <Menu
-      className={classes.popover}
-      anchorEl={anchorEl}
-      open={isOpen}
-      onClose={handleClose}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'center',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'center',
-      }}
-    >
-      <MenuItem onClick={handleClose}>マイページ</MenuItem>
-      <MenuItem onClick={handleLogout}>ログアウト</MenuItem>
-    </Menu>
+  const renderDialog = (
+    <div className={classes.dialog}>
+      <Paper elevation={5} className={classes.dialogPaper}>
+        <List className={classes.dialogList}>
+          <ListItem onClick={handleClose} button>マイページ</ListItem>
+          <ListItem onClick={handleLogout} button>ログアウト</ListItem>
+        </List>
+      </Paper>
+    </div>
   )
 
-  const LoginButton = () => {
-    return (
-      <Button
-        variant="outlined"
-        component={RouterLink}
-        to="/login"
-      >
-        ログイン
-      </Button>
-    )
-  }
-
-  const AccountButton = () => {
-    return (
-      <Button
-        onClick={handleOpen}
-        color="inherit"
-        endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-      >
-        <AccountCircle />
-      </Button>
-    )
-  }
-
   return (
-    <div className={classes.grow}>
-      <AppBar position="static">
-        <Toolbar className={classes.toolbar}>
-          <Typography variant="h6" noWrap className={classes.title}>
-            施設予約
-          </Typography>
-          <IconButton color="inherit">
-            <EventNoteIcon />
-          </IconButton>
-          <div className={classes.grow} />
-          {currentUser !== undefined && (
-            <>
-              <Button
-                onClick={handleOpen}
-                color="inherit"
-                endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-              >
-                <AccountCircle />
-              </Button>
-              {renderMenu}
-            </>
-          )}
-        </Toolbar>
-      </AppBar>
-    </div>
+    <AppBar color="primary" position="static" elevation={0}>
+      <Toolbar className={classes.toolbar}>
+        <Typography variant="h6" noWrap>
+          施設予約
+        </Typography>
+        <IconButton className={classes.appIcon} color="inherit">
+          <EventNoteIcon />
+        </IconButton>
+        <div className={classes.grow} />
+        {currentUser !== undefined && (
+          <ClickAwayListener onClickAway={handleClose}>
+            <div>
+            <Button
+              onClick={handleClick}
+              color="inherit"
+              endIcon={isDialogOpen ? <ExpandLessIcon />: <ExpandMoreIcon />}
+            >
+              <AccountCircle />
+            </Button>
+            <Fade in={isDialogOpen} timeout={200}>
+              {renderDialog}
+            </Fade>
+            </div>
+          </ClickAwayListener>
+        )}
+      </Toolbar>
+    </AppBar>
   );
 }
