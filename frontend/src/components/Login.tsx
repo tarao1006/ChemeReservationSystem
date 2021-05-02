@@ -7,7 +7,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
-import InputAdornment from '@material-ui/core/InputAdornment'
 import IconButton from '@material-ui/core/IconButton'
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -18,19 +17,21 @@ import { getMe, login as loginAPI, validate as validateAPI } from '@api'
 import { AuthContext } from '@contexts'
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingRight: 0,
+  formControlRoot: {
+    marginTop: 0,
+    marginBottom: 0,
   },
-  circularProgress: {
+  inputGroup: {
+    position: 'relative',
     display: 'flex',
-    '& > * + *': {
-      marginLeft: theme.spacing(2),
-    },
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  iconButton: {
-    marginRight: theme.spacing(1),
+  inputIcon: {
+    position: 'absolute',
+    right: theme.spacing(1.0),
   },
   paper: {
     marginTop: theme.spacing(8),
@@ -47,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
 }))
 
@@ -122,31 +123,35 @@ export const Login = () => {
 
   const LoadingIcon = () => {
     return (
-      <InputAdornment position="end" className={classes.circularProgress}>
-        <IconButton className={classes.iconButton} size="small" disabled disableFocusRipple disableRipple>
-          <CircularProgress size={25} />
-        </IconButton>
-      </InputAdornment>
+      <IconButton className={classes.inputIcon} size="small" disabled disableFocusRipple disableRipple>
+        <CircularProgress size={25} />
+      </IconButton>
     )
   }
 
-  const UserIdInputAdornment = () => {
+  const UserIdInputIcon = () => {
     return (
-      <InputAdornment position="end">
-        <IconButton className={classes.iconButton} disabled={userId === ""} size="small" type="submit">
-          <ArrowForwardIcon />
-        </IconButton>
-      </InputAdornment>
+      <IconButton
+        className={classes.inputIcon}
+        disabled={userId === ""}
+        size="small"
+        type="submit"
+      >
+        <ArrowForwardIcon />
+      </IconButton>
     )
   }
 
-  const PasswordInputAdornment = () => {
+  const PasswordInputIcon = () => {
     return (
-      <InputAdornment position="end">
-        <IconButton className={classes.iconButton} disabled={password === ""} size="small" type="submit">
-          <ArrowForwardIcon />
-        </IconButton>
-      </InputAdornment>
+      <IconButton
+        className={classes.inputIcon}
+        disabled={password === ""}
+        size="small"
+        type="submit"
+      >
+        <ArrowForwardIcon />
+      </IconButton>
     )
   }
 
@@ -161,47 +166,48 @@ export const Login = () => {
           ログイン
         </Typography>
         <form className={classes.form} noValidate onSubmit={isValidUserId ? handleSubmit : validate}>
-          <TextField
-            value={userId}
-            onChange={handleUserId}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="userId"
-            placeholder="ユーザーID"
-            name="username"
-            autoComplete="username"
-            autoFocus
-            InputProps={{
-              endAdornment: isValidUserId ? <></> : isLoading ? <LoadingIcon /> : <UserIdInputAdornment />,
-              className: classes.root
-            }}
-            error={isInvalidUserId}
-            helperText={isInvalidUserId ? "ユーザーIDが不正です": ""}
-          />
-          <Fade in={isValidUserId}>
+          <div className={classes.inputGroup}>
             <TextField
-              inputRef={passwordInputEl}
-              value={password}
-              onChange={handlePassword}
+              value={userId}
+              onChange={handleUserId}
               variant="outlined"
               margin="normal"
               required
               fullWidth
-              name="password"
-              placeholder="パスワード"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              InputProps={{
-                endAdornment: !isValidUserId ? <></> :isLoading ? <LoadingIcon /> : <PasswordInputAdornment />,
-                className: classes.root
-              }}
-              error={isInvalidPassword}
-              helperText={isInvalidPassword ? "パスワードが不正です": ""}
+              id="userId"
+              placeholder="ユーザーID"
+              name="username"
+              autoComplete="username"
+              autoFocus
+              error={isInvalidUserId}
+              helperText={isInvalidUserId ? "ユーザーIDが不正です": ""}
+              classes={{ root: classes.formControlRoot }}
             />
-          </Fade>
+            {isValidUserId ? null : isLoading ? <LoadingIcon /> : <UserIdInputIcon />}
+          </div>
+          <div className={classes.inputGroup}>
+            <Fade in={!isValidUserId}>
+              <TextField
+                inputRef={passwordInputEl}
+                value={password}
+                onChange={handlePassword}
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                placeholder="パスワード"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                error={isInvalidPassword}
+                helperText={isInvalidPassword ? "パスワードが不正です": ""}
+                classes={{ root: classes.formControlRoot }}
+                style={{ top: '-1px' }}
+              />
+            </Fade>
+            {!isValidUserId ? null : isLoading ? <LoadingIcon /> : <PasswordInputIcon />}
+          </div>
           <FormControlLabel
             control={<Checkbox checked={checked} onChange={handleChecked} color="primary" />}
             label="ログインしたままにする"
