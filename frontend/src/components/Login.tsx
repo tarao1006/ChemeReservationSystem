@@ -11,6 +11,7 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import IconButton from '@material-ui/core/IconButton'
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Fade from '@material-ui/core/Fade'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import { getMe, login as loginAPI, validate as validateAPI } from '@api'
@@ -179,27 +180,28 @@ export const Login = () => {
             error={isInvalidUserId}
             helperText={isInvalidUserId ? "ユーザーIDが不正です": ""}
           />
-          <TextField
-            inputRef={passwordInputEl}
-            style={{visibility: isValidUserId ? 'visible' : 'hidden'}}
-            value={password}
-            onChange={handlePassword}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            placeholder="パスワード"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            InputProps={{
-              endAdornment: !isValidUserId ? <></> :isLoading ? <LoadingIcon /> : <PasswordInputAdornment />,
-              className: classes.root
-            }}
-            error={isInvalidPassword}
-            helperText={isInvalidPassword ? "パスワードが不正です": ""}
-          />
+          <Fade in={isValidUserId}>
+            <TextField
+              inputRef={passwordInputEl}
+              value={password}
+              onChange={handlePassword}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              placeholder="パスワード"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              InputProps={{
+                endAdornment: !isValidUserId ? <></> :isLoading ? <LoadingIcon /> : <PasswordInputAdornment />,
+                className: classes.root
+              }}
+              error={isInvalidPassword}
+              helperText={isInvalidPassword ? "パスワードが不正です": ""}
+            />
+          </Fade>
           <FormControlLabel
             control={<Checkbox checked={checked} onChange={handleChecked} color="primary" />}
             label="ログインしたままにする"
