@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export const Header = () => {
   const classes = useStyles()
   const { currentUser, setCurrentUser } = useContext(AuthContext)
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(true)
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
 
   const handleClick = () => {
     setIsDialogOpen(prev => !prev)
