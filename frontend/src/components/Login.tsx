@@ -17,6 +17,24 @@ import { getMe, login as loginAPI, validate as validateAPI } from '@api'
 import { AuthContext } from '@contexts'
 
 const useStyles = makeStyles((theme) => ({
+  userIdTextFieldBefore: {
+    borderTopLeftRadius: theme.spacing(1.0),
+    borderTopRightRadius: theme.spacing(1.0),
+    borderBottomLeftRadius: theme.spacing(1.0),
+    borderBottomRightRadius: theme.spacing(1.0),
+  },
+  userIdTextField: {
+    borderTopLeftRadius: theme.spacing(1.0),
+    borderTopRightRadius: theme.spacing(1.0),
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  passwordTextField: {
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    borderBottomLeftRadius: theme.spacing(1.0),
+    borderBottomRightRadius: theme.spacing(1.0),
+  },
   formControlRoot: {
     marginTop: 0,
     marginBottom: 0,
@@ -182,11 +200,14 @@ export const Login = () => {
               error={isInvalidUserId}
               helperText={isInvalidUserId ? "ユーザーIDが不正です": ""}
               classes={{ root: classes.formControlRoot }}
+              InputProps={{
+                className: isValidUserId ? classes.userIdTextField : classes.userIdTextFieldBefore
+              }}
             />
             {isValidUserId ? null : isLoading ? <LoadingIcon /> : <UserIdInputIcon />}
           </div>
           <div className={classes.inputGroup}>
-            <Fade in={!isValidUserId}>
+            <Fade in={isValidUserId}>
               <TextField
                 inputRef={passwordInputEl}
                 value={password}
@@ -203,6 +224,9 @@ export const Login = () => {
                 error={isInvalidPassword}
                 helperText={isInvalidPassword ? "パスワードが不正です": ""}
                 classes={{ root: classes.formControlRoot }}
+                InputProps={{
+                  className: classes.passwordTextField,
+                }}
                 style={{ top: '-1px' }}
               />
             </Fade>
