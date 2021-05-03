@@ -11,16 +11,16 @@ const useStyles = makeStyles(() => ({
     overflow: 'hidden',
     display: 'flex',
   },
-  main: {
+  wrap: {
     flex: '1 1 auto',
     overflow: 'hidden',
     height: '100%',
   },
-  allWrap: {
+  container: {
     position: 'relative',
     height: '100%',
   },
-  wrap: {
+  main: {
     position: 'relative',
     width: '100%',
     height: `calc(100vh - ${headerHeight})`,
@@ -32,10 +32,6 @@ const useStyles = makeStyles(() => ({
     overflow: 'hidden',
     position: 'relative',
   },
-  rightPanel: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
 }));
 
 export const Layout = ({ children }) => {
@@ -46,14 +42,12 @@ export const Layout = ({ children }) => {
     <ReservationProvider>
       <CssBaseline />
       <div className={classes.root}>
-        <div className={classes.main}>
-          <div className={classes.allWrap}>
+        <div className={classes.wrap}>
+          <div className={classes.container}>
             <Header />
-            <div className={classes.wrap}>
+            <div className={classes.main}>
               <div className={classes.mainPanel}>
                 {children}
-              </div>
-              <div className={classes.rightPanel}>
               </div>
             </div>
           </div>

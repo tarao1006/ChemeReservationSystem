@@ -273,7 +273,7 @@ const BodyMainPanelContent = () => {
   )
 }
 
-export const Demo = () => {
+export const WeeklyCalendar = () => {
   const classes = useStyles()
 
   return (

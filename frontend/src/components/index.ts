@@ -4,3 +4,5 @@ export { Home } from './Home'
 export { Login } from './Login'
 export { Loading } from './Loading'
 export { Demo } from './Demo'
+
+export { WeeklyCalendar } from './WeeklyCalendar'
