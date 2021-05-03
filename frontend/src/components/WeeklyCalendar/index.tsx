@@ -87,7 +87,7 @@ export const WeeklyCalendar = () => {
     <div className={classes.root}>
       <div className={classes.wrap}>
         <Head dates={dates} />
-        <Body />
+        <Body dates={dates} />
       </div>
     </div>
   )

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { BodyLeftPanel } from './BodyLeftPanel'
 import { BodyMainPanel } from './BodyMainPanel'
+import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const Body = () => {
+export const Body = ({ dates }: { dates: dayjs.Dayjs[] }) => {
   const classes = useStyles()
   const [scrollTop, setScrollTop] = useState<number>(0)
 
@@ -42,7 +43,7 @@ export const Body = () => {
     <div className={classes.root}>
       <div className={scrollTop === 0 ? classes.wrap : classes.wrapScrolled}>
         <BodyLeftPanel scrollTop={scrollTop} />
-        <BodyMainPanel setScrollTop={setScrollTop} />
+        <BodyMainPanel dates={dates} setScrollTop={setScrollTop} />
       </div>
     </div>
   )

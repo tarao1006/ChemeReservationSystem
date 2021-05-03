@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
     },
     dialog: {
+      zIndex: theme.zIndex.appBar,
       position: 'absolute',
       top: `${headerHeight}`,
       right: theme.spacing(1.0),

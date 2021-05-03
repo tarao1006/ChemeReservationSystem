@@ -1,5 +1,9 @@
-import React from 'react'
+import React, { createRef, useContext, useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
+import Button from '@material-ui/core/Button'
+import { Reservation } from '@api'
+import { ReservationContext } from '@contexts'
+import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,6 +62,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       height: '100%',
     },
+    buttonRoot: {
+      textAlign: 'left',
+    },
   }),
 )
 
@@ -78,34 +85,102 @@ const BodyMainPanelContentCell = () => {
   )
 }
 
-const BodyMainPanelContent = () => {
+const Plan = ({ r }: { r: Reservation }) => {
   const classes = useStyles()
-  const days = ['日', '月', '火', '水', '木', '金', '土']
+  const [width, setWidth] = useState<number>(100)
+  const [top, setTop] = useState<number>((r.startAt.hour() + r.startAt.minute() / 60.0) * 48 - 1)
+  const [height, setHeight] = useState<number>(r.length > 1 ? r.length * 48 - 2 : 22)
+
+  return (
+    <Button
+      component="div"
+      color='primary'
+      variant='contained'
+      classes={{
+        root: classes.buttonRoot,
+      }}
+      style={{
+        display: 'block',
+        position: 'absolute',
+        width: `${width}%`,
+        top: `${top}px`,
+        height: `${height}px`,
+        zIndex: 5,
+        paddingTop: 0,
+        paddingBottom: 0,
+        paddingRight: 0,
+        paddingLeft: '8px',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      <div style={{ fontSize: '12px' }}>
+        {r.plan.name}
+      </div>
+      {r.length > 1 && (
+        <div style={{ fontSize: '12px' }}>
+          {r.startAt.format('A h:m')}～{r.endAt.format('h:m')}
+        </div>
+      )}
+    </Button>
+  )
+}
+
+const BodyMainPanelContentColumn = ({
+  date,
+  reservations
+}: {
+  date: dayjs.Dayjs
+  reservations: Reservation[]
+}) => {
+  const classes = useStyles()
+
+  return (
+    <div className={classes.column}>
+      <div className={classes.columnContent} />
+      <div className={classes.columnContentPresentation}>
+        {reservations.map(r => <Plan key={r.id} r={r} />)}
+      </div>
+    </div>
+  )
+}
+
+const BodyMainPanelContent = ({ dates }: { dates: dayjs.Dayjs[] }) => {
+  const classes = useStyles()
+  const { reservations } = useContext(ReservationContext)
 
   return (
     <div className={classes.wrap}>
       <BodyMainPanelContentCell />
       <div className={classes.gutter} />
-      {days.map(day => (
-        <div key={day} className={classes.column}>
-          <div className={classes.columnContent} />
-          <div className={classes.columnContentPresentation} />
-        </div>
+      {dates.map(date => (
+        <BodyMainPanelContentColumn
+          key={date.format()}
+          date={date}
+          reservations={reservations.filter(r => r.startAt.isSame(date, 'day'))}
+        />
       ))}
     </div>
   )
 }
 
-export const BodyMainPanel = ({ setScrollTop }: { setScrollTop: React.Dispatch<React.SetStateAction<number>> }) => {
+export const BodyMainPanel = ({
+  dates,
+  setScrollTop
+}: {
+  dates: dayjs.Dayjs[]
+  setScrollTop: React.Dispatch<React.SetStateAction<number>>
+}) => {
   const classes = useStyles()
+  const ref = createRef<HTMLDivElement>()
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    setScrollTop((e.target as HTMLDivElement).scrollTop)
+    const top = (e.target as HTMLDivElement).scrollTop
+    setScrollTop(top)
   }
 
   return (
-    <div className={classes.root} onScroll={handleScroll}>
-      <BodyMainPanelContent />
+    <div className={classes.root} onScroll={handleScroll} ref={ref}>
+      <BodyMainPanelContent dates={dates} />
     </div>
   )
 }

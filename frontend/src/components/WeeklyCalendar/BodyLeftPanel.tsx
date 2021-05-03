@@ -55,7 +55,7 @@ const BodyLeftPanelContent = () => {
 
 export const BodyLeftPanel = ({ scrollTop }: { scrollTop: number }) => {
   const classes = useStyles()
-  const ref = useRef(null)
+  const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     ref.current.scrollTop = scrollTop

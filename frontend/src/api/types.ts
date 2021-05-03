@@ -60,6 +60,7 @@ export interface Reservation {
 	creator: User
 	startAt: dayjs.Dayjs
   endAt: dayjs.Dayjs
+  length: number
 	plan: Plan
 	planMemo: string
 	createdAt: dayjs.Dayjs
@@ -99,6 +100,7 @@ export const convertToReservation = (r: ReservationDTO): Reservation => {
     creator: convertToUser(r.creator),
     startAt: dayjs(r.start_at),
     endAt: dayjs(r.end_at),
+    length: (dayjs(r.end_at).unix() - dayjs(r.start_at).unix()) / 3600.0,
     plan: r.plan,
     planMemo: r.plan_memo,
     createdAt: dayjs(r.created_at),
