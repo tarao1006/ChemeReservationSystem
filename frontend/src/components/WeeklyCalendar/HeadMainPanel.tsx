@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import IconButton from '@material-ui/core/IconButton'
+import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-const HeadDay = () => {
+const HeadDay = ({ dates }: { dates: dayjs.Dayjs[] }) => {
   const classes = useStyles()
   const days = ['日', '月', '火', '水', '木', '金', '土']
 
@@ -79,15 +80,15 @@ const HeadDay = () => {
     <div className={classes.wrap}>
       <div className={classes.main}>
         <div className={classes.gutter} />
-        {days.map((day, i) => (
+        {dates.map((date, i) => (
           <div key={i} className={classes.cell}>
             <div className={classes.cellBorder} />
             <h2 className={classes.cellContent}>
               <div className={classes.text}>
-                {day}
+                {days[i]}
               </div>
               <IconButton className={classes.button}>
-                {i + 8}
+                {date.date()}
               </IconButton>
             </h2>
           </div>
@@ -97,12 +98,12 @@ const HeadDay = () => {
   )
 }
 
-export const HeadMainPanel = () => {
+export const HeadMainPanel = ({ dates }: { dates: dayjs.Dayjs[] }) => {
   const classes = useStyles()
 
   return (
     <div className={classes.root}>
-      <HeadDay />
+      <HeadDay dates={dates} />
       <div></div> {/* sZR1Lb  */}
     </div>
   )
