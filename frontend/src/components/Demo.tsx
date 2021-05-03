@@ -79,9 +79,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     headDayText: {
       fontSize: '8px',
-      marginTop: theme.spacing(2.5),
+      marginTop: theme.spacing(2.0),
     },
     headDayButton: {
+      marginTop: theme.spacing(0.5),
       fontSize: '32px',
       height: '48px',
       width: '48px',
@@ -130,7 +131,7 @@ const HeadDay = () => {
             <span className={classes.headDayCellContent}>
               <div className={classes.headDayText}>{day}</div>
               <IconButton className={classes.headDayButton}>
-                {i + 2}
+                {i + 4}
               </IconButton>
             </span>
           </div>
