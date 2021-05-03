@@ -118,7 +118,7 @@ const Plan = ({ r }: { r: Reservation }) => {
       </div>
       {r.length > 1 && (
         <div style={{ fontSize: '12px' }}>
-          {r.startAt.format('A h:m')}～{r.endAt.format('h:m')}
+          {r.startAt.format('A h:mm')}～{r.endAt.format('h:mm')}
         </div>
       )}
     </Button>
