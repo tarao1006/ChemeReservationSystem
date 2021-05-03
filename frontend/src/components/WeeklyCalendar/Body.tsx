@@ -25,11 +25,12 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'stretch',
       overflow: 'hidden',
       '&::before': {
-        boxShadow: 'inset 0 1px 1px 0 rgb(0 0 0 / 14%), inset 0 2px 1px -1px rgb(0 0 0 / 12%)',
+        boxShadow: 'inset 0px 1px 1px 0 #dadce0',
         content: "''",
-        height: '2px',
+        height: '4px',
         position: 'absolute',
         width: '100%',
+        zIndex: 505,
       },
     }
   }),
@@ -37,15 +38,17 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Body = ({ dates }: { dates: dayjs.Dayjs[] }) => {
   const classes = useStyles()
-  const ref = useRef<HTMLDivElement>()
+  const [scrolled, setScrolled] = useState<boolean>(false)
+  const ref = useRef<HTMLDivElement>(undefined)
 
   const setScrollTop = (scrollTop: number) => {
     ref.current.scrollTop = scrollTop
+    setScrolled(scrollTop !== 0)
   }
 
   return (
     <div className={classes.root}>
-      <div className={classes.wrap}>
+      <div className={scrolled ? classes.wrapScrolled : classes.wrap}>
         <BodyLeftPanel ref={ref} />
         <BodyMainPanel dates={dates} setScrollTop={setScrollTop} />
       </div>
