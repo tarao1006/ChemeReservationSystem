@@ -89,7 +89,7 @@ const Plan = ({ r }: { r: Reservation }) => {
   const classes = useStyles()
   const [width, setWidth] = useState<number>(100)
   const [top, setTop] = useState<number>((r.startAt.hour() + r.startAt.minute() / 60.0) * 48 - 1)
-  const [height, setHeight] = useState<number>(r.length > 1 ? r.length * 48 - 2 : 22)
+  const [height, setHeight] = useState<number>(r.length >= 1 ? r.length * 48 - 2 : 22)
 
   return (
     <Button
@@ -116,7 +116,7 @@ const Plan = ({ r }: { r: Reservation }) => {
       <div style={{ fontSize: '12px' }}>
         {r.plan.name}
       </div>
-      {r.length > 1 && (
+      {r.length >= 1 && (
         <div style={{ fontSize: '12px' }}>
           {r.startAt.format('A h:mm')}～{r.endAt.format('h:mm')}
         </div>
