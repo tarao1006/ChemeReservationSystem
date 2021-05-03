@@ -18,6 +18,19 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'stretch',
       overflow: 'hidden',
     },
+    wrapScrolled: {
+      flex: '1 1 auto',
+      display: 'flex',
+      alignItems: 'stretch',
+      overflow: 'hidden',
+      '&::before': {
+        boxShadow: 'inset 0 1px 1px 0 rgb(0 0 0 / 14%), inset 0 2px 1px -1px rgb(0 0 0 / 12%)',
+        content: "''",
+        height: '4px',
+        position: 'absolute',
+        width: '100%',
+      },
+    }
   }),
 )
 
@@ -27,7 +40,7 @@ export const Body = () => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.wrap}>
+      <div className={scrollTop === 0 ? classes.wrap : classes.wrapScrolled}>
         <BodyLeftPanel scrollTop={scrollTop} />
         <BodyMainPanel setScrollTop={setScrollTop} />
       </div>
