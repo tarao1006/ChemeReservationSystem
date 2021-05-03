@@ -1,4 +1,4 @@
-import React, { createRef, useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import { Reservation } from '@api'
@@ -168,10 +168,9 @@ export const BodyMainPanel = ({
   setScrollTop
 }: {
   dates: dayjs.Dayjs[]
-  setScrollTop: React.Dispatch<React.SetStateAction<number>>
+  setScrollTop(scrollTop: number): void
 }) => {
   const classes = useStyles()
-  const ref = createRef<HTMLDivElement>()
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const top = (e.target as HTMLDivElement).scrollTop
@@ -179,7 +178,7 @@ export const BodyMainPanel = ({
   }
 
   return (
-    <div className={classes.root} onScroll={handleScroll} ref={ref}>
+    <div className={classes.root} onScroll={handleScroll}>
       <BodyMainPanelContent dates={dates} />
     </div>
   )

@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: '1 1 auto',
       display: 'flex',
       overflowX: 'scroll',
-      overflowY: 'hidden'
+      overflowY: 'hidden',
     },
     gutter: {
       width: '9px',
