@@ -1,8 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import { Reservation } from '@api'
-import { ReservationContext } from '@contexts'
+import { AuthContext, ReservationContext } from '@contexts'
 import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -56,6 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
       right: 0,
       bottom: 0,
       left: 0,
+      zIndex: 5,
     },
     columnContentPresentation: {
       position: 'relative',
@@ -85,11 +86,20 @@ const BodyMainPanelContentCell = () => {
   )
 }
 
-const Plan = ({ r }: { r: Reservation }) => {
+const Plan = ({
+  r
+}: {
+  r: Reservation
+}) => {
   const classes = useStyles()
   const [width, setWidth] = useState<number>(100)
   const [top, setTop] = useState<number>((r.startAt.hour() + r.startAt.minute() / 60.0) * 48 - 1)
   const [height, setHeight] = useState<number>(r.length >= 1 ? r.length * 48 - 2 : 22)
+
+  useEffect(() => {
+    setTop((r.startAt.hour() + r.startAt.minute() / 60.0) * 48 - 1)
+    setHeight(r.length >= 1 ? r.length * 48 - 2 : 22)
+  }, [r])
 
   return (
     <Button
@@ -132,13 +142,40 @@ const BodyMainPanelContentColumn = ({
   date: dayjs.Dayjs
   reservations: Reservation[]
 }) => {
+  const { currentUser } = useContext(AuthContext)
   const classes = useStyles()
+  const [newReservation, setNewReservation] = useState<Reservation>()
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const offsetY = e.nativeEvent.offsetY
+    const offsetAllMinutes = Math.floor(offsetY / 12.0) * 15
+    const offsetHour = Math.floor(offsetAllMinutes / 60.0)
+    const offsetMinutes = offsetAllMinutes - offsetHour * 60.0
+
+    setNewReservation({
+      id: 0,
+      creator: currentUser,
+      startAt: date.hour(offsetHour).minute(offsetMinutes),
+      endAt: date.hour(offsetHour).minute(offsetMinutes).add(1, 'hour'),
+      length: 1,
+      plan: {
+        id: 0,
+        name: 'テスト'
+      },
+      planMemo: '',
+      createdAt: dayjs(),
+      updatedAt: dayjs(),
+      attendees: [],
+      facilities: []
+    })
+  }
 
   return (
     <div className={classes.column}>
-      <div className={classes.columnContent} />
+      <div className={classes.columnContent} onClick={handleClick} />
       <div className={classes.columnContentPresentation}>
         {reservations.map(r => <Plan key={r.id} r={r} />)}
+        {newReservation !== undefined && <Plan r={newReservation} />}
       </div>
     </div>
   )
