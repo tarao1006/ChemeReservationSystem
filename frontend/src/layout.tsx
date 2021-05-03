@@ -6,10 +6,35 @@ import { Header } from '@components'
 import { headerHeight } from '@config'
 
 const useStyles = makeStyles(() => ({
-  root: {
+  root:{
+    height: '100%',
+    overflow: 'hidden',
+    display: 'flex',
+  },
+  main: {
+    flex: '1 1 auto',
+    overflow: 'hidden',
+    height: '100%',
+  },
+  allWrap: {
+    position: 'relative',
+    height: '100%',
+  },
+  wrap: {
+    position: 'relative',
+    width: '100%',
+    height: `calc(100vh - ${headerHeight})`,
+    display: 'flex',
+    boxSizing: 'border-box',
+  },
+  mainPanel: {
+    flex: '1 1 auto',
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  rightPanel: {
     display: 'flex',
     flexDirection: 'column',
-    minHeight: `calc(100vh - ${headerHeight})`,
   },
 }));
 
@@ -20,9 +45,19 @@ export const Layout = ({ children }) => {
     <AuthProvider>
     <ReservationProvider>
       <CssBaseline />
-      <Header />
       <div className={classes.root}>
-        {children}
+        <div className={classes.main}>
+          <div className={classes.allWrap}>
+            <Header />
+            <div className={classes.wrap}>
+              <div className={classes.mainPanel}>
+                {children}
+              </div>
+              <div className={classes.rightPanel}>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </ReservationProvider>
     </AuthProvider>
