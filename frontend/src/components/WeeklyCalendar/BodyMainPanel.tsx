@@ -96,11 +96,15 @@ const BodyMainPanelContent = () => {
   )
 }
 
-export const BodyMainPanel = () => {
+export const BodyMainPanel = ({ setScrollTop }: { setScrollTop: React.Dispatch<React.SetStateAction<number>> }) => {
   const classes = useStyles()
 
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    setScrollTop((e.target as HTMLDivElement).scrollTop)
+  }
+
   return (
-    <div className={classes.root}>
+    <div className={classes.root} onScroll={handleScroll}>
       <BodyMainPanelContent />
     </div>
   )

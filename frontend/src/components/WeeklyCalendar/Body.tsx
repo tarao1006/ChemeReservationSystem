@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { BodyLeftPanel } from './BodyLeftPanel'
 import { BodyMainPanel } from './BodyMainPanel'
@@ -23,12 +23,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Body = () => {
   const classes = useStyles()
+  const [scrollTop, setScrollTop] = useState<number>(0)
 
   return (
     <div className={classes.root}>
       <div className={classes.wrap}>
-        <BodyLeftPanel />
-        <BodyMainPanel />
+        <BodyLeftPanel scrollTop={scrollTop} />
+        <BodyMainPanel setScrollTop={setScrollTop} />
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -53,11 +53,16 @@ const BodyLeftPanelContent = () => {
   )
 }
 
-export const BodyLeftPanel = () => {
+export const BodyLeftPanel = ({ scrollTop }: { scrollTop: number }) => {
   const classes = useStyles()
+  const ref = useRef(null)
+
+  useEffect(() => {
+    ref.current.scrollTop = scrollTop
+  }, [scrollTop])
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} ref={ref}>
       <BodyLeftPanelContent />
     </div>
   )
