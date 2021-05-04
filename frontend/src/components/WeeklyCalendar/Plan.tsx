@@ -104,7 +104,7 @@ export const Plan = ({
         )}
       </Button>
       <PlanDetail
-        r={reservation}
+        reservation={reservation}
         isOpen={isOpen}
         onClose={handleClose}
         anchorEl={anchorEl}

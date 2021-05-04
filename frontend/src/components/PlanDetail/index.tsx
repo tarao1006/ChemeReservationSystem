@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 export const PlanDetail = ({
-  r,
+  reservation,
   isOpen,
   onClose,
   anchorEl,
@@ -26,7 +26,7 @@ export const PlanDetail = ({
   transformOrigin,
   margin,
 }: {
-  r: Reservation
+  reservation: Reservation
   isOpen: boolean
   onClose: () => void
   anchorEl: Element
@@ -75,7 +75,7 @@ export const PlanDetail = ({
           handleEdit={handleEdit}
           handleDelete={handleDelete}
         />
-        <Body r={r} />
+        <Body reservation={reservation} />
       </div>
     </Popover>
   )

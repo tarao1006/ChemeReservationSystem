@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export const BodyTitle = ({ r }: { r: Reservation }) => {
+export const BodyTitle = ({ reservation }: { reservation: Reservation }) => {
   const classes = useStyles()
 
   return (
@@ -42,11 +42,11 @@ export const BodyTitle = ({ r }: { r: Reservation }) => {
       <div className={classes.main}>
         <div className={classes.name}>
           <span>
-            {r.plan.name}
+            {reservation.plan.name}
           </span>
         </div>
         <div className={classes.time}>
-          {r.format()}
+          {reservation.format()}
         </div>
       </div>
     </div>

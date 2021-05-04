@@ -30,16 +30,16 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export const Body = ({ r }: { r: Reservation }) => {
+export const Body = ({ reservation }: { reservation: Reservation }) => {
   const classes = useStyles()
 
   return (
     <div className={classes.root}>
       <div className={classes.title}>
-        <BodyTitle r={r} />
+        <BodyTitle reservation={reservation} />
       </div>
       <div className={classes.facility}>
-        {r.facilities[0].name}
+        {reservation.facilities[0].name}
       </div>
     </div>
   )
