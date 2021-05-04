@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react"
-import { Reservation, DateRange } from '@api'
+import { Reservation, DateRange } from '@types'
 
 interface IReservationContext {
   reservations: Reservation[]

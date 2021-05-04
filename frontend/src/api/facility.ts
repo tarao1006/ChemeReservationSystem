@@ -1,4 +1,5 @@
-import { baseInstance, Facility, testUserToken } from '.'
+import { baseInstance, testUserToken } from '.'
+import { Facility } from '@types'
 
 export const getAllFacilities = async (): Promise<Facility[]> => {
   return baseInstance.get<Facility[]>('/facility').then(res => {

@@ -1,4 +1,5 @@
-import { backendInstance, CodeResponse } from '.';
+import { backendInstance } from '.';
+import { CodeResponse } from '@types'
 
 export const login = async (userId: string, password: string, rememberMe: boolean): Promise<CodeResponse> => {
   return backendInstance.post<CodeResponse>('/login', {

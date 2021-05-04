@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react"
-import { User } from '@api'
+import { User } from '@types'
 
 type user = User | undefined
 

@@ -1,5 +1,5 @@
 import { baseInstance } from '.'
-import { Reservation, ReservationDTO, convertToReservation, DateRange } from './types'
+import { Reservation, ReservationDTO, convertToReservation, DateRange } from '@types'
 
 export const getAllReservations = async (): Promise<Reservation[]> => {
   return baseInstance.get<ReservationDTO[]>('/reservation').then(res => {

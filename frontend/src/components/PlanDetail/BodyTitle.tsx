@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { Reservation } from '@api'
+import { Reservation } from '@types'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

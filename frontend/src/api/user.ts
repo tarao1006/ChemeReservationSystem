@@ -1,4 +1,5 @@
-import { baseInstance, User, UserDTO, convertToUser } from '.'
+import { baseInstance } from '.'
+import { User, UserDTO, convertToUser } from '@types'
 
 export const getMe = async (): Promise<User> => {
   return baseInstance.get<UserDTO>('/me').then(res => {

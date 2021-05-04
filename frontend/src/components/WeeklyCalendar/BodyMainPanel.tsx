@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { Reservation } from '@api'
+import { Reservation } from '@types'
 import { AuthContext, ReservationContext } from '@contexts'
 import dayjs from 'dayjs'
 import { Plan } from './Plan'
