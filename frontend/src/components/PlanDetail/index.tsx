@@ -1,23 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Popover, { PopoverOrigin } from '@material-ui/core/Popover'
-import Typography from '@material-ui/core/Typography'
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-
-const useStyles = makeStyles((theme: Theme) => 
-  createStyles({
-    backDropRoot: {
-      backgroundColor: 'transparent',
-    }
-  }),
-)
+import { Reservation } from '@api'
 
 export const PlanDetail = ({
+  r,
   isOpen,
   onClose,
   anchorEl,
   anchorOrigin,
   transformOrigin
 }: {
+  r: Reservation
   isOpen: boolean
   onClose: () => void
   anchorEl: Element
@@ -37,7 +30,8 @@ export const PlanDetail = ({
       anchorOrigin={anchorOrigin}
       transformOrigin={transformOrigin}
     >
-      <Typography>The content of the Popover.</Typography>
+      <div>
+      </div>
     </Popover>
   )
 }

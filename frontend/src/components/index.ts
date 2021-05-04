@@ -6,3 +6,4 @@ export { Loading } from './Loading'
 export { Demo } from './Demo'
 
 export { WeeklyCalendar } from './WeeklyCalendar'
+export { PlanDetail } from './PlanDetail'

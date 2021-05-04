@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import { Reservation } from '@api'
-import { PlanDetail } from '../PlanDetail'
+import { PlanDetail } from '@components'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -78,6 +78,7 @@ export const Plan = ({
         )}
       </Button>
       <PlanDetail
+        r={r}
         isOpen={isOpen}
         onClose={handleClose}
         anchorEl={anchorEl}
