@@ -121,6 +121,18 @@ export class Reservation implements IReservation {
       return `${startDate} ${startTime}〜${endDate} ${endTime}`
     }
   }
+
+  formatDate() {
+    return this.startAt.format('M[月] D[日] (dddd')
+  }
+
+  formatStartAt() {
+    return this.startAt.format('A h:mm')
+  }
+
+  formatEndAt() {
+    return this.endAt.format('A h:mm')
+  }
 }
 
 export interface DateRange {

@@ -1,8 +1,8 @@
 import React from 'react'
 import Popover, { PopoverOrigin } from '@material-ui/core/Popover'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-// import { Head } from './Head'
-// import { Body } from './Body'
+import { Head } from './Head'
+import { Body } from './Body'
 import { Reservation } from '@types'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -65,6 +65,8 @@ export const PlanNew = ({
         }
       }}
     >
+      <Head handleClose={handleClose} />
+      <Body reservation={reservation} />
     </Popover>
   )
 }
