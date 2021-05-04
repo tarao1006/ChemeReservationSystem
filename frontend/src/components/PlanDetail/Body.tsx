@@ -24,9 +24,6 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       outline: 'none',
     },
-    facility: {
-
-    },
   })
 )
 
@@ -38,7 +35,7 @@ export const Body = ({ reservation }: { reservation: Reservation }) => {
       <div className={classes.title}>
         <BodyTitle reservation={reservation} />
       </div>
-      <div className={classes.facility}>
+      <div>
         {reservation.facilities[0].name}
       </div>
     </div>
