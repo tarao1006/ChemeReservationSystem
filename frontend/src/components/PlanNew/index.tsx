@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      paddingBottom: '8px',
+      padding: '8px',
     }
   })
 )
