@@ -100,22 +100,21 @@ const BodyMainPanelContentColumn = ({
     const offsetHour = Math.floor(offsetAllMinutes / 60.0)
     const offsetMinutes = offsetAllMinutes - offsetHour * 60.0
 
-    setNewReservation({
-      id: 0,
-      creator: currentUser,
-      startAt: date.hour(offsetHour).minute(offsetMinutes),
-      endAt: date.hour(offsetHour).minute(offsetMinutes).add(1, 'hour'),
-      length: 1,
-      plan: {
+    setNewReservation(new Reservation(
+      0,
+      currentUser,
+      date.hour(offsetHour).minute(offsetMinutes),
+      date.hour(offsetHour).minute(offsetMinutes).add(1, 'hour'),
+      {
         id: 0,
         name: 'テスト'
       },
-      planMemo: '',
-      createdAt: dayjs(),
-      updatedAt: dayjs(),
-      attendees: [],
-      facilities: []
-    })
+      '',
+      dayjs(),
+      dayjs(),
+      [],
+      []
+    ))
   }
 
   return (
