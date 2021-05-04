@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
       overflowY: 'scroll',
       paddingBottom: '16px',
       paddingTop: 0,
+      paddingLeft: '12px',
     },
     title: {
       minHeight: '32px',

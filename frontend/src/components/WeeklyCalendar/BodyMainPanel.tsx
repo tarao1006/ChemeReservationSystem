@@ -121,8 +121,8 @@ const BodyMainPanelContentColumn = ({
     <div className={classes.column}>
       <div className={classes.columnContent} onClick={handleClick} />
       <div className={classes.columnContentPresentation}>
-        {reservations.map(r => <Plan key={r.id} r={r} />)}
-        {newReservation !== undefined && <Plan r={newReservation} />}
+        {reservations.map(r => <Plan key={r.id} reservation={r} />)}
+        {newReservation !== undefined && <Plan reservation={newReservation} />}
       </div>
     </div>
   )

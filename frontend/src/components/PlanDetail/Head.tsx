@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     container: {
       flex: 'none',
-      padding: '8px 6px 0 6px',
+      padding: '12px 6px 0 6px',
       display: 'flex',
       flexFlow: 'row-reverse',
     },

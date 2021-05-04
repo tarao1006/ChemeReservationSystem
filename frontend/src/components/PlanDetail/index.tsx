@@ -23,7 +23,8 @@ export const PlanDetail = ({
   onClose,
   anchorEl,
   anchorOrigin,
-  transformOrigin
+  transformOrigin,
+  margin,
 }: {
   r: Reservation
   isOpen: boolean
@@ -31,6 +32,12 @@ export const PlanDetail = ({
   anchorEl: Element
   anchorOrigin: PopoverOrigin
   transformOrigin: PopoverOrigin
+  margin: {
+    top: string
+    bottom: string
+    left: string
+    right: string
+  } 
 }) => {
   const classes = useStyles()
 
@@ -53,6 +60,14 @@ export const PlanDetail = ({
       anchorEl={anchorEl}
       anchorOrigin={anchorOrigin}
       transformOrigin={transformOrigin}
+      PaperProps={{
+        style: {
+          marginTop: margin.top,
+          marginBottom: margin.bottom,
+          marginLeft: margin.left,
+          marginRight: margin.right,
+        }
+      }}
     >
       <div className={classes.root}>
         <Head
