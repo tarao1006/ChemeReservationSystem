@@ -106,8 +106,8 @@ const BodyMainPanelContentColumn = ({
       date.hour(offsetHour).minute(offsetMinutes),
       date.hour(offsetHour).minute(offsetMinutes).add(1, 'hour'),
       {
-        id: 0,
-        name: 'テスト'
+        id: 1,
+        name: '会議'
       },
       '',
       dayjs(),
