@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       outline: 'none',
     },
-    creator: {
+    facility: {
 
     },
   })
@@ -37,7 +37,8 @@ export const Body = ({ r }: { r: Reservation }) => {
       <div className={classes.title}>
         <BodyTitle r={r} />
       </div>
-      <div className={classes.creator}>
+      <div className={classes.facility}>
+        {r.facilities[0].name}
       </div>
     </div>
   )

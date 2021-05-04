@@ -1,4 +1,3 @@
-import React from 'react';
 import dayjs from 'dayjs'
 
 export interface CodeResponse {
@@ -112,39 +111,14 @@ export class Reservation implements IReservation {
   format() {
     if (this.startAt.date === this.endAt.date) {
       const date = this.startAt.format('M[月] D[日] (dddd)')
-      if (this.startAt.format('A') === this.endAt.format('A')) {
-        return (
-          <>
-            <span>
-              {date}
-            </span>
-            <span>
-              ・
-            </span>
-            <span>
-              {`${this.startAt.format('A h:mm')}〜${this.endAt.format('h:mm')}`}
-            </span>
-          </>
-        )
-      } else {
-        return (
-          <>
-            <span>
-              {date}
-            </span>
-            <span>・</span>
-            <span>
-              {`${this.startAt.format('A h:mm')}〜${this.endAt.format('A h:mm')}`}
-            </span>
-          </>
-        )
-      }
+      const endAtFormat = (this.startAt.format('A') === this.endAt.format('A')) ? 'h:mm' : 'A h:mm'
+      return `${date} ・ ${this.startAt.format('A h:mm')}〜${this.endAt.format(endAtFormat)}`
     } else {
       const startDate = this.startAt.format('M[月] D[日]')
       const startTime = this.startAt.format('A h:mm')
       const endDate = this.endAt.format('M[月] D[日]')
       const endTime = this.endAt.format('A h:mm')
-      return <span>{`${startDate} ${startTime}〜${endDate} ${endTime}`}</span>
+      return `${startDate} ${startTime}〜${endDate} ${endTime}`
     }
   }
 }
