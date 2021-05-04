@@ -38,21 +38,29 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export const Head = () => {
+export const Head = ({
+  handleClose,
+  handleEdit,
+  handleDelete
+}: {
+  handleClose: () => void
+  handleEdit: () => void
+  handleDelete: () => void
+}) => {
   const classes = useStyles()
 
   return (
     <div className={classes.root}>
       <div className={classes.wrap}>
         <div className={classes.container}>
-          <IconButton className={classes.closeButton} size='small'>
+          <IconButton className={classes.closeButton} size='small' onClick={handleClose}>
             <CloseIcon />
           </IconButton>
           <div className={classes.buttonGroup}>
-            <IconButton size='small'>
+            <IconButton size='small' onClick={handleEdit}>
               <EditIcon />
             </IconButton>
-            <IconButton size='small'>
+            <IconButton size='small' onClick={handleDelete}>
               <DeleteIcon />
             </IconButton>
           </div>

@@ -38,6 +38,14 @@ export const PlanDetail = ({
     onClose()
   }
 
+  const handleEdit = () => {
+    console.log('edit')
+  }
+
+  const handleDelete = () => {
+    console.log('delete')
+  }
+
   return (
     <Popover
       open={isOpen}
@@ -47,7 +55,11 @@ export const PlanDetail = ({
       transformOrigin={transformOrigin}
     >
       <div className={classes.root}>
-        <Head />
+        <Head
+          handleClose={handleClose}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+        />
         <Body r={r} />
       </div>
     </Popover>
