@@ -62,8 +62,7 @@ export const Plan = ({
   const handleMouseEnter = () => setBackgroundColor('#3f51b5')
   const handleMouseLeave = () => setBackgroundColor('#3f51b5')
 
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-    const target = e.currentTarget
+  const setAnchor = (target: HTMLElement) => {
     const targetRect = target.getBoundingClientRect()
     const targetRectLeft = targetRect.left
     const targetRectRight = targetRect.right
@@ -132,9 +131,13 @@ export const Plan = ({
     })
   }
 
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchor(e.currentTarget)
+  }
+
   useEffect(() => {
     if (reservation.id === 0) {
-      setAnchorEl(ref.current)
+      (ref.current !== undefined) && setAnchor(ref.current)
     }
   }, [ref])
 
