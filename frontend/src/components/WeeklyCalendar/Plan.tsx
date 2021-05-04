@@ -23,15 +23,6 @@ const useStyles = makeStyles((theme: Theme) =>
 type Vertical = "center" | "top" | "bottom"
 type Horizontal = "center" | "left" | "right"
 
-enum Position {
-  TopRight,
-  TopLeft,
-  TopCenter,
-  BottomRight,
-  BottomLeft,
-  BottomCenter
-}
-
 export const Plan = ({
   reservation
 }: {
