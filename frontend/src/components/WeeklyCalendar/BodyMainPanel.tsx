@@ -63,7 +63,14 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       height: '100%',
     },
-    buttonRoot: {
+    button: {
+      display: 'block',
+      position: 'absolute',
+      paddingTop: 0,
+      paddingBottom: 0,
+      paddingRight: 0,
+      paddingLeft: '8px',
+      whiteSpace: 'nowrap',
       textAlign: 'left',
     },
   }),
@@ -95,32 +102,36 @@ const Plan = ({
   const [width, setWidth] = useState<number>(100)
   const [top, setTop] = useState<number>((r.startAt.hour() + r.startAt.minute() / 60.0) * 48 - 1)
   const [height, setHeight] = useState<number>(r.length >= 1 ? r.length * 48 - 2 : 22)
+  const [backgroundColor, setBackgroundColor] = useState<string>('#3f51b5')
 
   useEffect(() => {
     setTop((r.startAt.hour() + r.startAt.minute() / 60.0) * 48 - 1)
     setHeight(r.length >= 1 ? r.length * 48 - 2 : 22)
   }, [r])
 
+  const handleMouseEnter = () => {
+    setBackgroundColor('#3f51b5')
+  }
+
+  const handleMouseLeave = () => {
+    setBackgroundColor('#3f51b5')
+  }
+
   return (
     <Button
       component="div"
       color='primary'
       variant='contained'
-      classes={{
-        root: classes.buttonRoot,
-      }}
+      className={classes.button}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      disableFocusRipple
       style={{
-        display: 'block',
-        position: 'absolute',
         width: `${width}%`,
         top: `${top}px`,
         height: `${height}px`,
         zIndex: 5,
-        paddingTop: 0,
-        paddingBottom: 0,
-        paddingRight: 0,
-        paddingLeft: '8px',
-        whiteSpace: 'nowrap',
+        backgroundColor: `${backgroundColor}`
       }}
     >
       <div style={{ fontSize: '12px' }}>
