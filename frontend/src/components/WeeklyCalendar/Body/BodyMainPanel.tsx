@@ -100,21 +100,19 @@ const BodyMainPanelContentColumn = ({
     const offsetHour = Math.floor(offsetAllMinutes / 60.0)
     const offsetMinutes = offsetAllMinutes - offsetHour * 60.0
 
-    setNewReservation(new Reservation(
-      0,
-      currentUser,
-      date.hour(offsetHour).minute(offsetMinutes),
-      date.hour(offsetHour).minute(offsetMinutes).add(1, 'hour'),
-      {
-        id: 1,
-        name: '会議'
-      },
-      '',
-      dayjs(),
-      dayjs(),
-      [],
-      []
-    ))
+    const startAt = date.hour(offsetHour).minute(offsetMinutes)
+    const endAt = date.hour(offsetHour).minute(offsetMinutes).add(1, 'hour')
+    const plan = {
+      id: 1,
+      name: '会議',
+    }
+    const now = dayjs()
+
+    setNewReservation(new Reservation(0, currentUser, startAt, endAt, plan, '', now, now, [], []))
+  }
+
+  const handleClose = () => {
+    setNewReservation(undefined)
   }
 
   return (
@@ -122,7 +120,7 @@ const BodyMainPanelContentColumn = ({
       <div className={classes.columnContent} onClick={handleClick} />
       <div className={classes.columnContentPresentation}>
         {reservations.map(reservation => <Plan key={reservation.id} reservation={reservation} />)}
-        {newReservation !== undefined && <Plan reservation={newReservation} />}
+        {newReservation !== undefined && <Plan reservation={newReservation} onClose={handleClose} />}
       </div>
     </div>
   )

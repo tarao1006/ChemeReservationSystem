@@ -7,3 +7,4 @@ export { Demo } from './Demo'
 
 export { WeeklyCalendar } from './WeeklyCalendar'
 export { PlanDetail } from './PlanDetail'
+export { PlanNew } from './PlanNew'

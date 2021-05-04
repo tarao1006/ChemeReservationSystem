@@ -3,7 +3,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { PopoverOrigin } from '@material-ui/core/Popover'
 import Button from '@material-ui/core/Button'
 import { Reservation } from '@types'
-import { PlanDetail } from '@components'
+import { PlanDetail, PlanNew } from '@components'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,11 +24,14 @@ type Vertical = "center" | "top" | "bottom"
 type Horizontal = "center" | "left" | "right"
 
 export const Plan = ({
-  reservation
+  reservation,
+  onClose
 }: {
   reservation: Reservation
+  onClose?: () => void
 }) => {
   const classes = useStyles()
+  const ref = useRef<HTMLDivElement>()
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
   const isOpen = Boolean(anchorEl)
   const [width, setWidth] = useState<number>(100)
@@ -129,13 +132,21 @@ export const Plan = ({
     })
   }
 
+  useEffect(() => {
+    if (reservation.id === 0) {
+      setAnchorEl(ref.current)
+    }
+  }, [ref])
+
   const handleClose = () => {
+    onClose && onClose()
     setAnchorEl(null)
   }
 
   return (
     <>
       <Button
+        ref={ref}
         component="div"
         color='primary'
         variant='contained'
@@ -162,15 +173,29 @@ export const Plan = ({
           </div>
         )}
       </Button>
-      <PlanDetail
-        reservation={reservation}
-        isOpen={isOpen}
-        onClose={handleClose}
-        anchorEl={anchorEl}
-        anchorOrigin={anchorOrigin}
-        transformOrigin={transformOrigin}
-        margin={margin}
-      />
+      {reservation.id === 0 ? (
+        anchorEl ? (
+          <PlanNew
+            reservation={reservation}
+            isOpen={true}
+            onClose={handleClose}
+            anchorEl={anchorEl}
+            anchorOrigin={anchorOrigin}
+            transformOrigin={transformOrigin}
+            margin={margin}
+          />
+        ) : null
+      ) : (
+        <PlanDetail
+          reservation={reservation}
+          isOpen={isOpen}
+          onClose={handleClose}
+          anchorEl={anchorEl}
+          anchorOrigin={anchorOrigin}
+          transformOrigin={transformOrigin}
+          margin={margin}
+        />
+      )}
     </>
   )
 }
