@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
+      paddingBottom: '8px',
     }
   })
 )
@@ -65,8 +66,10 @@ export const PlanNew = ({
         }
       }}
     >
-      <Head handleClose={handleClose} />
-      <Body reservation={reservation} />
+      <div className={classes.root}>
+        <Head handleClose={handleClose} />
+        <Body reservation={reservation} />
+      </div>
     </Popover>
   )
 }
