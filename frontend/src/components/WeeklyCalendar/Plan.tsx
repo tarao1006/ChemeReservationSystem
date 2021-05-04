@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-type Vertical = "top" | "bottom"
+type Vertical = "center" | "top" | "bottom"
 type Horizontal = "center" | "left" | "right"
 
 enum Position {
@@ -80,25 +80,6 @@ export const Plan = ({
 
     setAnchorEl(target)
 
-    let position: Position
-    if (targetRectTop > halfInnerHeight && targetRectBottom > halfInnerHeight) {
-      if (targetRectLeft < halfInnerWidth && targetRectRight < halfInnerWidth) {
-        position = Position.TopRight
-      } else if (targetRectLeft > halfInnerWidth && targetRectRight > halfInnerWidth) {
-        position = Position.TopLeft
-      } else {
-        position = Position.TopCenter
-      }
-    } else {
-      if (targetRectLeft < halfInnerWidth && targetRectRight < halfInnerWidth) {
-        position = Position.BottomRight
-      } else if (targetRectLeft > halfInnerWidth && targetRectRight > halfInnerWidth) {
-        position = Position.BottomLeft
-      } else {
-        position = Position.BottomCenter
-      }
-    }
-
     let anchorOriginVertical: Vertical
     let anchorOriginHorizontal: Horizontal
     let transformOriginVertical: Vertical
@@ -106,58 +87,41 @@ export const Plan = ({
     let topMargin: string
     let leftMargin: string
 
-    switch (position) {
-      case Position.TopRight:
-        anchorOriginVertical = 'top'
-        transformOriginVertical = 'bottom'
-        anchorOriginHorizontal = 'right'
-        transformOriginHorizontal = 'left'
-        topMargin = '-12px'
-        leftMargin = '12px'
-        break
-      case Position.TopLeft:
-        anchorOriginVertical = 'top'
-        transformOriginVertical = 'bottom'
-        anchorOriginHorizontal = 'left'
-        transformOriginHorizontal = 'right'
-        topMargin = '-12px'
-        leftMargin = '-12px'
-        break
-      case Position.TopCenter:
-        anchorOriginVertical = 'top'
-        transformOriginVertical = 'bottom'
-        anchorOriginHorizontal = 'center'
-        transformOriginHorizontal = 'center'
-        topMargin = '-12px'
-        leftMargin = '0px'
-        break
-      case Position.BottomRight:
-        anchorOriginVertical = 'bottom'
-        transformOriginVertical = 'top'
-        anchorOriginHorizontal = 'right'
-        transformOriginHorizontal = 'left'
-        topMargin = '12px'
-        leftMargin = '12px'
-        break
-      case Position.BottomLeft:
-        anchorOriginVertical = 'bottom'
-        transformOriginVertical = 'top'
-        anchorOriginHorizontal = 'left'
-        transformOriginHorizontal = 'right'
-        topMargin = '12px'
-        leftMargin = '-12px'
-        break
-      case Position.BottomCenter:
-        anchorOriginVertical = 'bottom'
-        transformOriginVertical = 'top'
-        anchorOriginHorizontal = 'center'
-        transformOriginHorizontal = 'center'
-        topMargin = '12px'
-        leftMargin = '0px'
-        break
-      default:
-        console.error("invalid position")
-        break
+    if (targetRectTop > halfInnerHeight && targetRectBottom > halfInnerHeight) {
+      anchorOriginVertical = 'top'
+      transformOriginVertical = 'bottom'
+      topMargin = '-12px'
+    } else if (targetRectTop < halfInnerHeight && targetRectBottom < halfInnerHeight) {
+      anchorOriginVertical = 'bottom'
+      transformOriginVertical = 'top'
+      topMargin = '12px'
+    } else {
+      anchorOriginVertical = 'center'
+      transformOriginVertical = 'center'
+      topMargin = '0px'
+    }
+
+    if (targetRectLeft < halfInnerWidth && targetRectRight < halfInnerWidth) {
+      anchorOriginHorizontal = 'right'
+      transformOriginHorizontal = 'left'
+      leftMargin = '12px'
+    } else if (targetRectLeft > halfInnerWidth && targetRectRight > halfInnerWidth) {
+      anchorOriginHorizontal = 'left'
+      transformOriginHorizontal = 'right'
+      leftMargin = '-12px' 
+    } else {
+      anchorOriginHorizontal = 'center'
+      transformOriginHorizontal = 'center'
+      leftMargin = '0px'
+    }
+
+    if (anchorOriginVertical === 'center' && anchorOriginHorizontal === 'center') {
+      anchorOriginVertical = 'center'
+      transformOriginVertical = 'center'
+      anchorOriginHorizontal = 'left'
+      transformOriginHorizontal = 'right'
+      topMargin = '0px'
+      leftMargin = '-12px'
     }
 
     setAnchorOrigin({
