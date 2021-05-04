@@ -34,9 +34,7 @@ export const PlanDetail = ({
   transformOrigin: PopoverOrigin
   margin: {
     top: string
-    bottom: string
     left: string
-    right: string
   } 
 }) => {
   const classes = useStyles()
@@ -63,9 +61,7 @@ export const PlanDetail = ({
       PaperProps={{
         style: {
           marginTop: margin.top,
-          marginBottom: margin.bottom,
           marginLeft: margin.left,
-          marginRight: margin.right,
         }
       }}
     >

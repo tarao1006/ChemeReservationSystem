@@ -20,6 +20,18 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
+type Vertical = "top" | "bottom"
+type Horizontal = "center" | "left" | "right"
+
+enum Position {
+  TopRight,
+  TopLeft,
+  TopCenter,
+  BottomRight,
+  BottomLeft,
+  BottomCenter
+}
+
 export const Plan = ({
   reservation
 }: {
@@ -42,13 +54,9 @@ export const Plan = ({
   })
   const [margin, setMargin] = useState<{
     top: string
-    bottom: string
-    right: string
     left: string
   }>({
     top: "12px",
-    bottom: "0px",
-    right: "0px",
     left: "0px",
   })
 
@@ -61,12 +69,108 @@ export const Plan = ({
   const handleMouseLeave = () => setBackgroundColor('#3f51b5')
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(e.currentTarget)
+    const target = e.currentTarget
+    const targetRect = target.getBoundingClientRect()
+    const targetRectLeft = targetRect.left
+    const targetRectRight = targetRect.right
+    const targetRectTop = targetRect.top
+    const targetRectBottom = targetRect.bottom
+    const halfInnerHeight = window.innerHeight / 2.0
+    const halfInnerWidth = window.innerWidth / 2.0
+
+    setAnchorEl(target)
+
+    let position: Position
+    if (targetRectTop > halfInnerHeight && targetRectBottom > halfInnerHeight) {
+      if (targetRectLeft < halfInnerWidth && targetRectRight < halfInnerWidth) {
+        position = Position.TopRight
+      } else if (targetRectLeft > halfInnerWidth && targetRectRight > halfInnerWidth) {
+        position = Position.TopLeft
+      } else {
+        position = Position.TopCenter
+      }
+    } else {
+      if (targetRectLeft < halfInnerWidth && targetRectRight < halfInnerWidth) {
+        position = Position.BottomRight
+      } else if (targetRectLeft > halfInnerWidth && targetRectRight > halfInnerWidth) {
+        position = Position.BottomLeft
+      } else {
+        position = Position.BottomCenter
+      }
+    }
+
+    let anchorOriginVertical: Vertical
+    let anchorOriginHorizontal: Horizontal
+    let transformOriginVertical: Vertical
+    let transformOriginHorizontal: Horizontal
+    let topMargin: string
+    let leftMargin: string
+
+    switch (position) {
+      case Position.TopRight:
+        anchorOriginVertical = 'top'
+        transformOriginVertical = 'bottom'
+        anchorOriginHorizontal = 'right'
+        transformOriginHorizontal = 'left'
+        topMargin = '-12px'
+        leftMargin = '12px'
+        break
+      case Position.TopLeft:
+        anchorOriginVertical = 'top'
+        transformOriginVertical = 'bottom'
+        anchorOriginHorizontal = 'left'
+        transformOriginHorizontal = 'right'
+        topMargin = '-12px'
+        leftMargin = '-12px'
+        break
+      case Position.TopCenter:
+        anchorOriginVertical = 'top'
+        transformOriginVertical = 'bottom'
+        anchorOriginHorizontal = 'center'
+        transformOriginHorizontal = 'center'
+        topMargin = '-12px'
+        leftMargin = '0px'
+        break
+      case Position.BottomRight:
+        anchorOriginVertical = 'bottom'
+        transformOriginVertical = 'top'
+        anchorOriginHorizontal = 'right'
+        transformOriginHorizontal = 'left'
+        topMargin = '12px'
+        leftMargin = '12px'
+        break
+      case Position.BottomLeft:
+        anchorOriginVertical = 'bottom'
+        transformOriginVertical = 'top'
+        anchorOriginHorizontal = 'left'
+        transformOriginHorizontal = 'right'
+        topMargin = '12px'
+        leftMargin = '-12px'
+        break
+      case Position.BottomCenter:
+        anchorOriginVertical = 'bottom'
+        transformOriginVertical = 'top'
+        anchorOriginHorizontal = 'center'
+        transformOriginHorizontal = 'center'
+        topMargin = '12px'
+        leftMargin = '0px'
+        break
+      default:
+        console.error("invalid position")
+        break
+    }
+
+    setAnchorOrigin({
+      vertical: anchorOriginVertical,
+      horizontal: anchorOriginHorizontal,
+    })
+    setTransformOrigin({
+      vertical: transformOriginVertical,
+      horizontal: transformOriginHorizontal,
+    })
     setMargin({
-      top: "12px",
-      bottom: "0px",
-      left: "0px",
-      right: "0px",
+      top: topMargin,
+      left: leftMargin,
     })
   }
 
