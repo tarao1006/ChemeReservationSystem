@@ -1,5 +1,6 @@
 import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
+import { weeklyCalenderLeftPanelWidth } from '@config'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -12,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
       overflowY: 'hidden',
     },
     main: {
-      minWidth: '64px',
+      minWidth: `${weeklyCalenderLeftPanelWidth}px`,
       position: 'relative',
       boxSizing: 'border-box',
     },

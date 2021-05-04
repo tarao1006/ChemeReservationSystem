@@ -23,7 +23,7 @@ const useStyles = makeStyles(() => ({
   main: {
     position: 'relative',
     width: '100%',
-    height: `calc(100vh - ${headerHeight})`,
+    height: `calc(100vh - ${headerHeight}px)`,
     display: 'flex',
     boxSizing: 'border-box',
   },

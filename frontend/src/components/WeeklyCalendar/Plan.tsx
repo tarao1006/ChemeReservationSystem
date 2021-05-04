@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import { Reservation } from '@api'
-import dayjs from 'dayjs'
+import { PlanDetail } from '../PlanDetail'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,6 +25,8 @@ export const Plan = ({
   r: Reservation
 }) => {
   const classes = useStyles()
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
+  const isOpen = Boolean(anchorEl)
   const [width, setWidth] = useState<number>(100)
   const [top, setTop] = useState<number>((r.startAt.hour() + r.startAt.minute() / 60.0) * 48 - 1)
   const [height, setHeight] = useState<number>(r.length >= 1 ? r.length * 48 - 2 : 22)
@@ -35,39 +37,59 @@ export const Plan = ({
     setHeight(r.length >= 1 ? r.length * 48 - 2 : 22)
   }, [r])
 
-  const handleMouseEnter = () => {
-    setBackgroundColor('#3f51b5')
+  const handleMouseEnter = () => setBackgroundColor('#3f51b5')
+  const handleMouseLeave = () => setBackgroundColor('#3f51b5')
+
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget)
   }
 
-  const handleMouseLeave = () => {
-    setBackgroundColor('#3f51b5')
+  const handleClose = () => {
+    setAnchorEl(null)
   }
 
   return (
-    <Button
-      component="div"
-      color='primary'
-      variant='contained'
-      className={classes.button}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      disableFocusRipple
-      style={{
-        width: `${width}%`,
-        top: `${top}px`,
-        height: `${height}px`,
-        zIndex: 5,
-        backgroundColor: `${backgroundColor}`
-      }}
-    >
-      <div style={{ fontSize: '12px' }}>
-        {r.plan.name}
-      </div>
-      {r.length >= 1 && (
+    <>
+      <Button
+        component="div"
+        color='primary'
+        variant='contained'
+        className={classes.button}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleClick}
+        disableFocusRipple
+        disableRipple
+        style={{
+          width: `${width}%`,
+          top: `${top}px`,
+          height: `${height}px`,
+          zIndex: 5,
+          backgroundColor: `${backgroundColor}`
+        }}
+      >
         <div style={{ fontSize: '12px' }}>
-          {r.startAt.format('A h:mm')}～{r.endAt.format('h:mm')}
+          {r.plan.name}
         </div>
-      )}
-    </Button>
+        {r.length >= 1 && (
+          <div style={{ fontSize: '12px' }}>
+            {r.startAt.format('A h:mm')}～{r.endAt.format('h:mm')}
+          </div>
+        )}
+      </Button>
+      <PlanDetail
+        isOpen={isOpen}
+        onClose={handleClose}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'center',
+          horizontal: 'right'
+        }}
+        transformOrigin={{
+          vertical: 'center',
+          horizontal: 'left',
+        }}
+      />
+    </>
   )
 }

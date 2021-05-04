@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     toolbar: {
       [theme.breakpoints.up('sm')]: {
-        minHeight: `${headerHeight}`,
+        minHeight: `${headerHeight}px`,
       },
     },
     grow: {
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
     dialog: {
       zIndex: theme.zIndex.appBar,
       position: 'absolute',
-      top: `${headerHeight}`,
+      top: `${headerHeight}px`,
       right: theme.spacing(1.0),
       display: 'flex',
       flexDirection: 'column',

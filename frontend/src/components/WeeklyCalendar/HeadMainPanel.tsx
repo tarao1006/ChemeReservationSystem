@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import IconButton from '@material-ui/core/IconButton'
+import { weeklyCalenderHeadHeight } from '@config'
 import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -14,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'relative',
     },
     wrap: {
-      height: '84px',
+      height: `${weeklyCalenderHeadHeight}px`,
       display: 'flex',
       flex: 'none',
       overflow: 'hidden',

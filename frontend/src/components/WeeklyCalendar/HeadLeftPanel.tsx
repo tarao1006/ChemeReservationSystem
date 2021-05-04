@@ -1,5 +1,6 @@
 import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
+import { weeklyCalenderHeadHeight, weeklyCalenderLeftPanelWidth } from '@config'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -10,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
     },
     main: {
-      minWidth: '64px',
+      minWidth: `${weeklyCalenderLeftPanelWidth}px`,
       flex: 1,
       marginLeft: '1px',
     },
@@ -23,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     label: {
       zIndex: 1,
-      top: '84px',
+      top: `${weeklyCalenderHeadHeight}px`,
       boxSizing: 'border-box',
       display: 'table-cell',
       lineHeight: '24px',
