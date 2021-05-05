@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { Reservation } from '@types'
+import Chip from '@material-ui/core/Chip'
+import { Reservation, Facility, User } from '@types'
 import { BodyTitle } from './BodyTitle'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -24,8 +25,43 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       outline: 'none',
     },
+    chips: {
+      display: 'flex',
+      overflowX: 'scroll',
+      paddingTop: '8px',
+      paddingBottom: '8px',
+    },
+    chip: {
+      flex: 'none',
+      fontSize: '14px',
+      margin: '2px',
+    }
   })
 )
+
+const FacilityChip = ({ facility }: { facility: Facility }) => {
+  const classes = useStyles()
+
+  return (
+    <Chip
+      className={classes.chip}
+      label={facility.name}
+      variant="outlined"
+    />
+  )
+}
+
+const UserChip = ({ user }: { user: User }) => {
+  const classes = useStyles()
+
+  return (
+    <Chip
+      className={classes.chip}
+      label={user.name}
+      variant="outlined"
+    />
+  )
+}
 
 export const Body = ({ reservation }: { reservation: Reservation }) => {
   const classes = useStyles()
@@ -35,8 +71,15 @@ export const Body = ({ reservation }: { reservation: Reservation }) => {
       <div className={classes.title}>
         <BodyTitle reservation={reservation} />
       </div>
-      <div>
-        {reservation.places[0].name}
+      <div className={classes.chips}>
+        {reservation.attendees.map(attendee => (
+          <UserChip key={attendee.id} user={attendee} />
+        ))}
+      </div>
+      <div className={classes.chips}>
+        {reservation.places.map(place => (
+          <FacilityChip key={place.id} facility={place} />
+        ))}
       </div>
     </div>
   )
