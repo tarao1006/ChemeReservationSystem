@@ -3,23 +3,12 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Chip from '@material-ui/core/Chip'
 import Autocomplete from '@material-ui/lab/Autocomplete'
-import { AttendeeIcon } from './AttendeeIcon'
 import { User } from '@types'
+export { AttendeeIcon } from './AttendeeIcon'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      display: 'block',
-      width: '100%',
-      margin: '8px 0 8px',
-      fontSize: '14px',
-    },
-    wrap: {
-      display: 'flex',
-      margin: '2px 16px 0',
-      alignItems: 'flex-start',
-    },
-    container: {
       flex: '1 1 auto',
       width: 'auto',
       display: 'flex',
@@ -180,38 +169,33 @@ export const Attendee = () => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.wrap}>
-        <AttendeeIcon />
-        <div className={classes.container}>
-          <Autocomplete
-            inputValue={inputValue}
-            onChange={handleChange}
-            onInputChange={handleInputChange}
-            fullWidth
-            disableClearable
-            options={allUsers}
-            getOptionLabel={(option) => option.name}
-            filterSelectedOptions
-            getOptionSelected={(option: User, value: User) => (
-              users.findIndex(u => u.id === option.id) !== -1
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                placeholder="参加者を追加"
-              />
-            )}
+      <Autocomplete
+        inputValue={inputValue}
+        onChange={handleChange}
+        onInputChange={handleInputChange}
+        fullWidth
+        disableClearable
+        options={allUsers}
+        getOptionLabel={(option) => option.name}
+        filterSelectedOptions
+        getOptionSelected={(option: User, value: User) => (
+          users.findIndex(u => u.id === option.id) !== -1
+        )}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder="参加者を追加"
           />
-          <div className={classes.chips}>
-            {users.map(user => (
-              <UserChip
-                key={user.id}
-                user={user}
-                onDelete={handleRemoveUser}
-              />
-            ))}
-          </div>
-        </div>
+        )}
+      />
+      <div className={classes.chips}>
+        {users.map(user => (
+          <UserChip
+            key={user.id}
+            user={user}
+            onDelete={handleRemoveUser}
+          />
+        ))}
       </div>
     </div>
   )

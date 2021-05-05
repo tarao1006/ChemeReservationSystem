@@ -3,37 +3,13 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import { DatePicker } from '@material-ui/pickers';
-import { DateIcon } from './DateIcon'
 import { Reservation } from '@types'
 import dayjs from 'dayjs'
+export { DateIcon } from './DateIcon'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      display: 'table',
-      width: '100%',
-      margin: '16px 0 20px',
-      fontSize: '14px',
-    },
-    wrap: {
-      display: 'flex',
-      margin: '2px 16px 0',
-      alignItems: 'center',
-    },
-    field: {
-      display: 'table',
-      width: '100%',
-      margin: '8px 0 8px',
-      fontSize: '14px',
-    },
-    container: {
-      flex: '1 1 auto',
-      width: 'auto',
-      display: 'flex',
-      alignItems: 'center',
-      overflow: 'hidden',
-    },
-    main: {
       padding: 0,
       display: 'flex',
       alignItems: 'center',
@@ -144,79 +120,72 @@ export const Date = ({
 
   return (
     <div className={classes.root}>
-      <div className={classes.wrap}>
-        <DateIcon />
-        <div className={classes.container}>
-          <div className={classes.main}>
-              <DatePicker
-                disableToolbar
-                variant="inline"
-                format="M[月] D[日] (dddd)"
-                margin="none"
-                value={date}
-                onChange={handleDateChange}
-                InputProps={{
-                  classes: {
-                    root: classes.dateSelect
-                  },
-                  style: {
-                    width: `${104 + (date.date() >= 10 ? 8 : 0) + (date.month() + 1 >= 10 ? 8 : 0)}px`,
-                  }
-                }}
-              />
-            <div className={classes.time}>
-              <Select
-                value={startAtMinute}
-                renderValue={(value: number) => parseMinute(value)}
-                onChange={handleStartAtChange}
-                className={classes.timeSelect}
-                MenuProps={{
-                  style: {
-                    maxHeight: '400px',
-                  }
-                }}
-                inputProps={{
-                  fontSize: '14px',
-                }}
-              >
-                {startAtSelect.map(s => (
-                  <MenuItem
-                    key={parseMinute(s)}
-                    value={s}
-                    className={classes.selectItem}
-                  >
-                    {parseMinute(s)}
-                  </MenuItem>
-                ))}
-              </Select>
-              <span style={{ fontSize: '14px' }}>–</span>
-              <Select
-                value={endAtMinute}
-                renderValue={(value: number) => parseMinute(value)}
-                onChange={handleEndAtChange}
-                className={classes.timeSelect}
-                MenuProps={{
-                  style: {
-                    maxHeight: '400px',
-                  }
-                }}
-                inputProps={{
-                  fontSize: '14px',
-                }}
-              >
-                {endAtSelect.map(s => (
-                  <MenuItem
-                    key={parseMinute(s)}
-                    value={s}
-                    className={classes.selectItem}
-                  >
-                    {parseMinuteWithN(s, startAtMinute)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </div>
-          </div>
-        </div>
+      <DatePicker
+        disableToolbar
+        variant="inline"
+        format="M[月] D[日] (dddd)"
+        margin="none"
+        value={date}
+        onChange={handleDateChange}
+        InputProps={{
+          classes: {
+            root: classes.dateSelect
+          },
+          style: {
+            width: `${104 + (date.date() >= 10 ? 8 : 0) + (date.month() + 1 >= 10 ? 8 : 0)}px`,
+          }
+        }}
+      />
+      <div className={classes.time}>
+        <Select
+          value={startAtMinute}
+          renderValue={(value: number) => parseMinute(value)}
+          onChange={handleStartAtChange}
+          className={classes.timeSelect}
+          MenuProps={{
+            style: {
+              maxHeight: '400px',
+            }
+          }}
+          inputProps={{
+            fontSize: '14px',
+          }}
+        >
+          {startAtSelect.map(s => (
+            <MenuItem
+              key={parseMinute(s)}
+              value={s}
+              className={classes.selectItem}
+            >
+              {parseMinute(s)}
+            </MenuItem>
+          ))}
+        </Select>
+        <span style={{ fontSize: '14px' }}>–</span>
+        <Select
+          value={endAtMinute}
+          renderValue={(value: number) => parseMinute(value)}
+          onChange={handleEndAtChange}
+          className={classes.timeSelect}
+          MenuProps={{
+            style: {
+              maxHeight: '400px',
+            }
+          }}
+          inputProps={{
+            fontSize: '14px',
+          }}
+        >
+          {endAtSelect.map(s => (
+            <MenuItem
+              key={parseMinute(s)}
+              value={s}
+              className={classes.selectItem}
+            >
+              {parseMinuteWithN(s, startAtMinute)}
+            </MenuItem>
+          ))}
+        </Select>
       </div>
     </div>
   )

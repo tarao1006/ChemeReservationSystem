@@ -3,23 +3,12 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Chip from '@material-ui/core/Chip'
 import Autocomplete from '@material-ui/lab/Autocomplete'
-import { PlaceIcon } from './PlaceIcon'
 import { Facility } from '@types'
+export { PlaceIcon } from './PlaceIcon'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      display: 'block',
-      width: '100%',
-      margin: '8px 0 8px',
-      fontSize: '14px',
-    },
-    wrap: {
-      display: 'flex',
-      margin: '2px 16px 0',
-      alignItems: 'flex-start',
-    },
-    container: {
       flex: '1 1 auto',
       width: 'auto',
       display: 'flex',
@@ -166,38 +155,33 @@ export const Place = () => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.wrap}>
-        <PlaceIcon />
-        <div className={classes.container}>
-          <Autocomplete
-            inputValue={inputValue}
-            onChange={handleChange}
-            onInputChange={handleInputChange}
-            fullWidth
-            disableClearable
-            options={allFacilities}
-            getOptionLabel={(option) => option.name}
-            filterSelectedOptions
-            getOptionSelected={(option: Facility, value: Facility) => (
-              facilities.findIndex(f => f.id === option.id) !== -1
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                placeholder="施設を追加"
-              />
-            )}
+      <Autocomplete
+        inputValue={inputValue}
+        onChange={handleChange}
+        onInputChange={handleInputChange}
+        fullWidth
+        disableClearable
+        options={allFacilities}
+        getOptionLabel={(option) => option.name}
+        filterSelectedOptions
+        getOptionSelected={(option: Facility, value: Facility) => (
+          facilities.findIndex(f => f.id === option.id) !== -1
+        )}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder="施設を追加"
           />
-          <div className={classes.chips}>
-            {facilities.map(facility => (
-              <FacilityChip
-                key={facility.id}
-                facility={facility}
-                onDelete={handleRemoveFacility}
-              />
-            ))}
-          </div>
-        </div>
+        )}
+      />
+      <div className={classes.chips}>
+        {facilities.map(facility => (
+          <FacilityChip
+            key={facility.id}
+            facility={facility}
+            onDelete={handleRemoveFacility}
+          />
+        ))}
       </div>
     </div>
   )
