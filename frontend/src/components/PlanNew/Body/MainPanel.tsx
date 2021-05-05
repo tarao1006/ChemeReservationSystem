@@ -4,7 +4,7 @@ import { Plan, PlanIcon } from './Plan'
 import { Date, DateIcon } from './Date'
 import { Place, PlaceIcon } from './Place'
 import { Attendee, AttendeeIcon } from './Attendee'
-import { Reservation } from '@types'
+import { Reservation, Plan as PlanModel } from '@types'
 import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -46,7 +46,34 @@ export const MainPanel = ({
 }) => {
   const classes = useStyles()
 
-  const handleChangeTitle = () => {
+  const handlePlanChange = (plan: PlanModel) => {
+    setNewReservation(new Reservation(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      reservation.endAt,
+      plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+  }
+
+  const handlePlanMemoChange = (planMemo: string) => {
+    setNewReservation(new Reservation(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      reservation.endAt,
+      reservation.plan,
+      planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
   }
 
   const handleDateChange = (date: dayjs.Dayjs) => {
@@ -90,7 +117,12 @@ export const MainPanel = ({
         <div className={classes.container}>
           <PlanIcon />
           <div className={classes.main}>
-            <Plan />
+            <Plan
+              plan={reservation.plan}
+              planMemo={reservation.planMemo}
+              onPlanChange={handlePlanChange}
+              onPlanMemoChange={handlePlanMemoChange}
+            />
           </div>
         </div>
       </div>

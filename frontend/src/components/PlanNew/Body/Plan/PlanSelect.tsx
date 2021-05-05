@@ -6,12 +6,7 @@ import { Plan } from '@types'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    select: {
-      // width: 'auto',
-      // marginRight: '16px',
-      // marginLeft: '52px',
-      // paddingTop: '8px',
-      // boxSizing: 'border-box',
+    root: {
     },
   }),
 )
@@ -27,19 +22,24 @@ const plans: Plan[] = [
   }
 ]
 
-export const PlanSelect = () => {
+export const PlanSelect = ({
+  plan,
+  onPlanChange
+}: {
+  plan: Plan,
+  onPlanChange: (plan: Plan) => void
+}) => {
   const classes = useStyles()
-  const [plan, setPlan] = useState<Plan>(plans[0])
 
   const handleChange = (e: React.ChangeEvent<{ value: unknown }>) => {
-    setPlan(plans.find(p => p.name === e.target.value as string))
+    onPlanChange(plans.find(p => p.name === e.target.value as string))
   }
 
   return (
     <Select
       value={plan.name}
       onChange={handleChange}
-      className={classes.select}
+      className={classes.root}
     >
       {plans.map(plan => (
         <MenuItem
