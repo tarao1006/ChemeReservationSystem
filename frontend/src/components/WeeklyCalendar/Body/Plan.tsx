@@ -69,6 +69,9 @@ export const Plan = ({
     const halfInnerHeight = window.innerHeight / 2.0
     const halfInnerWidth = window.innerWidth / 2.0
 
+    const quarterInnerHeight = window.innerHeight / 4.0
+    const quarterThreeInnerHeight = window.innerHeight * 3.0 / 4.0
+
     setAnchorEl(target)
 
     let anchorOriginVertical: Vertical
@@ -78,17 +81,25 @@ export const Plan = ({
     let topMargin: string
     let leftMargin: string
 
-    if (targetRectTop > halfInnerHeight && targetRectBottom > halfInnerHeight) {
+    if (targetRectTop > quarterThreeInnerHeight && targetRectBottom > quarterThreeInnerHeight) {
       anchorOriginVertical = 'top'
       transformOriginVertical = 'bottom'
       topMargin = '-12px'
-    } else if (targetRectTop < halfInnerHeight && targetRectBottom < halfInnerHeight) {
+    } else if (targetRectTop < quarterInnerHeight && targetRectBottom < quarterInnerHeight) {
       anchorOriginVertical = 'bottom'
       transformOriginVertical = 'top'
       topMargin = '12px'
     } else {
-      anchorOriginVertical = 'center'
-      transformOriginVertical = 'center'
+      if (targetRectBottom > quarterThreeInnerHeight) {
+        anchorOriginVertical = 'top'
+        transformOriginVertical = 'bottom'
+      } else if (targetRectTop < quarterInnerHeight) {
+        anchorOriginVertical = 'top'
+        transformOriginVertical = 'top'
+      } else {
+        anchorOriginVertical = 'center'
+        transformOriginVertical = 'center'
+      }
       topMargin = '0px'
     }
 
