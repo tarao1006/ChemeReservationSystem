@@ -26,9 +26,6 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: '16px 0 20px',
       fontSize: '14px',
     },
-    icon: {
-      flex: 'none',
-    },
     container: {
       flex: '1 1 auto',
       width: 'auto',
@@ -43,6 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'relative',
       textAlign: 'left',
       flex: '1 1 auto',
+      justifyContent: 'bottom',
     },
     time: {
       flex: '1 1 auto',
@@ -154,7 +152,7 @@ export const Date = ({
                 disableToolbar
                 variant="inline"
                 format="M[月] D[日] (dddd)"
-                margin="normal"
+                margin="none"
                 value={date}
                 onChange={handleDateChange}
                 InputProps={{
