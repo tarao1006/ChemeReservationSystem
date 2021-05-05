@@ -46,14 +46,6 @@ export const PlanNew = ({
     onClose()
   }
 
-  const handleEdit = () => {
-    console.log('edit')
-  }
-
-  const handleDelete = () => {
-    console.log('delete')
-  }
-
   return (
     <Popover
       open={isOpen}

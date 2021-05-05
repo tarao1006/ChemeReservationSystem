@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
     field: {
       display: 'table',
       width: '100%',
-      margin: '16px 0 20px',
+      margin: '8px 0 8px',
       fontSize: '14px',
     },
     container: {
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
     },
     main: {
-      padding: '0 8px',
+      padding: 0,
       display: 'flex',
       alignItems: 'center',
       position: 'relative',
@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
     time: {
       flex: '1 1 auto',
       display: 'flex',
-      padding: '0 8px',
+      paddingLeft: '8px',
     },
     dateSelect: {
       flex: 'none',
@@ -160,7 +160,7 @@ export const Date = ({
                     root: classes.dateSelect
                   },
                   style: {
-                    width: `${103 + (date.date() >= 10 ? 8 : 0) + (date.month() + 1 >= 10 ? 8 : 0)}px`,
+                    width: `${104 + (date.date() >= 10 ? 8 : 0) + (date.month() + 1 >= 10 ? 8 : 0)}px`,
                   }
                 }}
               />
