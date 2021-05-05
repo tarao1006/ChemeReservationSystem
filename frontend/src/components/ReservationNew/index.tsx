@@ -23,6 +23,7 @@ export const ReservationNew = ({
   reservation,
   isOpen,
   onClose,
+  onSubmit,
   onPlanChange,
   onPlanMemoChange,
   onDateChange,
@@ -38,6 +39,14 @@ export const ReservationNew = ({
   reservation: Reservation
   isOpen: boolean
   onClose: () => void
+  onSubmit: () => void
+  anchorEl: Element
+  anchorOrigin: PopoverOrigin
+  transformOrigin: PopoverOrigin
+  margin: {
+    top: string
+    left: string
+  },
   onPlanChange: (plan: Plan) => void
   onPlanMemoChange: (planMemo: string) => void
   onDateChange: (date: dayjs.Dayjs) => void
@@ -45,18 +54,15 @@ export const ReservationNew = ({
   onEndAtChange: (endAt: dayjs.Dayjs) => void
   onPlacesChange: (places: Facility[]) => void
   onAttendeesChange: (attendees: User[]) => void
-  anchorEl: Element
-  anchorOrigin: PopoverOrigin
-  transformOrigin: PopoverOrigin
-  margin: {
-    top: string
-    left: string
-  } 
 }) => {
   const classes = useStyles()
 
   const handleClose = () => {
     onClose()
+  }
+
+  const handleSubmit = () => {
+    onSubmit()
   }
 
   return (
@@ -76,8 +82,8 @@ export const ReservationNew = ({
       <div className={classes.root}>
         <Head handleClose={handleClose} />
         <Body
-          handleClose={handleClose}
           reservation={reservation}
+          onSubmit={handleSubmit}
           onPlanChange={onPlanChange}
           onPlanMemoChange={onPlanMemoChange}
           onDateChange={onDateChange}

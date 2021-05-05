@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Body = ({
   reservation,
-  handleClose,
+  onSubmit,
   onPlanChange,
   onPlanMemoChange,
   onDateChange,
@@ -29,7 +29,7 @@ export const Body = ({
   onAttendeesChange
 }: {
   reservation: Reservation
-  handleClose: () => void,
+  onSubmit: () => void,
   onPlanChange: (plan: Plan) => void
   onPlanMemoChange: (planMemo: string) => void
   onDateChange: (date: dayjs.Dayjs) => void
@@ -42,8 +42,7 @@ export const Body = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    createReservation(reservation)
-    handleClose()
+    onSubmit()
   }
 
   return (

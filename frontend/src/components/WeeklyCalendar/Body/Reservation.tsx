@@ -27,6 +27,7 @@ type Horizontal = "center" | "left" | "right"
 export const Reservation = ({
   reservation,
   onClose,
+  onSubmit,
   onPlanChange,
   onPlanMemoChange,
   onDateChange,
@@ -36,7 +37,8 @@ export const Reservation = ({
   onAttendeesChange,
 }: {
   reservation: ReservationModel
-  onClose?: () => void
+  onClose: () => void
+  onSubmit: () => void
   onPlanChange: (plan: Plan) => void
   onPlanMemoChange: (planMemo: string) => void
   onDateChange: (date: dayjs.Dayjs) => void
@@ -164,7 +166,12 @@ export const Reservation = ({
   }, [ref])
 
   const handleClose = () => {
-    onClose && onClose()
+    onClose()
+    setAnchorEl(null)
+  }
+
+  const handleSubmit = () => {
+    onSubmit()
     setAnchorEl(null)
   }
 
@@ -204,6 +211,11 @@ export const Reservation = ({
             reservation={reservation}
             isOpen={isOpen}
             onClose={handleClose}
+            onSubmit={handleSubmit}
+            anchorEl={anchorEl}
+            anchorOrigin={anchorOrigin}
+            transformOrigin={transformOrigin}
+            margin={margin}
             onPlanChange={onPlanChange}
             onPlanMemoChange={onPlanMemoChange}
             onDateChange={onDateChange}
@@ -211,10 +223,6 @@ export const Reservation = ({
             onEndAtChange={onEndAtChange}
             onPlacesChange={onPlacesChange}
             onAttendeesChange={onAttendeesChange}
-            anchorEl={anchorEl}
-            anchorOrigin={anchorOrigin}
-            transformOrigin={transformOrigin}
-            margin={margin}
           />
         ) : null
       ) : (

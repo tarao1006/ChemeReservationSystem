@@ -4,6 +4,7 @@ import { Reservation as ReservationModel, Plan, Facility, User } from '@types'
 import { AuthContext, ReservationContext } from '@contexts'
 import dayjs from 'dayjs'
 import { Reservation } from './Reservation'
+import { createReservation } from '@api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -91,7 +92,7 @@ const BodyMainPanelContentColumn = ({
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
   const { reservations, setReservations } = useContext(ReservationContext)
-  const [index, setIndex] = useState<number>(0)
+  const [index, setIndex] = useState<number>(-1)
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const offsetY = e.nativeEvent.offsetY
@@ -260,9 +261,22 @@ const BodyMainPanelContentColumn = ({
   }
 
   const handleClose = () => {
+    if (index >= 0) {
+      const newReservations = [...reservations]
+      newReservations.splice(index, 1)
+      setIndex(-1)
+      setReservations(newReservations)
+    }
+  }
+
+  const handleSubmit = async () => {
     const newReservations = [...reservations]
-    newReservations.splice(index, 1)
-    setIndex(0)
+    const newReservation = newReservations[index]
+
+    const res = await createReservation(newReservation)
+
+    newReservations.splice(index, 1, res)
+    setIndex(-1)
     setReservations(newReservations)
   }
 
@@ -275,6 +289,7 @@ const BodyMainPanelContentColumn = ({
             key={reservation.id}
             reservation={reservation}
             onClose={handleClose}
+            onSubmit={handleSubmit}
             onPlanChange={handlePlanChange}
             onPlanMemoChange={handlePlanMemoChange}
             onDateChange={handleDateChange}
