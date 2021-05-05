@@ -18,7 +18,7 @@ export const BottomPanel = () => {
 
   return (
     <div className={classes.root}>
-      <Button color="primary" variant="contained">
+      <Button color="primary" variant="contained" type="submit">
         保存
       </Button>
     </div>

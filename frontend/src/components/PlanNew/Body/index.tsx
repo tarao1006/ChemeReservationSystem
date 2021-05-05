@@ -24,10 +24,17 @@ export const Body = ({
 }) => {
   const classes = useStyles()
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log(reservation)
+  }
+
   return (
     <div className={classes.root}>
-      <MainPanel reservation={reservation} setNewReservation={setNewReservation} />
-      <BottomPanel />
+      <form onSubmit={handleSubmit}>
+        <MainPanel reservation={reservation} setNewReservation={setNewReservation} />
+        <BottomPanel />
+      </form>
     </div>
   )
 }
