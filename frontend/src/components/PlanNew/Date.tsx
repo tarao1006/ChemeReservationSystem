@@ -105,7 +105,17 @@ const parseMinuteWithN = (minutes: number, base: number) => {
   return `${parsedMinute} (${gapText})`
 }
 
-export const Date = ({ reservation }: { reservation: Reservation }) => {
+export const Date = ({
+  reservation,
+  onDateChange,
+  onStartAtChange,
+  onEndAtChange
+}: {
+  reservation: Reservation
+  onDateChange: (date: dayjs.Dayjs) => void
+  onStartAtChange: (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => void
+  onEndAtChange: (endAt: dayjs.Dayjs) => void
+}) => {
   const classes = useStyles()
   const [date, setDate] = useState<dayjs.Dayjs>(reservation.startAt.startOf('day'))
   const [startAtMinute, setStartAtMinute] = useState<number>(reservation.startAt.hour() * 60 + reservation.startAt.minute())
@@ -117,16 +127,21 @@ export const Date = ({ reservation }: { reservation: Reservation }) => {
 
   const handleDateChange = (date: dayjs.Dayjs | null) => {
     setDate(date)
+    onDateChange(date)
   }
 
   const handleStartAtChange = (e: React.ChangeEvent<{ value: unknown }>) => {
     const newStartAtMinute = e.target.value as number
     setStartAtMinute(newStartAtMinute)
     setEndAtMinute(newStartAtMinute + gapMinute)
+
+    onStartAtChange(date.add(newStartAtMinute, 'minute'), date.add(newStartAtMinute + gapMinute, 'minute'))
   }
 
   const handleEndAtChange = (e: React.ChangeEvent<{ value: unknown }>) => {
+    const newEndAtMinute = e.target.value as number
     setEndAtMinute(e.target.value as number)
+    onEndAtChange(date.add(newEndAtMinute, 'minute'))
   }
 
   return (

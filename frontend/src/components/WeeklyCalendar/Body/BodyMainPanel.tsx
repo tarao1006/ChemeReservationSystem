@@ -119,8 +119,8 @@ const BodyMainPanelContentColumn = ({
     <div className={classes.column}>
       <div className={classes.columnContent} onClick={handleClick} />
       <div className={classes.columnContentPresentation}>
-        {reservations.map(reservation => <Plan key={reservation.id} reservation={reservation} />)}
-        {newReservation !== undefined && <Plan reservation={newReservation} onClose={handleClose} />}
+        {reservations.map(reservation => <Plan key={reservation.id} reservation={reservation} setNewReservation={setNewReservation} />)}
+        {newReservation !== undefined && <Plan reservation={newReservation} onClose={handleClose} setNewReservation={setNewReservation} />}
       </div>
     </div>
   )

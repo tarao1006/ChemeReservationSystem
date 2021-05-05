@@ -25,10 +25,12 @@ type Horizontal = "center" | "left" | "right"
 
 export const Plan = ({
   reservation,
-  onClose
+  onClose,
+  setNewReservation
 }: {
   reservation: Reservation
   onClose?: () => void
+  setNewReservation: React.Dispatch<React.SetStateAction<Reservation>>
 }) => {
   const classes = useStyles()
   const ref = useRef<HTMLDivElement>()
@@ -180,6 +182,7 @@ export const Plan = ({
         reservation={reservation}
         isOpen={isOpen}
         onClose={handleClose}
+        setNewReservation={setNewReservation}
         anchorEl={anchorEl}
         anchorOrigin={anchorOrigin}
         transformOrigin={transformOrigin}

@@ -16,12 +16,18 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const Body = ({ reservation }: { reservation: Reservation }) => {
+export const Body = ({
+  reservation,
+  setNewReservation
+}: {
+  reservation: Reservation
+  setNewReservation: React.Dispatch<React.SetStateAction<Reservation>>
+}) => {
   const classes = useStyles()
 
   return (
     <div className={classes.root}>
-      <MainPanel reservation={reservation} />
+      <MainPanel reservation={reservation} setNewReservation={setNewReservation} />
       <BottomPanel />
     </div>
   )

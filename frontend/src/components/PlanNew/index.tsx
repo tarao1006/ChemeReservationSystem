@@ -22,6 +22,7 @@ export const PlanNew = ({
   reservation,
   isOpen,
   onClose,
+  setNewReservation,
   anchorEl,
   anchorOrigin,
   transformOrigin,
@@ -30,6 +31,7 @@ export const PlanNew = ({
   reservation: Reservation
   isOpen: boolean
   onClose: () => void
+  setNewReservation: React.Dispatch<React.SetStateAction<Reservation>>
   anchorEl: Element
   anchorOrigin: PopoverOrigin
   transformOrigin: PopoverOrigin
@@ -68,7 +70,7 @@ export const PlanNew = ({
     >
       <div className={classes.root}>
         <Head handleClose={handleClose} />
-        <Body reservation={reservation} />
+        <Body reservation={reservation} setNewReservation={setNewReservation} />
       </div>
     </Popover>
   )
