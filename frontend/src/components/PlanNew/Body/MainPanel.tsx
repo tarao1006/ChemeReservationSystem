@@ -77,7 +77,20 @@ export const MainPanel = ({
   }
 
   const handleDateChange = (date: dayjs.Dayjs) => {
-    console.log(date.format())
+    const newStartAt = date.hour(reservation.startAt.hour()).minute(reservation.startAt.minute())
+    const newEndAt = date.hour(reservation.endAt.hour()).minute(reservation.endAt.minute())
+    setNewReservation(new Reservation(
+      reservation.id,
+      reservation.creator,
+      newStartAt,
+      newEndAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
   }
 
   const handleStartAtChange = (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => {
