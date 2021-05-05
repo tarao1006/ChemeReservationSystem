@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export const PlanDetail = ({
+export const ReservationDetail = ({
   reservation,
   isOpen,
   onClose,

@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { Reservation } from '@types'
+import { Reservation as ReservationModel } from '@types'
 import { AuthContext, ReservationContext } from '@contexts'
 import dayjs from 'dayjs'
-import { Plan } from './Plan'
+import { Reservation } from './Reservation'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -88,11 +88,11 @@ const BodyMainPanelContentColumn = ({
   reservations
 }: {
   date: dayjs.Dayjs
-  reservations: Reservation[]
+  reservations: ReservationModel[]
 }) => {
   const { currentUser } = useContext(AuthContext)
   const classes = useStyles()
-  const [newReservation, setNewReservation] = useState<Reservation>()
+  const [newReservation, setNewReservation] = useState<ReservationModel>()
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const offsetY = e.nativeEvent.offsetY
@@ -108,7 +108,7 @@ const BodyMainPanelContentColumn = ({
     }
     const now = dayjs()
 
-    setNewReservation(new Reservation(0, currentUser, startAt, endAt, plan, '', now, now, [], []))
+    setNewReservation(new ReservationModel(0, currentUser, startAt, endAt, plan, '', now, now, [], []))
   }
 
   const handleClose = () => {
@@ -119,8 +119,8 @@ const BodyMainPanelContentColumn = ({
     <div className={classes.column}>
       <div className={classes.columnContent} onClick={handleClick} />
       <div className={classes.columnContentPresentation}>
-        {reservations.map(reservation => <Plan key={reservation.id} reservation={reservation} setNewReservation={setNewReservation} />)}
-        {newReservation !== undefined && <Plan reservation={newReservation} onClose={handleClose} setNewReservation={setNewReservation} />}
+        {reservations.map(reservation => <Reservation key={reservation.id} reservation={reservation} setNewReservation={setNewReservation} />)}
+        {newReservation !== undefined && <Reservation reservation={newReservation} onClose={handleClose} setNewReservation={setNewReservation} />}
       </div>
     </div>
   )

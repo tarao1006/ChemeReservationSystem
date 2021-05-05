@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export const PlanNew = ({
+export const ReservationNew = ({
   reservation,
   isOpen,
   onClose,

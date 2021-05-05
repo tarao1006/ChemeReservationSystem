@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { PopoverOrigin } from '@material-ui/core/Popover'
 import Button from '@material-ui/core/Button'
-import { Reservation } from '@types'
-import { PlanDetail, PlanNew } from '@components'
+import { Reservation as ReservationModel } from '@types'
+import { ReservationDetail, ReservationNew } from '@components'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,14 +23,14 @@ const useStyles = makeStyles((theme: Theme) =>
 type Vertical = "center" | "top" | "bottom"
 type Horizontal = "center" | "left" | "right"
 
-export const Plan = ({
+export const Reservation = ({
   reservation,
   onClose,
   setNewReservation
 }: {
-  reservation: Reservation
+  reservation: ReservationModel
   onClose?: () => void
-  setNewReservation: React.Dispatch<React.SetStateAction<Reservation>>
+  setNewReservation: React.Dispatch<React.SetStateAction<ReservationModel>>
 }) => {
   const classes = useStyles()
   const ref = useRef<HTMLDivElement>()
@@ -185,19 +185,9 @@ export const Plan = ({
           </div>
         )}
       </Button>
-      {/* <PlanNew
-        reservation={reservation}
-        isOpen={isOpen}
-        onClose={handleClose}
-        setNewReservation={setNewReservation}
-        anchorEl={anchorEl}
-        anchorOrigin={anchorOrigin}
-        transformOrigin={transformOrigin}
-        margin={margin}
-      /> */}
       {reservation.id === 0 ? (
         anchorEl ? (
-          <PlanNew
+          <ReservationNew
             reservation={reservation}
             isOpen={isOpen}
             onClose={handleClose}
@@ -209,7 +199,7 @@ export const Plan = ({
           />
         ) : null
       ) : (
-        <PlanDetail
+        <ReservationDetail
           reservation={reservation}
           isOpen={isOpen}
           onClose={handleClose}
