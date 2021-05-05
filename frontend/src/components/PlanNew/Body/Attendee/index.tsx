@@ -126,9 +126,14 @@ const UserChip = ({
   )
 }
 
-export const Attendee = () => {
+export const Attendee = ({
+  attendees,
+  onAttendeesChange
+}:{
+  attendees: User[]
+  onAttendeesChange: (attendees: User[]) => void
+}) => {
   const classes = useStyles()
-  const [users, setUsers] = useState<User[]>([])
   const [inputValue, setInputValue] = useState<string>('')
 
   const handleChange = (event: object, value: User, reason: string) => {
@@ -138,15 +143,15 @@ export const Attendee = () => {
   }
 
   const handleAddUser = (user: User) => {
-    setUsers([...users, user])
+    onAttendeesChange([...attendees, user])
   }
 
   const handleRemoveUser = (user: User) => {
-    let newUsers = [...users]
-    const idx = newUsers.findIndex(u => u.id === user.id)
+    let newAttendees = [...attendees]
+    const idx = newAttendees.findIndex(u => u.id === user.id)
     if (idx !== -1) {
-      newUsers.splice(idx, 1)
-      setUsers(newUsers)
+      newAttendees.splice(idx, 1)
+      onAttendeesChange(newAttendees)
     }
   }
 
@@ -179,7 +184,7 @@ export const Attendee = () => {
         getOptionLabel={(option) => option.name}
         filterSelectedOptions
         getOptionSelected={(option: User, value: User) => (
-          users.findIndex(u => u.id === option.id) !== -1
+          attendees.findIndex(a => a.id === option.id) !== -1
         )}
         renderInput={(params) => (
           <TextField
@@ -189,10 +194,10 @@ export const Attendee = () => {
         )}
       />
       <div className={classes.chips}>
-        {users.map(user => (
+        {attendees.map(attendee => (
           <UserChip
-            key={user.id}
-            user={user}
+            key={attendee.id}
+            user={attendee}
             onDelete={handleRemoveUser}
           />
         ))}

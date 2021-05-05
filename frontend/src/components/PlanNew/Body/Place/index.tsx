@@ -112,9 +112,14 @@ const FacilityChip = ({
   )
 }
 
-export const Place = () => {
+export const Place = ({
+  places,
+  onPlacesChange
+}: {
+  places: Facility[],
+  onPlacesChange: (places: Facility[]) => void
+}) => {
   const classes = useStyles()
-  const [facilities, setFacilities] = useState<Facility[]>([])
   const [inputValue, setInputValue] = useState<string>('')
 
   const handleChange = (event: object, value: Facility, reason: string) => {
@@ -124,15 +129,15 @@ export const Place = () => {
   }
 
   const handleAddFacility = (facility: Facility) => {
-    setFacilities([...facilities, facility])
+    onPlacesChange([...places, facility])
   }
 
   const handleRemoveFacility = (facility: Facility) => {
-    let newFacilities = [...facilities]
-    const idx = newFacilities.findIndex(f => f.id === facility.id)
+    let newPlaces = [...places]
+    const idx = newPlaces.findIndex(f => f.id === facility.id)
     if (idx !== -1) {
-      newFacilities.splice(idx, 1)
-      setFacilities(newFacilities)
+      newPlaces.splice(idx, 1)
+      onPlacesChange(newPlaces)
     }
   }
 
@@ -165,7 +170,7 @@ export const Place = () => {
         getOptionLabel={(option) => option.name}
         filterSelectedOptions
         getOptionSelected={(option: Facility, value: Facility) => (
-          facilities.findIndex(f => f.id === option.id) !== -1
+          places.findIndex(p => p.id === option.id) !== -1
         )}
         renderInput={(params) => (
           <TextField
@@ -175,10 +180,10 @@ export const Place = () => {
         )}
       />
       <div className={classes.chips}>
-        {facilities.map(facility => (
+        {places.map(place => (
           <FacilityChip
-            key={facility.id}
-            facility={facility}
+            key={place.id}
+            facility={place}
             onDelete={handleRemoveFacility}
           />
         ))}
