@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       display: 'table',
       width: '100%',
-      margin: '16px 0 20px',
+      margin: '8px 0 8px',
       fontSize: '14px',
     },
     wrap: {
@@ -39,15 +39,16 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: '0 6px',
       fontSize: '14px',
     },
-    selectItem: {
-      minWidth: '150px',
-      fontSize: '14px',
-      lineHeight: '40px',
-      padding: '2px 16px',
-    },
     list: {
       maxHeight: '150px',
       overflowY: 'scroll',
+    },
+    listItem: {
+      paddingTop: '2px',
+      paddingBottom: '2px',
+    },
+    listItemText: {
+      fontSize: '14px',
     },
   })
 )
@@ -132,14 +133,15 @@ const UserListItem = ({
   user: User
   onClick: (user: User) => void
 }) => {
+  const classes = useStyles()
 
   const handleClick = () => {
     onClick(user)
   }
 
   return (
-    <ListItem>
-      <ListItemText>
+    <ListItem className={classes.listItem}>
+      <ListItemText disableTypography className={classes.listItemText}>
         {user.name}
       </ListItemText>
       <ListItemSecondaryAction>

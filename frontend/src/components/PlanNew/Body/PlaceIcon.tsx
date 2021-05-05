@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export const FacilityIcon = () => {
+export const PlaceIcon = () => {
   const classes = useStyles()
 
   return (
