@@ -109,7 +109,7 @@ func (ur *ReservationRepository) GetAll(db *sqlx.DB) ([]model.Reservation, error
 
 		r := mapReservations[id]
 		r.Attendees = users
-		r.Facilities = facilities
+		r.Places = facilities
 
 		res = append(res, *r)
 	}
@@ -215,7 +215,7 @@ func (ur *ReservationRepository) GetAllInRange(db *sqlx.DB, dr *model.DateRange)
 
 		r := mapReservations[id]
 		r.Attendees = users
-		r.Facilities = facilities
+		r.Places = facilities
 
 		res = append(res, *r)
 	}
@@ -288,16 +288,16 @@ func (ReservationRepository) FindByID(db *sqlx.DB, id int64) (*model.Reservation
 	}
 
 	return &model.Reservation{
-		ID:         reservations[0].ID,
-		Creator:    creator,
-		StartAt:    reservations[0].StartAt,
-		EndAt:      reservations[0].EndAt,
-		Plan:       plan,
-		PlanMemo:   reservations[0].PlanMemo,
-		CreatedAt:  reservations[0].CreatedAt,
-		UpdatedAt:  reservations[0].UpdatedAt,
-		Attendees:  users,
-		Facilities: facilities,
+		ID:        reservations[0].ID,
+		Creator:   creator,
+		StartAt:   reservations[0].StartAt,
+		EndAt:     reservations[0].EndAt,
+		Plan:      plan,
+		PlanMemo:  reservations[0].PlanMemo,
+		CreatedAt: reservations[0].CreatedAt,
+		UpdatedAt: reservations[0].UpdatedAt,
+		Attendees: users,
+		Places:    facilities,
 	}, nil
 }
 

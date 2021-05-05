@@ -129,7 +129,7 @@ func (rs *ReservationService) UpdateByID(id int64, r *model.ReservationAPI) (*mo
 			}
 		}
 		if len(r.FacilityIDs) != 0 {
-			for _, facility := range reservaton.Facilities {
+			for _, facility := range reservaton.Places {
 				_, err = rs.repo.RemoveFacility(tx, id, facility.ID)
 				if err != nil {
 					return err
