@@ -147,7 +147,7 @@ const WeeklyCalendarTableBody = ({
                   reservations={reservations.filter(
                     r => r.startAt.isSame(date, 'day')
                   ).filter(
-                    r => r.facilities.some(f => f.id === facility.id)
+                    r => r.places.some(f => f.id === facility.id)
                   )}
                 />
               )
@@ -265,7 +265,7 @@ export const Home = () => {
                 <TableRow key={reservation.id}>
                   <TableCell align="center">{reservation.id}</TableCell>
                   <TableCell align="center">{reservation.plan.name}</TableCell>
-                  <TableCell align="center">{reservation.facilities.map(facility => `${facility.name} `)}</TableCell>
+                  <TableCell align="center">{reservation.places.map(facility => `${facility.name} `)}</TableCell>
                   <TableCell align="center">{reservation.creator.id}</TableCell>
                   <TableCell align="center">{reservation.attendees.map(attendee => `${attendee.name} `)}</TableCell>
                   <TableCell align="center">{formatDateAndTime(reservation.startAt)} - {formatTime(reservation.endAt)}</TableCell>

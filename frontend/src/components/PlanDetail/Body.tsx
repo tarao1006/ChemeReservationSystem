@@ -36,7 +36,7 @@ export const Body = ({ reservation }: { reservation: Reservation }) => {
         <BodyTitle reservation={reservation} />
       </div>
       <div>
-        {reservation.facilities[0].name}
+        {reservation.places[0].name}
       </div>
     </div>
   )

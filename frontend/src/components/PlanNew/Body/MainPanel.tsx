@@ -45,7 +45,7 @@ export const MainPanel = ({
       reservation.createdAt,
       reservation.updatedAt,
       reservation.attendees,
-      reservation.facilities,
+      reservation.places,
     ))
   }
 
@@ -60,7 +60,7 @@ export const MainPanel = ({
       reservation.createdAt,
       reservation.updatedAt,
       reservation.attendees,
-      reservation.facilities,
+      reservation.places,
     ))
   }
 

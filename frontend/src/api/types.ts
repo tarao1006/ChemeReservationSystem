@@ -52,7 +52,7 @@ export interface ReservationDTO {
 	created_at: string
 	updated_at: string
 	attendees:  UserDTO[]
-	facilities: Facility[]
+	places: Facility[]
 }
 
 interface IReservation {
@@ -66,7 +66,7 @@ interface IReservation {
 	createdAt: dayjs.Dayjs
 	updatedAt: dayjs.Dayjs
 	attendees: User[]
-	facilities: Facility[]
+	places: Facility[]
 }
 
 export class Reservation implements IReservation {
@@ -80,7 +80,7 @@ export class Reservation implements IReservation {
 	createdAt: dayjs.Dayjs
 	updatedAt: dayjs.Dayjs
 	attendees: User[]
-	facilities: Facility[]
+	places: Facility[]
 
   constructor(
     id: number,
@@ -92,7 +92,7 @@ export class Reservation implements IReservation {
     createdAt: dayjs.Dayjs,
     updatedAt: dayjs.Dayjs,
     attendees: User[],
-    facilities: Facility[]
+    places: Facility[]
   ) {
     this.id = id
     this.creator = creator
@@ -103,7 +103,7 @@ export class Reservation implements IReservation {
     this.createdAt = createdAt
     this.updatedAt = updatedAt
     this.attendees = attendees
-    this.facilities = facilities
+    this.places = places
 
     this.length = (endAt.unix() - startAt.unix()) / 3600.0
   }
@@ -171,6 +171,6 @@ export const convertToReservation = (r: ReservationDTO): Reservation => {
     dayjs(r.created_at),
     dayjs(r.updated_at),
     r.attendees.map(u => convertToUser(u)),
-    r.facilities,
+    r.places,
   )
 }
