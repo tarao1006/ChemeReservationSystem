@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { AuthContext, ReservationContext } from '@contexts'
-import { getAllFacilities, getAllReservationsInRange } from '@api'
-import { Facility, inRange } from '@types'
+import { AuthContext, FacilityContext, ReservationContext, UserContext } from '@contexts'
+import { getAllFacilities, getAllReservationsInRange, getAllUsers } from '@api'
+import { inRange } from '@types'
 import { Head } from './Head'
 import { Body } from './Body'
 import dayjs from 'dayjs'
@@ -32,7 +32,8 @@ export const WeeklyCalendar = () => {
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
   const { reservations, fetchedDateRange, setReservations, setFetchedDateRange } = useContext(ReservationContext)
-  const [facilities, setFacilities] = useState<Facility[]>([])
+  const { setFacilities } = useContext(FacilityContext)
+  const { setUsers } = useContext(UserContext)
   const [startOfCurrentWeek, setStartOfCurrentWeek] = useState<dayjs.Dayjs>(dayjs())
   const [dates, setDates] = useState<dayjs.Dayjs[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -49,6 +50,9 @@ export const WeeklyCalendar = () => {
 
         const f = await getAllFacilities()
         setFacilities(f)
+
+        const u = await getAllUsers()
+        setUsers(u)
 
         if (reservations.length === 0 || !inRange(fetchedDateRange, d)) {
           if (reservations.length === 0) {

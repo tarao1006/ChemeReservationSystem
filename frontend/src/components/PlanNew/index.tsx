@@ -62,7 +62,7 @@ export const PlanNew = ({
     >
       <div className={classes.root}>
         <Head handleClose={handleClose} />
-        <Body reservation={reservation} setNewReservation={setNewReservation} />
+        <Body handleClose={handleClose} reservation={reservation} setNewReservation={setNewReservation} />
       </div>
     </Popover>
   )

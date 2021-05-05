@@ -30,11 +30,11 @@ func (ur *ReservationRepository) GetAll(db *sqlx.DB) ([]model.Reservation, error
 			rf.facility_id as facility_id
 		FROM
 			reservation as r
-		INNER JOIN
+		LEFT OUTER JOIN
 			reservation_user as ru
 		ON
 			r.id = ru.reservation_id
-		INNER JOIN
+		LEFT OUTER JOIN
 			reservation_facility as rf
 		ON
 			r.id = rf.reservation_id
@@ -89,8 +89,8 @@ func (ur *ReservationRepository) GetAll(db *sqlx.DB) ([]model.Reservation, error
 	}
 
 	for _, r := range reservations {
-		mapUserIDs[r.ID] = append(mapUserIDs[r.ID], r.UserID)
-		mapFacilityIDs[r.ID] = append(mapFacilityIDs[r.ID], r.FacilityID)
+		mapUserIDs[r.ID] = append(mapUserIDs[r.ID], r.UserID.String)
+		mapFacilityIDs[r.ID] = append(mapFacilityIDs[r.ID], r.FacilityID.Int64)
 	}
 
 	for _, id := range reservationIDs {
@@ -135,11 +135,11 @@ func (ur *ReservationRepository) GetAllInRange(db *sqlx.DB, dr *model.DateRange)
 			rf.facility_id as facility_id
 		FROM
 			reservation as r
-		INNER JOIN
+		LEFT OUTER JOIN
 			reservation_user as ru
 		ON
 			r.id = ru.reservation_id
-		INNER JOIN
+		LEFT OUTER JOIN
 			reservation_facility as rf
 		ON
 			r.id = rf.reservation_id
@@ -195,8 +195,8 @@ func (ur *ReservationRepository) GetAllInRange(db *sqlx.DB, dr *model.DateRange)
 	}
 
 	for _, r := range reservations {
-		mapUserIDs[r.ID] = append(mapUserIDs[r.ID], r.UserID)
-		mapFacilityIDs[r.ID] = append(mapFacilityIDs[r.ID], r.FacilityID)
+		mapUserIDs[r.ID] = append(mapUserIDs[r.ID], r.UserID.String)
+		mapFacilityIDs[r.ID] = append(mapFacilityIDs[r.ID], r.FacilityID.Int64)
 	}
 
 	for _, id := range reservationIDs {
@@ -241,11 +241,11 @@ func (ReservationRepository) FindByID(db *sqlx.DB, id int64) (*model.Reservation
 			rf.facility_id as facility_id
 		FROM
 			reservation as r
-		INNER JOIN
+		LEFT OUTER JOIN
 			reservation_user as ru
 		ON
 			r.id = ru.reservation_id
-		INNER JOIN
+		LEFT OUTER JOIN
 			reservation_facility as rf
 		ON
 			r.id = rf.reservation_id
@@ -273,8 +273,8 @@ func (ReservationRepository) FindByID(db *sqlx.DB, id int64) (*model.Reservation
 	facilityIDs := []int64{}
 
 	for _, r := range reservations {
-		userIDs = append(userIDs, r.UserID)
-		facilityIDs = append(facilityIDs, r.FacilityID)
+		userIDs = append(userIDs, r.UserID.String)
+		facilityIDs = append(facilityIDs, r.FacilityID.Int64)
 	}
 
 	users, err := userRepo.FindByIDs(db, userIDs)

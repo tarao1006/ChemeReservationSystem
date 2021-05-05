@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Chip from '@material-ui/core/Chip'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import { Facility } from '@types'
+import { FacilityContext } from '@contexts'
 export { PlaceIcon } from './PlaceIcon'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -30,65 +31,6 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 )
-
-const allFacilities = [
-  {
-    id: 1,
-    name: '施設A',
-    types: [{
-      id: 1,
-      name: '施設タイプA'
-    }]
-  },
-  {
-    id: 2,
-    name: '施設B',
-    types: [{
-      id: 1,
-      name: '施設タイプA'
-    }]
-  },
-  {
-    id: 3,
-    name: '施設C',
-    types: [{
-      id: 1,
-      name: '施設タイプA'
-    }]
-  },
-  {
-    id: 4,
-    name: '会議室A',
-    types: [{
-      id: 2,
-      name: '施設タイプB'
-    }]
-  },
-  {
-    id: 5,
-    name: '会議室B',
-    types: [{
-      id: 2,
-      name: '施設タイプB'
-    }]
-  },
-  {
-    id: 6,
-    name: '休憩室A',
-    types: [{
-      id: 1,
-      name: '施設タイプC'
-    }]
-  },
-  {
-    id: 7,
-    name: '休憩室B',
-    types: [{
-      id: 1,
-      name: '施設タイプC'
-    }]
-  }
-]
 
 const FacilityChip = ({
   facility,
@@ -121,6 +63,7 @@ export const Place = ({
 }) => {
   const classes = useStyles()
   const [inputValue, setInputValue] = useState<string>('')
+  const { facilities } = useContext(FacilityContext)
 
   const handleChange = (event: object, value: Facility, reason: string) => {
     if (reason === 'select-option') {
@@ -166,7 +109,7 @@ export const Place = ({
         onInputChange={handleInputChange}
         fullWidth
         disableClearable
-        options={allFacilities}
+        options={facilities}
         getOptionLabel={(option) => option.name}
         filterSelectedOptions
         getOptionSelected={(option: Facility, value: Facility) => (

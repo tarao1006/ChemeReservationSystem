@@ -1,7 +1,7 @@
 import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { makeStyles } from '@material-ui/core/styles'
-import { AuthProvider, ReservationProvider } from '@contexts'
+import { AuthProvider, FacilityProvider, ReservationProvider, UserProvider } from '@contexts'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DayjsUtils from '@date-io/dayjs'
 import { Header } from '@components'
@@ -42,7 +42,9 @@ export const Layout = ({ children }) => {
   return (
     <MuiPickersUtilsProvider utils={DayjsUtils}>
     <AuthProvider>
+    <FacilityProvider>
     <ReservationProvider>
+    <UserProvider>
       <CssBaseline />
       <div className={classes.root}>
         <div className={classes.wrap}>
@@ -56,7 +58,9 @@ export const Layout = ({ children }) => {
           </div>
         </div>
       </div>
+    </UserProvider>
     </ReservationProvider>
+    </FacilityProvider>
     </AuthProvider>
     </MuiPickersUtilsProvider>
   )

@@ -3,6 +3,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { BottomPanel } from './BottomPanel'
 import { MainPanel } from './MainPanel'
 import { Reservation } from '@types'
+import { createReservation } from '@api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -17,16 +18,19 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Body = ({
   reservation,
-  setNewReservation
+  setNewReservation,
+  handleClose
 }: {
   reservation: Reservation
   setNewReservation: React.Dispatch<React.SetStateAction<Reservation>>
+  handleClose: () => void
 }) => {
   const classes = useStyles()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(reservation)
+    createReservation(reservation)
+    handleClose()
   }
 
   return (

@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type ReservationAPI struct {
 	CreatorID      string    `json:"creator_id"`
@@ -38,16 +41,16 @@ type ReservationDTO struct {
 }
 
 type ReservationDTOWithStruct struct {
-	ID         int64     `db:"id"`
-	CreatorID  string    `db:"creator_id"`
-	StartAt    time.Time `db:"start_at"`
-	EndAt      time.Time `db:"end_at"`
-	PlanID     int64     `db:"plan_id"`
-	PlanMemo   string    `db:"plan_memo"`
-	CreatedAt  time.Time `db:"created_at"`
-	UpdatedAt  time.Time `db:"updated_at"`
-	UserID     string    `db:"user_id"`
-	FacilityID int64     `db:"facility_id"`
+	ID         int64          `db:"id"`
+	CreatorID  string         `db:"creator_id"`
+	StartAt    time.Time      `db:"start_at"`
+	EndAt      time.Time      `db:"end_at"`
+	PlanID     int64          `db:"plan_id"`
+	PlanMemo   string         `db:"plan_memo"`
+	CreatedAt  time.Time      `db:"created_at"`
+	UpdatedAt  time.Time      `db:"updated_at"`
+	UserID     sql.NullString `db:"user_id"`
+	FacilityID sql.NullInt64  `db:"facility_id"`
 }
 
 type RangeAPI struct {

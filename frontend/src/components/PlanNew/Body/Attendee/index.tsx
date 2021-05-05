@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Chip from '@material-ui/core/Chip'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import { User } from '@types'
+import { UserContext } from '@contexts'
 export { AttendeeIcon } from './AttendeeIcon'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -30,79 +31,6 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 )
-
-const allUsers: User[] = [
-  {
-    id: 'user001',
-    name: '三浦 昌光',
-    nameRuby: 'ミウラ マサミツ',
-    emailAddress: 'msmt-mur@plala.or.jp',
-    types: [{
-      id: 1,
-      name: '教授A'
-    }]
-  },
-  {
-    id: 'user002',
-    name: '畑中 祐美',
-    nameRuby: 'ハタケナカ ユウミ',
-    emailAddress: 'knkthdti@dti.ne.jp',
-    types: [{
-      id: 1,
-      name: '教授A'
-    }]
-  },
-  {
-    id: 'user003',
-    name: '久保田 俊彰',
-    nameRuby: 'クボタ トシアキ',
-    emailAddress: 'kubota0705@dti.ad.jp',
-    types: [{
-      id: 2,
-      name: '教授B'
-    }]
-  },
-  {
-    id: 'user004',
-    name: '松野 長生',
-    nameRuby: 'マツノ ナガオ',
-    emailAddress: '',
-    types: [{
-      id: 2,
-      name: '教授B'
-    }]
-  },
-  {
-    id: 'user005',
-    name: '安達 悠里',
-    nameRuby: 'アダチ ユリ',
-    emailAddress: 'itada0829@plala.or.jp',
-    types: [{
-      id: 3,
-      name: '生徒A'
-    }]
-  },
-  {
-    id: 'user006',
-    name: '塚本 清重',
-    nameRuby: 'ツカモト キヨシゲ',
-    emailAddress: 'tukamoto73@sannet.ne.jp',
-    types: [{
-      id: 4,
-      name: '生徒B'
-    }]
-  },
-  {
-    id: 'user007',
-    name: '西原 吉治',
-    nameRuby: 'ニシハラ キチジ',
-    emailAddress: '',
-    types: [{
-      id: 4,
-      name: '生徒B'
-    }]
-  }
-]
 
 const UserChip = ({
   user,
@@ -135,6 +63,7 @@ export const Attendee = ({
 }) => {
   const classes = useStyles()
   const [inputValue, setInputValue] = useState<string>('')
+  const { users } = useContext(UserContext)
 
   const handleChange = (event: object, value: User, reason: string) => {
     if (reason === 'select-option') {
@@ -180,7 +109,7 @@ export const Attendee = ({
         onInputChange={handleInputChange}
         fullWidth
         disableClearable
-        options={allUsers}
+        options={users}
         getOptionLabel={(option) => option.name}
         filterSelectedOptions
         getOptionSelected={(option: User, value: User) => (
