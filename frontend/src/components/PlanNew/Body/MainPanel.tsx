@@ -2,6 +2,7 @@ import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Title } from './Title'
 import { Date } from './Date'
+import { Place } from './Place'
 import { Reservation } from '@types'
 import dayjs from 'dayjs'
 
@@ -72,6 +73,7 @@ export const MainPanel = ({
         onStartAtChange={handleStartAtChange}
         onEndAtChange={handleEndAtChange}
       />
+      <Place />
     </div>
   )
 }
