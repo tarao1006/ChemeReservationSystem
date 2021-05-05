@@ -1,12 +1,7 @@
 import React, { useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
-import List from '@material-ui/core/List'
-import ListItem, { ListItemProps } from '@material-ui/core/ListItem'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import ListItemText from '@material-ui/core/ListItemText'
-import IconButton from '@material-ui/core/IconButton'
-import CloseIcon from '@material-ui/icons/Close';
+import Chip from '@material-ui/core/Chip'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import { PlaceIcon } from './PlaceIcon'
 import { Facility } from '@types'
@@ -14,7 +9,7 @@ import { Facility } from '@types'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      display: 'table',
+      display: 'block',
       width: '100%',
       margin: '8px 0 8px',
       fontSize: '14px',
@@ -32,30 +27,18 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
       flexDirection: 'column',
     },
-    select: {
-      width: '64px',
-      height: '24px',
-      flex: '1 1 auto',
-      margin: '0 6px',
-      fontSize: '14px',
-    },
-    selectItem: {
-      minWidth: '150px',
-      fontSize: '14px',
-      lineHeight: '40px',
-      padding: '2px 16px',
-    },
-    list: {
+    chips: {
+      display: 'flex',
       maxHeight: '150px',
-      overflowY: 'scroll',
+      overflowX: 'scroll',
+      paddingTop: '8px',
+      paddingBottom: '8px',
     },
-    listItem: {
-      paddingTop: '2px',
-      paddingBottom: '2px',
-    },
-    listItemText: {
+    chip: {
+      flex: 'none',
       fontSize: '14px',
-    },
+      margin: '2px',
+    }
   })
 )
 
@@ -83,33 +66,60 @@ const allFacilities = [
       id: 1,
       name: '施設タイプA'
     }]
+  },
+  {
+    id: 4,
+    name: '会議室A',
+    types: [{
+      id: 2,
+      name: '施設タイプB'
+    }]
+  },
+  {
+    id: 5,
+    name: '会議室B',
+    types: [{
+      id: 2,
+      name: '施設タイプB'
+    }]
+  },
+  {
+    id: 6,
+    name: '休憩室A',
+    types: [{
+      id: 1,
+      name: '施設タイプC'
+    }]
+  },
+  {
+    id: 7,
+    name: '休憩室B',
+    types: [{
+      id: 1,
+      name: '施設タイプC'
+    }]
   }
 ]
 
-const FacilityListItem = ({
+const FacilityChip = ({
   facility,
-  onClick
+  onDelete
 }: {
   facility: Facility
-  onClick: (facility: Facility) => void
+  onDelete: (facility: Facility) => void
 }) => {
   const classes = useStyles()
 
-  const handleClick = () => {
-    onClick(facility)
+  const handleDelete = () => {
+    onDelete(facility)
   }
 
   return (
-    <ListItem className={classes.listItem}>
-      <ListItemText disableTypography className={classes.listItemText}>
-        {facility.name}
-      </ListItemText>
-      <ListItemSecondaryAction>
-        <IconButton size='small' onClick={handleClick}>
-          <CloseIcon />
-        </IconButton>
-      </ListItemSecondaryAction>
-    </ListItem>
+    <Chip
+      className={classes.chip}
+      label={facility.name}
+      onDelete={handleDelete}
+    />
   )
 }
 
@@ -178,16 +188,14 @@ export const Place = () => {
               />
             )}
           />
-          <div className={classes.list}>
-            <List>
-              {facilities.map(facility => (
-                <FacilityListItem
-                  key={facility.id}
-                  facility={facility}
-                  onClick={handleAddFacility}
-                />
-              ))}
-            </List>
+          <div className={classes.chips}>
+            {facilities.map(facility => (
+              <FacilityChip
+                key={facility.id}
+                facility={facility}
+                onDelete={handleRemoveFacility}
+              />
+            ))}
           </div>
         </div>
       </div>

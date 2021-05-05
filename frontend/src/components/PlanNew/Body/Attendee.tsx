@@ -1,12 +1,7 @@
 import React, { useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
-import List from '@material-ui/core/List'
-import ListItem, { ListItemProps } from '@material-ui/core/ListItem'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import ListItemText from '@material-ui/core/ListItemText'
-import IconButton from '@material-ui/core/IconButton'
-import CloseIcon from '@material-ui/icons/Close';
+import Chip from '@material-ui/core/Chip'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import { AttendeeIcon } from './AttendeeIcon'
 import { User } from '@types'
@@ -14,7 +9,7 @@ import { User } from '@types'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      display: 'table',
+      display: 'block',
       width: '100%',
       margin: '8px 0 8px',
       fontSize: '14px',
@@ -32,24 +27,18 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'hidden',
       flexDirection: 'column',
     },
-    select: {
-      width: '64px',
-      height: '24px',
-      flex: '1 1 auto',
-      margin: '0 6px',
-      fontSize: '14px',
-    },
-    list: {
+    chips: {
+      display: 'flex',
       maxHeight: '150px',
-      overflowY: 'scroll',
+      overflowX: 'scroll',
+      paddingTop: '8px',
+      paddingBottom: '8px',
     },
-    listItem: {
-      paddingTop: '2px',
-      paddingBottom: '2px',
-    },
-    listItemText: {
+    chip: {
+      flex: 'none',
       fontSize: '14px',
-    },
+      margin: '2px',
+    }
   })
 )
 
@@ -126,30 +115,25 @@ const allUsers: User[] = [
   }
 ]
 
-const UserListItem = ({
+const UserChip = ({
   user,
-  onClick
+  onDelete
 }: {
   user: User
-  onClick: (user: User) => void
+  onDelete: (user: User) => void
 }) => {
   const classes = useStyles()
 
-  const handleClick = () => {
-    onClick(user)
+  const handleDelete = () => {
+    onDelete(user)
   }
 
   return (
-    <ListItem className={classes.listItem}>
-      <ListItemText disableTypography className={classes.listItemText}>
-        {user.name}
-      </ListItemText>
-      <ListItemSecondaryAction>
-        <IconButton size='small' onClick={handleClick}>
-          <CloseIcon />
-        </IconButton>
-      </ListItemSecondaryAction>
-    </ListItem>
+    <Chip
+      className={classes.chip}
+      label={user.name}
+      onDelete={handleDelete}
+    />
   )
 }
 
@@ -218,16 +202,14 @@ export const Attendee = () => {
               />
             )}
           />
-          <div className={classes.list}>
-            <List>
-              {users.map(user => (
-                <UserListItem
-                  key={user.id}
-                  user={user}
-                  onClick={handleRemoveUser}
-                />
-              ))}
-            </List>
+          <div className={classes.chips}>
+            {users.map(user => (
+              <UserChip
+                key={user.id}
+                user={user}
+                onDelete={handleRemoveUser}
+              />
+            ))}
           </div>
         </div>
       </div>
