@@ -176,7 +176,16 @@ export const Plan = ({
           </div>
         )}
       </Button>
-      {reservation.id === 0 ? (
+      <PlanNew
+        reservation={reservation}
+        isOpen={isOpen}
+        onClose={handleClose}
+        anchorEl={anchorEl}
+        anchorOrigin={anchorOrigin}
+        transformOrigin={transformOrigin}
+        margin={margin}
+      />
+      {/* {reservation.id === 0 ? (
         anchorEl ? (
           <PlanNew
             reservation={reservation}
@@ -198,7 +207,7 @@ export const Plan = ({
           transformOrigin={transformOrigin}
           margin={margin}
         />
-      )}
+      )} */}
     </>
   )
 }

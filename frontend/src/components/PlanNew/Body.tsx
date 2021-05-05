@@ -21,7 +21,7 @@ export const Body = ({ reservation }: { reservation: Reservation }) => {
 
   return (
     <div className={classes.root}>
-      <MainPanel />
+      <MainPanel reservation={reservation} />
       <BottomPanel />
     </div>
   )

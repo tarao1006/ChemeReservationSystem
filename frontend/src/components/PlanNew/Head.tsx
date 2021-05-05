@@ -12,6 +12,10 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '36px',
       overflow: 'hidden',
     },
+    button: {
+      height: '36px',
+      width: '36px',
+    }
   })
 )
 
@@ -24,7 +28,7 @@ export const Head = ({
 
   return (
     <div className={classes.root}>
-      <IconButton size='small' onClick={handleClose}>
+      <IconButton size='small' onClick={handleClose} className={classes.button}>
         <CloseIcon />
       </IconButton>
     </div>

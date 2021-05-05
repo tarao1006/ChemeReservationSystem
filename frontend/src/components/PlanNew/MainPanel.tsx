@@ -2,6 +2,7 @@ import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Title } from './Title'
 import { Date } from './Date'
+import { Reservation } from '@types'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -15,13 +16,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const MainPanel = () => {
+export const MainPanel = ({ reservation }: { reservation: Reservation }) => {
   const classes = useStyles()
 
   return (
     <div className={classes.root}>
       <Title />
-      <Date />
+      <Date reservation={reservation} />
     </div>
   )
 }

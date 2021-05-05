@@ -2,6 +2,8 @@ import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { makeStyles } from '@material-ui/core/styles'
 import { AuthProvider, ReservationProvider } from '@contexts'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import DayjsUtils from '@date-io/dayjs'
 import { Header } from '@components'
 import { headerHeight } from '@config'
 
@@ -38,6 +40,7 @@ export const Layout = ({ children }) => {
   const classes = useStyles()
 
   return (
+    <MuiPickersUtilsProvider utils={DayjsUtils}>
     <AuthProvider>
     <ReservationProvider>
       <CssBaseline />
@@ -55,5 +58,6 @@ export const Layout = ({ children }) => {
       </div>
     </ReservationProvider>
     </AuthProvider>
+    </MuiPickersUtilsProvider>
   )
 }

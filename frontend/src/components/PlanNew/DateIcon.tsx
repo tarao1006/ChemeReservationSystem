@@ -1,6 +1,5 @@
 import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import IconButton from '@material-ui/core/IconButton'
 import ScheduleIcon from '@material-ui/icons/Schedule'
 
 const useStyles = makeStyles((theme: Theme) =>
