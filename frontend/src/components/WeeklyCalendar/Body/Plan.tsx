@@ -37,8 +37,6 @@ export const Plan = ({
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
   const isOpen = Boolean(anchorEl)
   const [width, setWidth] = useState<number>(100)
-  const [top, setTop] = useState<number>((reservation.startAt.hour() + reservation.startAt.minute() / 60.0) * 48 - 1)
-  const [height, setHeight] = useState<number>(reservation.length >= 1 ? reservation.length * 48 - 2 : 22)
   const [backgroundColor, setBackgroundColor] = useState<string>('#3f51b5')
   const [anchorOrigin, setAnchorOrigin] = useState<PopoverOrigin>({
     vertical: 'bottom',
@@ -56,10 +54,8 @@ export const Plan = ({
     left: "0px",
   })
 
-  useEffect(() => {
-    setTop((reservation.startAt.hour() + reservation.startAt.minute() / 60.0) * 48 - 1)
-    setHeight(reservation.length >= 1 ? reservation.length * 48 - 2 : 22)
-  }, [reservation])
+  const top = (reservation.startAt.hour() + reservation.startAt.minute() / 60.0) * 48 - 1
+  const height = reservation.length >= 1 ? reservation.length * 48 - 2 : 22
 
   const handleMouseEnter = () => setBackgroundColor('#3f51b5')
   const handleMouseLeave = () => setBackgroundColor('#3f51b5')
