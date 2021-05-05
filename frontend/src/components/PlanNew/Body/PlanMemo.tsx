@@ -13,13 +13,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const Title = () => {
+export const PlanMemo = () => {
   const classes = useStyles()
 
   return (
     <TextField
       className={classes.root}
-      placeholder="タイトルを追加"
+      placeholder="メモを追加"
     />
   )
 }
