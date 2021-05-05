@@ -87,22 +87,22 @@ const allFacilities = [
 ]
 
 const FacilityListItem = ({
-  user,
+  facility,
   onClick
 }: {
-  user: Facility
-  onClick: (user: Facility) => void
+  facility: Facility
+  onClick: (facility: Facility) => void
 }) => {
   const classes = useStyles()
 
   const handleClick = () => {
-    onClick(user)
+    onClick(facility)
   }
 
   return (
     <ListItem className={classes.listItem}>
       <ListItemText disableTypography className={classes.listItemText}>
-        {user.name}
+        {facility.name}
       </ListItemText>
       <ListItemSecondaryAction>
         <IconButton size='small' onClick={handleClick}>
@@ -120,15 +120,15 @@ export const Place = () => {
 
   const handleChange = (event: object, value: Facility, reason: string) => {
     if (reason === 'select-option') {
-      handleAddUser(value)
+      handleAddFacility(value)
     }
   }
 
-  const handleAddUser = (facility: Facility) => {
+  const handleAddFacility = (facility: Facility) => {
     setFacilities([...facilities, facility])
   }
 
-  const handleRemoveUser = (facility: Facility) => {
+  const handleRemoveFacility = (facility: Facility) => {
     let newFacilities = [...facilities]
     const idx = newFacilities.findIndex(f => f.id === facility.id)
     if (idx !== -1) {
@@ -169,7 +169,7 @@ export const Place = () => {
             getOptionLabel={(option) => option.name}
             filterSelectedOptions
             getOptionSelected={(option: Facility, value: Facility) => (
-              facilities.findIndex(u => u.id === option.id) !== -1
+              facilities.findIndex(f => f.id === option.id) !== -1
             )}
             renderInput={(params) => (
               <TextField
@@ -180,11 +180,11 @@ export const Place = () => {
           />
           <div className={classes.list}>
             <List>
-              {facilities.map(user => (
+              {facilities.map(facility => (
                 <FacilityListItem
-                  key={user.id}
-                  user={user}
-                  onClick={handleRemoveUser}
+                  key={facility.id}
+                  facility={facility}
+                  onClick={handleAddFacility}
                 />
               ))}
             </List>
