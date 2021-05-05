@@ -98,31 +98,12 @@ const BodyMainPanelContentColumn = ({
     const offsetAllMinutes = Math.floor(offsetY / 12.0) * 15
     const offsetHour = Math.floor(offsetAllMinutes / 60.0)
     const offsetMinutes = offsetAllMinutes - offsetHour * 60.0
-
     const startAt = date.hour(offsetHour).minute(offsetMinutes)
     const endAt = date.hour(offsetHour).minute(offsetMinutes).add(1, 'hour')
-    const plan = {
-      id: 1,
-      name: '会議',
-    }
+    const plan = { id: 1, name: '会議' }
     const now = dayjs()
 
-    const newReservations = [...reservations]
-
-    let newIndex = 0
-    for (let i = 0; i < newReservations.length; ++i) {
-      if (newReservations[i].startAt.isBefore(startAt)) {
-        newIndex = i
-        break
-      }
-    }
-
-    newReservations.splice(newIndex, 0, new ReservationModel(0, currentUser, startAt, endAt, plan, '', now, now, [], []))
-
-    setIndex(newIndex)
-    setReservations(newReservations)
-
-    // setNewReservation(new ReservationModel(0, currentUser, startAt, endAt, plan, '', now, now, [], []))
+    addReservations(new ReservationModel(0, currentUser, startAt, endAt, plan, '', now, now, [], []))
   }
 
   const handlePlanChange = (plan: Plan) => {
@@ -139,14 +120,12 @@ const BodyMainPanelContentColumn = ({
       reservation.attendees,
       reservation.places,
     ))
-    const newReservations = [...reservations]
-    newReservations.splice(index, 1, newReservation)
-    setReservations(newReservations)
+    updateReservations(newReservation)
   }
 
   const handlePlanMemoChange = (planMemo: string) => {
     const reservation = reservations[index]
-    const newReservation = (new ReservationModel(
+    updateReservations(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
@@ -158,109 +137,11 @@ const BodyMainPanelContentColumn = ({
       reservation.attendees,
       reservation.places,
     ))
-    const newReservations = [...reservations]
-    newReservations.splice(index, 1, newReservation)
-    setReservations(newReservations)
-  }
-
-  const handleDateChange = (date: dayjs.Dayjs) => {
-    const reservation = reservations[index]
-    const newStartAt = date.hour(reservation.startAt.hour()).minute(reservation.startAt.minute())
-    const newEndAt = date.hour(reservation.endAt.hour()).minute(reservation.endAt.minute())
-    const newReservation = (new ReservationModel(
-      reservation.id,
-      reservation.creator,
-      newStartAt,
-      newEndAt,
-      reservation.plan,
-      reservation.planMemo,
-      reservation.createdAt,
-      reservation.updatedAt,
-      reservation.attendees,
-      reservation.places,
-    ))
-    const newReservations = [...reservations]
-    newReservations.splice(index, 1)
-
-    let newIndex = 0
-    for (let i = 0; i < newReservations.length; ++i) {
-      if (newReservations[i].startAt.isBefore(newReservation.startAt)) {
-        newIndex = i
-        break
-      }
-    }
-
-    newReservations.splice(newIndex, 1, newReservation)
-
-    setIndex(newIndex)
-    setReservations(newReservations)
-  }
-
-  const handleStartAtChange = (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => {
-    const reservation = reservations[index]
-    const newReservation = (new ReservationModel(
-      reservation.id,
-      reservation.creator,
-      startAt,
-      endAt,
-      reservation.plan,
-      reservation.planMemo,
-      reservation.createdAt,
-      reservation.updatedAt,
-      reservation.attendees,
-      reservation.places,
-    ))
-    const newReservations = [...reservations]
-    newReservations.splice(index, 1)
-
-    let newIndex = 0
-    for (let i = 0; i < newReservations.length; ++i) {
-      if (newReservations[i].startAt.isBefore(newReservation.startAt)) {
-        newIndex = i
-        break
-      }
-    }
-
-    newReservations.splice(newIndex, 1, newReservation)
-
-    setIndex(newIndex)
-    setReservations(newReservations)
-  }
-
-  const handleEndAtChange = (endAt: dayjs.Dayjs) => {
-    const reservation = reservations[index]
-    const newReservation = (new ReservationModel(
-      reservation.id,
-      reservation.creator,
-      reservation.startAt,
-      endAt,
-      reservation.plan,
-      reservation.planMemo,
-      reservation.createdAt,
-      reservation.updatedAt,
-      reservation.attendees,
-      reservation.places,
-    ))
-    const newReservations = [...reservations]
-    newReservations.splice(index, 1)
-
-    let newIndex = 0
-    for (let i = 0; i < newReservations.length; ++i) {
-      if (newReservations[i].startAt.isBefore(newReservation.startAt)) {
-        newIndex = i
-        break
-      }
-    }
-
-    newReservations.splice(newIndex, 1, newReservation)
-
-    setIndex(newIndex)
-    setReservations(newReservations)
   }
 
   const handlePlacesChange = (places: Facility[]) => {
     const reservation = reservations[index]
-    const newReservation = (new ReservationModel(
+    updateReservations(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
@@ -272,14 +153,11 @@ const BodyMainPanelContentColumn = ({
       reservation.attendees,
       places,
     ))
-    const newReservations = [...reservations]
-    newReservations.splice(index, 1, newReservation)
-    setReservations(newReservations)
   }
 
   const handleAttendeesChange = (attendees: User[]) => {
     const reservation = reservations[index]
-    const newReservation = (new ReservationModel(
+    updateReservations(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
@@ -291,8 +169,93 @@ const BodyMainPanelContentColumn = ({
       attendees,
       reservation.places,
     ))
+  }
+
+  const handleDateChange = (date: dayjs.Dayjs) => {
+    const reservation = reservations[index]
+    const newStartAt = date.hour(reservation.startAt.hour()).minute(reservation.startAt.minute())
+    const newEndAt = date.hour(reservation.endAt.hour()).minute(reservation.endAt.minute())
+    replaceReservations(new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      newStartAt,
+      newEndAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+  }
+
+  const handleStartAtChange = (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => {
+    const reservation = reservations[index]
+    replaceReservations(new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      startAt,
+      endAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+  }
+
+  const handleEndAtChange = (endAt: dayjs.Dayjs) => {
+    const reservation = reservations[index]
+    replaceReservations(new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      endAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+  }
+
+  const addReservations = (newReservation: ReservationModel) => {
+    const newReservations = [...reservations]
+    let newIndex = 0
+    for (let i = 0; i < newReservations.length; ++i) {
+      if (newReservations[i].startAt.isBefore(newReservation.startAt)) {
+        newIndex = i
+        break
+      }
+    }
+
+    newReservations.splice(newIndex, 0, newReservation)
+    setIndex(newIndex)
+    setReservations(newReservations)
+  }
+
+  const updateReservations = (newReservation: ReservationModel) => {
     const newReservations = [...reservations]
     newReservations.splice(index, 1, newReservation)
+    setReservations(newReservations)
+  }
+
+  const replaceReservations = (newReservation: ReservationModel) => {
+    const newReservations = [...reservations]
+    newReservations.splice(index, 1)
+
+    let newIndex = 0
+    for (let i = 0; i < newReservations.length; ++i) {
+      if (newReservations[i].startAt.isBefore(newReservation.startAt)) {
+        newIndex = i
+        break
+      }
+    }
+
+    newReservations.splice(newIndex, 0, newReservation)
+    setIndex(newIndex)
     setReservations(newReservations)
   }
 
