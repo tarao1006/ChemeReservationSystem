@@ -3,7 +3,8 @@ import Popover, { PopoverOrigin } from '@material-ui/core/Popover'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Head } from './Head'
 import { Body } from './Body'
-import { Reservation } from '@types'
+import { Reservation, Plan, User, Facility } from '@types'
+import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,7 +23,13 @@ export const ReservationNew = ({
   reservation,
   isOpen,
   onClose,
-  setNewReservation,
+  onPlanChange,
+  onPlanMemoChange,
+  onDateChange,
+  onStartAtChange,
+  onEndAtChange,
+  onPlacesChange,
+  onAttendeesChange,
   anchorEl,
   anchorOrigin,
   transformOrigin,
@@ -31,7 +38,13 @@ export const ReservationNew = ({
   reservation: Reservation
   isOpen: boolean
   onClose: () => void
-  setNewReservation: React.Dispatch<React.SetStateAction<Reservation>>
+  onPlanChange: (plan: Plan) => void
+  onPlanMemoChange: (planMemo: string) => void
+  onDateChange: (date: dayjs.Dayjs) => void
+  onStartAtChange: (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => void
+  onEndAtChange: (endAt: dayjs.Dayjs) => void
+  onPlacesChange: (places: Facility[]) => void
+  onAttendeesChange: (attendees: User[]) => void
   anchorEl: Element
   anchorOrigin: PopoverOrigin
   transformOrigin: PopoverOrigin
@@ -62,7 +75,17 @@ export const ReservationNew = ({
     >
       <div className={classes.root}>
         <Head handleClose={handleClose} />
-        <Body handleClose={handleClose} reservation={reservation} setNewReservation={setNewReservation} />
+        <Body
+          handleClose={handleClose}
+          reservation={reservation}
+          onPlanChange={onPlanChange}
+          onPlanMemoChange={onPlanMemoChange}
+          onDateChange={onDateChange}
+          onStartAtChange={onStartAtChange}
+          onEndAtChange={onEndAtChange}
+          onPlacesChange={onPlacesChange}
+          onAttendeesChange={onAttendeesChange}
+        />
       </div>
     </Popover>
   )

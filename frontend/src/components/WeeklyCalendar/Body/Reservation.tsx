@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { PopoverOrigin } from '@material-ui/core/Popover'
 import Button from '@material-ui/core/Button'
-import { Reservation as ReservationModel } from '@types'
+import { Reservation as ReservationModel, Plan, User, Facility } from '@types'
 import { ReservationDetail, ReservationNew } from '@components'
+import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,11 +27,23 @@ type Horizontal = "center" | "left" | "right"
 export const Reservation = ({
   reservation,
   onClose,
-  setNewReservation
+  onPlanChange,
+  onPlanMemoChange,
+  onDateChange,
+  onStartAtChange,
+  onEndAtChange,
+  onPlacesChange,
+  onAttendeesChange,
 }: {
   reservation: ReservationModel
   onClose?: () => void
-  setNewReservation: React.Dispatch<React.SetStateAction<ReservationModel>>
+  onPlanChange: (plan: Plan) => void
+  onPlanMemoChange: (planMemo: string) => void
+  onDateChange: (date: dayjs.Dayjs) => void
+  onStartAtChange: (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => void
+  onEndAtChange: (endAt: dayjs.Dayjs) => void
+  onPlacesChange: (places: Facility[]) => void
+  onAttendeesChange: (attendees: User[]) => void
 }) => {
   const classes = useStyles()
   const ref = useRef<HTMLDivElement>()
@@ -191,7 +204,13 @@ export const Reservation = ({
             reservation={reservation}
             isOpen={isOpen}
             onClose={handleClose}
-            setNewReservation={setNewReservation}
+            onPlanChange={onPlanChange}
+            onPlanMemoChange={onPlanMemoChange}
+            onDateChange={onDateChange}
+            onStartAtChange={onStartAtChange}
+            onEndAtChange={onEndAtChange}
+            onPlacesChange={onPlacesChange}
+            onAttendeesChange={onAttendeesChange}
             anchorEl={anchorEl}
             anchorOrigin={anchorOrigin}
             transformOrigin={transformOrigin}

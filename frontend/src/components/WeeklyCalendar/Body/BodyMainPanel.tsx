@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { Reservation as ReservationModel } from '@types'
+import { Reservation as ReservationModel, Plan, Facility, User } from '@types'
 import { AuthContext, ReservationContext } from '@contexts'
 import dayjs from 'dayjs'
 import { Reservation } from './Reservation'
@@ -84,15 +84,14 @@ const BodyMainPanelContentCell = () => {
 }
 
 const BodyMainPanelContentColumn = ({
-  date,
-  reservations
+  date
 }: {
   date: dayjs.Dayjs
-  reservations: ReservationModel[]
 }) => {
-  const { currentUser } = useContext(AuthContext)
   const classes = useStyles()
-  const [newReservation, setNewReservation] = useState<ReservationModel>()
+  const { currentUser } = useContext(AuthContext)
+  const { reservations, setReservations } = useContext(ReservationContext)
+  const [index, setIndex] = useState<number>(0)
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const offsetY = e.nativeEvent.offsetY
@@ -108,19 +107,220 @@ const BodyMainPanelContentColumn = ({
     }
     const now = dayjs()
 
-    setNewReservation(new ReservationModel(0, currentUser, startAt, endAt, plan, '', now, now, [], []))
+    const newReservations = [...reservations]
+
+    let newIndex = 0
+    for (let i = 0; i < newReservations.length; ++i) {
+      if (newReservations[i].startAt.isBefore(startAt)) {
+        newIndex = i
+        break
+      }
+    }
+
+    newReservations.splice(newIndex, 0, new ReservationModel(0, currentUser, startAt, endAt, plan, '', now, now, [], []))
+
+    setIndex(newIndex)
+    setReservations(newReservations)
+
+    // setNewReservation(new ReservationModel(0, currentUser, startAt, endAt, plan, '', now, now, [], []))
+  }
+
+  const handlePlanChange = (plan: Plan) => {
+    const reservation = reservations[index]
+    const newReservation = (new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      reservation.endAt,
+      plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+    const newReservations = [...reservations]
+    newReservations.splice(index, 1, newReservation)
+    setReservations(newReservations)
+  }
+
+  const handlePlanMemoChange = (planMemo: string) => {
+    const reservation = reservations[index]
+    const newReservation = (new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      reservation.endAt,
+      reservation.plan,
+      planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+    const newReservations = [...reservations]
+    newReservations.splice(index, 1, newReservation)
+    setReservations(newReservations)
+  }
+
+  const handleDateChange = (date: dayjs.Dayjs) => {
+    const reservation = reservations[index]
+    const newStartAt = date.hour(reservation.startAt.hour()).minute(reservation.startAt.minute())
+    const newEndAt = date.hour(reservation.endAt.hour()).minute(reservation.endAt.minute())
+    const newReservation = (new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      newStartAt,
+      newEndAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+    const newReservations = [...reservations]
+    newReservations.splice(index, 1)
+
+    let newIndex = 0
+    for (let i = 0; i < newReservations.length; ++i) {
+      if (newReservations[i].startAt.isBefore(newReservation.startAt)) {
+        newIndex = i
+        break
+      }
+    }
+
+    newReservations.splice(newIndex, 1, newReservation)
+
+    setIndex(newIndex)
+    setReservations(newReservations)
+  }
+
+  const handleStartAtChange = (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => {
+    const reservation = reservations[index]
+    const newReservation = (new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      startAt,
+      endAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+    const newReservations = [...reservations]
+    newReservations.splice(index, 1)
+
+    let newIndex = 0
+    for (let i = 0; i < newReservations.length; ++i) {
+      if (newReservations[i].startAt.isBefore(newReservation.startAt)) {
+        newIndex = i
+        break
+      }
+    }
+
+    newReservations.splice(newIndex, 1, newReservation)
+
+    setIndex(newIndex)
+    setReservations(newReservations)
+  }
+
+  const handleEndAtChange = (endAt: dayjs.Dayjs) => {
+    const reservation = reservations[index]
+    const newReservation = (new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      endAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+    const newReservations = [...reservations]
+    newReservations.splice(index, 1)
+
+    let newIndex = 0
+    for (let i = 0; i < newReservations.length; ++i) {
+      if (newReservations[i].startAt.isBefore(newReservation.startAt)) {
+        newIndex = i
+        break
+      }
+    }
+
+    newReservations.splice(newIndex, 1, newReservation)
+
+    setIndex(newIndex)
+    setReservations(newReservations)
+  }
+
+  const handlePlacesChange = (places: Facility[]) => {
+    const reservation = reservations[index]
+    const newReservation = (new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      reservation.endAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      places,
+    ))
+    const newReservations = [...reservations]
+    newReservations.splice(index, 1, newReservation)
+    setReservations(newReservations)
+  }
+
+  const handleAttendeesChange = (attendees: User[]) => {
+    const reservation = reservations[index]
+    const newReservation = (new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      reservation.endAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      attendees,
+      reservation.places,
+    ))
+    const newReservations = [...reservations]
+    newReservations.splice(index, 1, newReservation)
+    setReservations(newReservations)
   }
 
   const handleClose = () => {
-    setNewReservation(undefined)
+    const newReservations = [...reservations]
+    newReservations.splice(index, 1)
+    setIndex(0)
+    setReservations(newReservations)
   }
 
   return (
     <div className={classes.column}>
       <div className={classes.columnContent} onClick={handleClick} />
       <div className={classes.columnContentPresentation}>
-        {reservations.map(reservation => <Reservation key={reservation.id} reservation={reservation} setNewReservation={setNewReservation} />)}
-        {newReservation !== undefined && <Reservation reservation={newReservation} onClose={handleClose} setNewReservation={setNewReservation} />}
+        {reservations.filter(reservation => reservation.startAt.isSame(date, 'day')).map(reservation => (
+          <Reservation
+            key={reservation.id}
+            reservation={reservation}
+            onClose={handleClose}
+            onPlanChange={handlePlanChange}
+            onPlanMemoChange={handlePlanMemoChange}
+            onDateChange={handleDateChange}
+            onStartAtChange={handleStartAtChange}
+            onEndAtChange={handleEndAtChange}
+            onPlacesChange={handlePlacesChange}
+            onAttendeesChange={handleAttendeesChange}
+          />
+        ))}
       </div>
     </div>
   )
@@ -128,7 +328,6 @@ const BodyMainPanelContentColumn = ({
 
 const BodyMainPanelContent = ({ dates }: { dates: dayjs.Dayjs[] }) => {
   const classes = useStyles()
-  const { reservations } = useContext(ReservationContext)
 
   return (
     <div className={classes.wrap}>
@@ -138,7 +337,6 @@ const BodyMainPanelContent = ({ dates }: { dates: dayjs.Dayjs[] }) => {
         <BodyMainPanelContentColumn
           key={date.format()}
           date={date}
-          reservations={reservations.filter(r => r.startAt.isSame(date, 'day'))}
         />
       ))}
     </div>
