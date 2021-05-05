@@ -1,7 +1,6 @@
 import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { Program } from './Program/Program'
-import { ProgramMemo } from './Program/ProgramMemo'
+import { Program } from './Program'
 import { Date } from './Date'
 import { Place } from './Place'
 import { Attendee } from './Attendee'
@@ -69,7 +68,6 @@ export const MainPanel = ({
   return (
     <div className={classes.root}>
       <Program />
-      <ProgramMemo />
       <Date
         reservation={reservation}
         onDateChange={handleDateChange}

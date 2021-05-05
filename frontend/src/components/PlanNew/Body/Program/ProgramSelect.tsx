@@ -6,12 +6,12 @@ import { Plan } from '@types'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      width: 'auto',
-      marginRight: '16px',
-      marginLeft: '52px',
-      paddingTop: '8px',
-      boxSizing: 'border-box',
+    select: {
+      // width: 'auto',
+      // marginRight: '16px',
+      // marginLeft: '52px',
+      // paddingTop: '8px',
+      // boxSizing: 'border-box',
     },
   }),
 )
@@ -27,7 +27,7 @@ const plans: Plan[] = [
   }
 ]
 
-export const Program = () => {
+export const ProgramSelect = () => {
   const classes = useStyles()
   const [plan, setPlan] = useState<Plan>(plans[0])
 
@@ -39,7 +39,7 @@ export const Program = () => {
     <Select
       value={plan.name}
       onChange={handleChange}
-      className={classes.root}
+      className={classes.select}
     >
       {plans.map(plan => (
         <MenuItem
