@@ -27,7 +27,7 @@ const plans: Plan[] = [
   }
 ]
 
-export const ProgramSelect = () => {
+export const PlanSelect = () => {
   const classes = useStyles()
   const [plan, setPlan] = useState<Plan>(plans[0])
 

@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export const ProgramIcon = () => {
+export const PlanIcon = () => {
   const classes = useStyles()
 
   return (

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { ProgramSelect } from './ProgramSelect'
-import { ProgramMemo } from './ProgramMemo'
-import { ProgramIcon } from './ProgramIcon'
+import { PlanSelect } from './PlanSelect'
+import { PlanMemo } from './PlanMemo'
+import { PlanIcon } from './PlanIcon'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -28,16 +28,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const Program = () => {
+export const Plan = () => {
   const classes = useStyles()
 
   return (
     <div className={classes.root}>
       <div className={classes.wrap}>
-        <ProgramIcon />
+        <PlanIcon />
         <div className={classes.container}>
-          <ProgramSelect />
-          <ProgramMemo />
+          <PlanSelect />
+          <PlanMemo />
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const ProgramMemo = () => {
+export const PlanMemo = () => {
   const classes = useStyles()
 
   return (
