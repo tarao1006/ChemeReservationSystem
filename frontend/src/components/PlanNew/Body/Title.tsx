@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       width: 'auto',
       margin: '0 16px',
-      padding: '8px 0 0 52px',
+      padding: '8px 0 0 36px',
       boxSizing: 'border-box',
     },
   }),
