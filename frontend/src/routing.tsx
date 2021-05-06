@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom'
-import { WeeklyCalendar } from '@components'
+import { WeeklyCalendar } from '@pages'
 import { Layout } from './layout'
 import { RedirectRoute } from './RedirectRoute'
 import dayjs from 'dayjs'
