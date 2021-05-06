@@ -9,6 +9,7 @@ TRUNCATE `reservation`;
 TRUNCATE `user_group`;
 TRUNCATE `user_type`;
 TRUNCATE `user`;
+TRUNCATE `color`;
 SET FOREIGN_KEY_CHECKS = 1;
 
 INSERT INTO `user_type` (`id`, `name`) VALUES (1, "教授A");
@@ -92,18 +93,43 @@ INSERT INTO `user` (
 INSERT INTO `user_group` (`id`, `user_id`, `user_type_id`) VALUES (15, "student004", 6);
 INSERT INTO `user_group` (`id`, `user_id`, `user_type_id`) VALUES (16, "student004", 8);
 
-INSERT INTO `facility` (`id`, `name`) VALUES (1, "施設A");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (1, "ワイン", "#AD1457");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (2, "ミカン", "#F4511E");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (3, "レモン", "#E4C441");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (4, "バジル", "#0B8043");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (5, "ブルーベリー", "#3F51B5");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (6, "ブドウ", "#8E24AA");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (7, "ローズ", "#D81B60");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (8, "カボチャ", "#EF6C00");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (9, "アボカド", "#C0CA33");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (10, "ユーカリ", "#009688");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (11, "ラベンダー", "#7986CB");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (12, "ココア", "#795548");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (13, "トマト", "#D50000");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (14, "マンゴー", "#F09300");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (15, "ピスタチオ", "#7CB342");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (16, "ピーコーック", "#039BE5");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (17, "ライラック", "#B39DDB");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (18, "グラファイト", "#616161");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (19, "フラミンゴ", "#E67C73");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (20, "バナナ", "#F6BF26");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (21, "セージ", "#33B679");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (22, "コバルト", "#4285F4");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (23, "アメジスト", "#9E69AF");
+INSERT INTO `color` (`id`, `name`, `code`) VALUES (24, "シラカバ", "#A79B8E");
+
+INSERT INTO `facility` (`id`, `name`, `color_id`) VALUES (1, "施設A", 1);
 INSERT INTO `facility_group` (`id`, `facility_id`, `facility_type_id`) VALUES (1, 1, 1);
 INSERT INTO `facility_group` (`id`, `facility_id`, `facility_type_id`) VALUES (2, 1, 2);
 
-INSERT INTO `facility` (`id`, `name`) VALUES (2, "施設B");
+INSERT INTO `facility` (`id`, `name`, `color_id`) VALUES (2, "施設B", 2);
 INSERT INTO `facility_group` (`id`, `facility_id`, `facility_type_id`) VALUES (3, 2, 2);
 INSERT INTO `facility_group` (`id`, `facility_id`, `facility_type_id`) VALUES (4, 2, 3);
 
-INSERT INTO `facility` (`id`, `name`) VALUES (3, "施設C");
+INSERT INTO `facility` (`id`, `name`, `color_id`) VALUES (3, "施設C", 3);
 INSERT INTO `facility_group` (`id`, `facility_id`, `facility_type_id`) VALUES (5, 3, 3);
 INSERT INTO `facility_group` (`id`, `facility_id`, `facility_type_id`) VALUES (6, 3, 4);
 
-INSERT INTO `facility` (`id`, `name`) VALUES (4, "施設D");
+INSERT INTO `facility` (`id`, `name`, `color_id`) VALUES (4, "施設D", 4);
 INSERT INTO `facility_group` (`id`, `facility_id`, `facility_type_id`) VALUES (7, 4, 4);
 INSERT INTO `facility_group` (`id`, `facility_id`, `facility_type_id`) VALUES (8, 4, 1);

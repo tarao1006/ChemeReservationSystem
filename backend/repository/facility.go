@@ -22,7 +22,7 @@ func (fr *FacilityRepository) GetAll(db *sqlx.DB) ([]model.Facility, error) {
 	var facilities []model.FacilityDTOWithType
 	query := `
 		SELECT
-			f.id, f.name, ft.id as type_id, ft.name as type_name
+			f.id, f.name, ft.id as type_id, ft.name as type_name, c.code as color_code
 		FROM
 			facility as f
 		INNER JOIN
@@ -33,6 +33,10 @@ func (fr *FacilityRepository) GetAll(db *sqlx.DB) ([]model.Facility, error) {
 			facility_type as ft
 		ON
 			fg.facility_type_id = ft.id
+		INNER JOIN
+			color as c
+		ON
+			f.color_id = c.id
 		ORDER BY id
 	`
 
@@ -54,9 +58,10 @@ func (fr *FacilityRepository) GetAll(db *sqlx.DB) ([]model.Facility, error) {
 		if _, ok := mapFacility[facility.ID]; !ok {
 			userIDs = append(userIDs, facility.ID)
 			mapFacility[facility.ID] = &model.Facility{
-				ID:    facility.ID,
-				Name:  facility.Name,
-				Types: []model.FacilityType{},
+				ID:        facility.ID,
+				Name:      facility.Name,
+				ColorCode: facility.ColorCode,
+				Types:     []model.FacilityType{},
 			}
 		}
 	}
@@ -78,7 +83,7 @@ func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, erro
 	var facilities []model.FacilityDTOWithType
 	query := `
 		SELECT
-			f.id, f.name, ft.id as type_id, ft.name as type_name
+			f.id, f.name, ft.id as type_id, ft.name as type_name, c.code as color_code
 		FROM
 			facility as f
 		INNER JOIN
@@ -89,6 +94,10 @@ func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, erro
 			facility_type as ft
 		ON
 			fg.facility_type_id = ft.id
+		INNER JOIN
+			color as c
+		ON
+			f.color_id = c.id
 		WHERE f.id = ?
 	`
 
@@ -105,9 +114,10 @@ func (FacilityRepository) FindByID(db *sqlx.DB, id int64) (*model.Facility, erro
 	}
 
 	return &model.Facility{
-		ID:    facilities[0].ID,
-		Name:  facilities[0].Name,
-		Types: types,
+		ID:        facilities[0].ID,
+		Name:      facilities[0].Name,
+		ColorCode: facilities[0].ColorCode,
+		Types:     types,
 	}, nil
 }
 
@@ -115,7 +125,7 @@ func (FacilityRepository) FindByIDs(db *sqlx.DB, ids []int64) ([]*model.Facility
 	var facilities []model.FacilityDTOWithType
 	query := `
 		SELECT
-			f.id, f.name, ft.id as type_id, ft.name as type_name
+			f.id, f.name, ft.id as type_id, ft.name as type_name, c.code as color_code
 		FROM
 			facility as f
 		INNER JOIN
@@ -126,6 +136,10 @@ func (FacilityRepository) FindByIDs(db *sqlx.DB, ids []int64) ([]*model.Facility
 			facility_type as ft
 		ON
 			fg.facility_type_id = ft.id
+		INNER JOIN
+			color as c
+		ON
+			f.color_id = c.id
 		WHERE f.id IN (?)
 	`
 
@@ -152,9 +166,10 @@ func (FacilityRepository) FindByIDs(db *sqlx.DB, ids []int64) ([]*model.Facility
 		if _, ok := mapFacility[facility.ID]; !ok {
 			userIDs = append(userIDs, facility.ID)
 			mapFacility[facility.ID] = &model.Facility{
-				ID:    facility.ID,
-				Name:  facility.Name,
-				Types: []model.FacilityType{},
+				ID:        facility.ID,
+				Name:      facility.Name,
+				ColorCode: facility.ColorCode,
+				Types:     []model.FacilityType{},
 			}
 		}
 	}

@@ -10,10 +10,27 @@ export interface FacilityType {
   name: string
 }
 
+export interface FacilityDTO {
+  id: number
+  name: string
+  color_code: string
+  types: FacilityType[]
+}
+
 export interface Facility {
   id: number
   name: string
+  colorCode: string
   types: FacilityType[]
+}
+
+export const convertToFacility = (f: FacilityDTO): Facility => {
+  return {
+    id: f.id,
+    name: f.name,
+    colorCode: f.color_code,
+    types: f.types,
+  }
 }
 
 export interface UserType {
@@ -52,7 +69,7 @@ export interface ReservationDTO {
 	created_at: string
 	updated_at: string
 	attendees:  UserDTO[]
-	places: Facility[]
+	places: FacilityDTO[]
 }
 
 interface IReservation {
@@ -171,6 +188,6 @@ export const convertToReservation = (r: ReservationDTO): Reservation => {
     dayjs(r.created_at),
     dayjs(r.updated_at),
     r.attendees.map(u => convertToUser(u)),
-    r.places,
+    r.places.map(f => convertToFacility(f)),
   )
 }

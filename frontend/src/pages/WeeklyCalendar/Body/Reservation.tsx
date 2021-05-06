@@ -45,7 +45,7 @@ export const Reservation = ({
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
   const isOpen = Boolean(anchorEl)
   const [width, setWidth] = useState<number>(100)
-  const [backgroundColor, setBackgroundColor] = useState<string>('#3f51b5')
+  const [backgroundColor, setBackgroundColor] = useState<string>(reservation.places.length !== 0 ? reservation.places[0].colorCode : '#3f51b5')
   const [anchorOrigin, setAnchorOrigin] = useState<PopoverOrigin>({
     vertical: 'bottom',
     horizontal: 'left'
@@ -65,8 +65,8 @@ export const Reservation = ({
   const top = (reservation.startAt.hour() + reservation.startAt.minute() / 60.0) * 48 - 1
   const height = reservation.length >= 1 ? reservation.length * 48 - 2 : 22
 
-  const handleMouseEnter = () => setBackgroundColor('#3f51b5')
-  const handleMouseLeave = () => setBackgroundColor('#3f51b5')
+  const handleMouseEnter = () => setBackgroundColor(backgroundColor)
+  const handleMouseLeave = () => setBackgroundColor(backgroundColor)
 
   const setAnchor = (target: HTMLElement) => {
     const targetRect = target.getBoundingClientRect()
