@@ -5,6 +5,7 @@ import { Login, Loading } from '@components'
 import {
   AuthContext,
   FacilityContext,
+  PlanContext,
   UserContext,
 } from '@contexts'
 import {
@@ -12,12 +13,14 @@ import {
   getMe,
   getAllFacilities,
   getAllUsers,
+  getAllPlans,
 } from '@api'
 
 const RedirectComponent = ({ children }) => {
   const { currentUser, setCurrentUser } = useContext(AuthContext)
   const { setFacilities, setChecked } = useContext(FacilityContext)
   const { setUsers } = useContext(UserContext)
+  const { setPlans } = useContext(PlanContext)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const getResources = async () => {
@@ -27,6 +30,9 @@ const RedirectComponent = ({ children }) => {
 
     const u = await getAllUsers()
     setUsers(u)
+
+    const p = await getAllPlans()
+    setPlans(p)
   }
 
   useEffect(() => {

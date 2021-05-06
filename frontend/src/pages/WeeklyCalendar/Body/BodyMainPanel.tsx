@@ -4,7 +4,8 @@ import { Reservation as ReservationModel, Plan, Facility, User } from '@types'
 import {
   AuthContext,
   FacilityContext,
-  ReservationContext
+  ReservationContext,
+  PlanContext,
 } from '@contexts'
 import dayjs from 'dayjs'
 import { Reservation } from '../Reservation'
@@ -96,7 +97,8 @@ const BodyMainPanelContentColumn = ({
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
   const { reservations, setReservations } = useContext(ReservationContext)
-  const { facilities, checked } = useContext(FacilityContext)
+  const { checked } = useContext(FacilityContext)
+  const { plans } = useContext(PlanContext)
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const offsetY = e.nativeEvent.offsetY
@@ -105,7 +107,6 @@ const BodyMainPanelContentColumn = ({
     const offsetMinutes = offsetAllMinutes - offsetHour * 60.0
     const startAt = date.hour(offsetHour).minute(offsetMinutes)
     const endAt = date.hour(offsetHour).minute(offsetMinutes).add(1, 'hour')
-    const plan = { id: 1, name: '会議' }
     const now = dayjs()
 
     addToReservations(new ReservationModel(
@@ -113,7 +114,7 @@ const BodyMainPanelContentColumn = ({
       currentUser,
       startAt,
       endAt,
-      plan,
+      plans[0],
       '',
       now,
       now,

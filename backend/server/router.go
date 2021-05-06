@@ -124,7 +124,7 @@ func NewRouter() *gin.Engine {
 
 		p := v1.Group("/plan")
 		{
-			c := controller.NewFacilityTypeController()
+			c := controller.NewPlanController()
 			p.GET("", c.Index)
 			p.GET("/:id", c.Show)
 			p.POST("", c.Create)
