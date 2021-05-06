@@ -65,7 +65,7 @@ const RedirectRoute = ({
 }
 
 export const Routing = () => {
-  const [isLeftPanelOpen, setIsLeftPanelOpen] = useState<boolean>(false)
+  const [isLeftPanelOpen, setIsLeftPanelOpen] = useState<boolean>(true)
 
   return (
     <Router>
