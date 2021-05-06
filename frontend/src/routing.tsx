@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom'
-import { Home, Login, Loading, WeeklyCalendar } from '@components'
+import { Login, Loading, WeeklyCalendar } from '@components'
 import { AuthContext } from '@contexts'
 import { loginWithRememberToken as loginAPI, getMe } from '@api'
 import { Layout } from './layout'
