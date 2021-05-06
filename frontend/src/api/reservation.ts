@@ -1,5 +1,5 @@
 import { baseInstance } from '.'
-import { Reservation, ReservationDTO, convertToReservation, DateRange } from '@types'
+import { Reservation, ReservationDTO, convertToReservation, DateRange, CodeResponse } from '@types'
 
 export const getAllReservations = async (): Promise<Reservation[]> => {
   return baseInstance.get<ReservationDTO[]>('/reservation').then(res => {
@@ -40,6 +40,20 @@ export const createReservation = async (r: Reservation): Promise<Reservation> =>
   }).then(res => {
     if (res.status === 200) {
       return convertToReservation(res.data)
+    }
+    return null
+  }).catch(() =>{
+    return null
+  })
+}
+
+export const deleteReservation = async (r: Reservation): Promise<CodeResponse> => {
+  return baseInstance.delete<CodeResponse>(`/reservation/${r.id}`).then(res => {
+    if (res.status === 204) {
+      return {
+        code: 204,
+        message: "deleted",
+      }
     }
     return null
   }).catch(() =>{

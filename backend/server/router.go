@@ -33,6 +33,14 @@ func NewRouter() *gin.Engine {
 			config.FrontendURL(),
 		},
 		AllowCredentials: true,
+		AllowMethods: []string{
+			"GET",
+			"POST",
+			"PUT",
+			"PATCH",
+			"DELETE",
+			"HEAD",
+		},
 	})
 
 	e := gin.Default()

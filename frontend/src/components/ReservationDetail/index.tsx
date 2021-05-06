@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Popover, { PopoverOrigin } from '@material-ui/core/Popover'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Head } from './Head'
 import { Body } from './Body'
 import { Reservation } from '@types'
+import { deleteReservation } from '@api'
+import { ReservationContext } from '@contexts'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,6 +40,7 @@ export const ReservationDetail = ({
   } 
 }) => {
   const classes = useStyles()
+  const { reservations, setReservations } = useContext(ReservationContext)
 
   const handleClose = () => {
     onClose()
@@ -47,8 +50,14 @@ export const ReservationDetail = ({
     console.log('edit')
   }
 
-  const handleDelete = () => {
-    console.log('delete')
+  const handleDelete = async () => {
+    const res = await deleteReservation(reservation)
+
+    if (res.code === 204) {
+      setReservations(reservations.filter(r => r.id !== reservation.id))
+    }
+
+    handleClose()
   }
 
   return (

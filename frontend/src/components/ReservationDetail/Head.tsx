@@ -45,7 +45,7 @@ export const Head = ({
 }: {
   onClose: () => void
   onEdit: () => void
-  onDelete: () => void
+  onDelete: () => Promise<void>
 }) => {
   const classes = useStyles()
 
