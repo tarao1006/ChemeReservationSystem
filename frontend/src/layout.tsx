@@ -34,15 +34,6 @@ const useStyles = makeStyles(() => ({
     overflow: 'hidden',
     position: 'relative',
   },
-  leftPanel: {
-    width: '256px',
-    transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s'
-  },
-  leftPanelHidden: {
-    width: '256px',
-    marginLeft: '-256px',
-    transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s'
-  },
 }));
 
 export const Layout = ({
@@ -73,7 +64,7 @@ export const Layout = ({
             <Header onClick={handleClick} />
             <div className={classes.main}>
               <LeftPanel
-                className={isLeftPanelOpen ? classes.leftPanel : classes.leftPanelHidden}
+                isOpen={isLeftPanelOpen}
               />
               <div className={classes.mainPanel}>
                 {children}
