@@ -45,7 +45,7 @@ export const Reservation = ({
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
   const isOpen = Boolean(anchorEl)
   const [width, setWidth] = useState<number>(100)
-  const [backgroundColor, setBackgroundColor] = useState<string>(reservation.places.length !== 0 ? reservation.places[0].colorCode : '#3f51b5')
+  const [backgroundColor, setBackgroundColor] = useState<string>(reservation.places.length !== 0 ? reservation.places[0].colorCode : '#444')
   const [anchorOrigin, setAnchorOrigin] = useState<PopoverOrigin>({
     vertical: 'bottom',
     horizontal: 'left'

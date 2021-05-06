@@ -183,7 +183,7 @@ const BodyMainPanelContentColumn = ({
       <div className={classes.columnContentPresentation}>
         {reservations
           .filter(reservation => reservation.startAt.isSame(date, 'day'))
-          .filter(reservation => isIn(reservation.places))
+          .filter(reservation => (reservation.id === 0) || (reservation.places.length === 0) || isIn(reservation.places))
           .map(reservation => (
             <Reservation
               key={reservation.id}
