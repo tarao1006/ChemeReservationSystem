@@ -1,10 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
-import Button from '@material-ui/core/Button'
-import IconButton from '@material-ui/core/IconButton'
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { AuthContext, ReservationContext } from '@contexts'
 import { getAllReservationsInRange } from '@api'
@@ -98,22 +93,6 @@ export const WeeklyCalendar = () => {
 
   return (
     <div className={classes.root}>
-      {/* <div className={classes.buttons}>
-        <Button onClick={goBackToday} variant="outlined">
-          今日
-        </Button>
-        <IconButton onClick={backDay} size="medium" className={classes.button}>
-          <ArrowBackIosIcon fontSize="small" />
-        </IconButton>
-        <IconButton onClick={forwardDay} size="medium" className={classes.button}>
-          <ArrowForwardIosIcon fontSize="small" />
-        </IconButton>
-        {isLoading && (
-          <IconButton size="small" disabled disableFocusRipple disableRipple>
-            <CircularProgress size={25} />
-          </IconButton>
-        )}
-      </div> */}
       <div className={classes.wrap}>
         <Head dates={dates} />
         <Body dates={dates} />

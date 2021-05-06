@@ -16,7 +16,7 @@ import {
 
 const RedirectComponent = ({ children }) => {
   const { currentUser, setCurrentUser } = useContext(AuthContext)
-  const { setFacilities, setChecked, checked } = useContext(FacilityContext)
+  const { setFacilities, setChecked } = useContext(FacilityContext)
   const { setUsers } = useContext(UserContext)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 

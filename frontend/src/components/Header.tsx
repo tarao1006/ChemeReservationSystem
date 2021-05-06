@@ -1,8 +1,13 @@
 import React, { useContext, useState } from 'react'
+import { useLocation, useHistory } from 'react-router-dom'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
 import Fade from '@material-ui/core/Fade'
@@ -17,7 +22,7 @@ import MenuIcon from '@material-ui/icons/Menu'
 import { AuthContext } from '@contexts'
 import { logout } from '@api'
 import { headerHeight } from '@config'
-import { IconButton } from '@material-ui/core'
+import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,7 +69,18 @@ const useStyles = makeStyles((theme: Theme) =>
       '& * >': {
         with: '100%',
       }
-    }
+    },
+    buttons: {
+      height: '36px',
+      marginLeft: '64px',
+      marginTop: '12px',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    button: {
+      flex: 'none',
+      margin: theme.spacing(1.0),
+    },
   }),
 )
 
@@ -72,6 +88,8 @@ export const Header = ({ onClick }: { onClick: () => void }) => {
   const classes = useStyles()
   const { currentUser, setCurrentUser } = useContext(AuthContext)
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+  const history = useHistory()
+  const location = useLocation()
 
   const handleClick = () => {
     setIsDialogOpen(prev => !prev)
@@ -89,6 +107,22 @@ export const Header = ({ onClick }: { onClick: () => void }) => {
     await logout()
     setCurrentUser(undefined)
     handleClose()
+  }
+
+  const handleGoBackToday = () => {
+    history.push(`/calendar/week/${dayjs().format('YYYY-MM-DD')}`)
+  }
+
+  const handleForwardDay = () => {
+    const elms = location.pathname.split('/')
+    const currentDate = dayjs(elms[elms.length - 1])
+    history.push(`/calendar/week/${currentDate.add(7, 'day').format('YYYY-MM-DD')}`)
+  }
+
+  const handleBackDay = () => {
+    const elms = location.pathname.split('/')
+    const currentDate = dayjs(elms[elms.length - 1])
+    history.push(`/calendar/week/${currentDate.add(7, 'day').format('YYYY-MM-DD')}`)
   }
 
   const renderDialog = (
@@ -114,6 +148,17 @@ export const Header = ({ onClick }: { onClick: () => void }) => {
         <IconButton className={classes.appIcon} color="inherit">
           <EventNoteIcon />
         </IconButton>
+        <div className={classes.buttons}>
+          <Button onClick={handleGoBackToday} variant="outlined">
+            今日
+          </Button>
+          <IconButton onClick={handleBackDay} size="medium" className={classes.button}>
+            <ArrowBackIosIcon fontSize="small" />
+          </IconButton>
+          <IconButton onClick={handleForwardDay} size="medium" className={classes.button}>
+            <ArrowForwardIosIcon fontSize="small" />
+          </IconButton>
+        </div>
         <div className={classes.grow} />
         {currentUser !== undefined && (
           <ClickAwayListener onClickAway={handleClose}>
