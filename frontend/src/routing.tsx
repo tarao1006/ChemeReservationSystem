@@ -64,11 +64,6 @@ export const Routing = () => {
         <RedirectRoute
           path='/calendar/week/:date'
           exact
-          component={Home}
-        />
-        <RedirectRoute
-          path='/demo'
-          exact
           component={WeeklyCalendar}
         />
       </Layout>

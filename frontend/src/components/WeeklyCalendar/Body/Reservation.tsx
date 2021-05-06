@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { PopoverOrigin } from '@material-ui/core/Popover'
 import Button from '@material-ui/core/Button'
@@ -38,6 +39,8 @@ export const Reservation = ({
   replaceReservations: (newReservation: ReservationModel) => void
 }) => {
   const classes = useStyles()
+  const history = useHistory()
+  const params = useParams()
   const ref = useRef<HTMLDivElement>()
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
   const isOpen = Boolean(anchorEl)
@@ -240,6 +243,8 @@ export const Reservation = ({
       reservation.attendees,
       reservation.places,
     ))
+
+    !date.isSame(dayjs(params["date"]), 'week') && history.push(`/calendar/week/${date.format('YYYY-MM-DD')}`)
   }
 
   const handleStartAtChange = (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => {
