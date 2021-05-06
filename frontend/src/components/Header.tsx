@@ -72,10 +72,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     buttons: {
       height: '36px',
-      marginLeft: '64px',
-      marginTop: '12px',
       display: 'flex',
       alignItems: 'center',
+      marginLeft: theme.spacing(2.0),
     },
     button: {
       flex: 'none',
@@ -145,17 +144,14 @@ export const Header = ({ onClick }: { onClick: () => void }) => {
         <Typography variant="h6" noWrap>
           施設予約
         </Typography>
-        <IconButton className={classes.appIcon} color="inherit">
-          <EventNoteIcon />
-        </IconButton>
         <div className={classes.buttons}>
-          <Button onClick={handleGoBackToday} variant="outlined">
+          <Button onClick={handleGoBackToday} variant="outlined" color="inherit">
             今日
           </Button>
-          <IconButton onClick={handleBackDay} size="medium" className={classes.button}>
+          <IconButton onClick={handleBackDay} size="medium" className={classes.button} color="inherit">
             <ArrowBackIosIcon fontSize="small" />
           </IconButton>
-          <IconButton onClick={handleForwardDay} size="medium" className={classes.button}>
+          <IconButton onClick={handleForwardDay} size="medium" className={classes.button} color="inherit">
             <ArrowForwardIosIcon fontSize="small" />
           </IconButton>
         </div>
