@@ -13,6 +13,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import EventNoteIcon from '@material-ui/icons/EventNote'
+import MenuIcon from '@material-ui/icons/Menu'
 import { AuthContext } from '@contexts'
 import { logout } from '@api'
 import { headerHeight } from '@config'
@@ -22,6 +23,9 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     title: {
       marginRight: theme.spacing(3.0),
+    },
+    menuIcon: {
+      marginRight: theme.spacing(1.0),
     },
     appIcon: {
       marginRight: theme.spacing(3.0),
@@ -64,13 +68,17 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const Header = () => {
+export const Header = ({ onClick }: { onClick: () => void }) => {
   const classes = useStyles()
   const { currentUser, setCurrentUser } = useContext(AuthContext)
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
 
   const handleClick = () => {
     setIsDialogOpen(prev => !prev)
+  }
+
+  const handleMenuIconClick = () => {
+    onClick()
   }
 
   const handleClose = () => {
@@ -97,6 +105,9 @@ export const Header = () => {
   return (
     <AppBar color="primary" position="static" elevation={0}>
       <Toolbar className={classes.toolbar}>
+        <IconButton onClick={handleMenuIconClick} className={classes.menuIcon} color="inherit">
+          <MenuIcon />
+        </IconButton>
         <Typography variant="h6" noWrap>
           施設予約
         </Typography>

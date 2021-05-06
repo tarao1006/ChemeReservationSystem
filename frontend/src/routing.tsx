@@ -32,39 +32,67 @@ const RedirectComponent = ({ children }) => {
 
   return (
     <>
-      {
-        isLoading
-        ? <Loading isLoading={isLoading} />
-        : currentUser === undefined
-        ? <Login />
-        : children
-      }
+      {isLoading ? (
+       <Loading isLoading={isLoading} />
+      ) : currentUser === undefined ? (
+        <Login />
+      ) : children}
     </>
   )
 }
 
-const RedirectRoute = ({ path, exact, component }) => {
+const RedirectRoute = ({
+  path,
+  exact,
+  component,
+  isLeftPanelOpen,
+  setIsLeftPanelOpen
+}: {
+  path: string,
+  exact: boolean
+  component: React.FunctionComponent<{ isLeftPanelOpen: boolean, setIsLeftPanelOpen: React.Dispatch<React.SetStateAction<boolean>> }>
+  isLeftPanelOpen: boolean
+  setIsLeftPanelOpen: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
 
   return (
     <Route path={path} exact={exact}>
       <RedirectComponent>
-        {React.createElement(component)}
+        {React.createElement<{ isLeftPanelOpen: boolean, setIsLeftPanelOpen: React.Dispatch<React.SetStateAction<boolean>> }>(component, {isLeftPanelOpen: isLeftPanelOpen, setIsLeftPanelOpen: setIsLeftPanelOpen})}
       </RedirectComponent>
     </Route>
   )
 }
 
 export const Routing = () => {
+  const [isLeftPanelOpen, setIsLeftPanelOpen] = useState<boolean>(false)
+
   return (
     <Router>
-      <Layout>
+      <Layout setIsLeftPanelOpen={setIsLeftPanelOpen}>
         <Route path="/" exact>
-          <Redirect to={`/calendar/week/${dayjs().startOf('day').format('YYYY-MM-DD')}`} />
+          <Redirect to={`/calendar/month/${dayjs().startOf('day').format('YYYY-MM-DD')}`} />
         </Route>
+        <RedirectRoute
+          path='/calendar/day/:date'
+          exact
+          component={WeeklyCalendar}
+          isLeftPanelOpen={isLeftPanelOpen}
+          setIsLeftPanelOpen={setIsLeftPanelOpen}
+        />
         <RedirectRoute
           path='/calendar/week/:date'
           exact
           component={WeeklyCalendar}
+          isLeftPanelOpen={isLeftPanelOpen}
+          setIsLeftPanelOpen={setIsLeftPanelOpen}
+        />
+        <RedirectRoute
+          path='/calendar/month/:date'
+          exact
+          component={WeeklyCalendar}
+          isLeftPanelOpen={isLeftPanelOpen}
+          setIsLeftPanelOpen={setIsLeftPanelOpen}
         />
       </Layout>
     </Router>

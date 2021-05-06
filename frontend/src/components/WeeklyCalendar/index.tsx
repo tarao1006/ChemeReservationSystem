@@ -44,7 +44,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const WeeklyCalendar = () => {
+export const WeeklyCalendar = ({
+  isLeftPanelOpen,
+  setIsLeftPanelOpen
+}: {
+  isLeftPanelOpen: boolean
+  setIsLeftPanelOpen: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
   const { reservations, fetchedDateRange, setReservations, setFetchedDateRange } = useContext(ReservationContext)

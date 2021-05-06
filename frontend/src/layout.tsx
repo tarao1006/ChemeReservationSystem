@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { makeStyles } from '@material-ui/core/styles'
 import { AuthProvider, FacilityProvider, ReservationProvider, UserProvider } from '@contexts'
@@ -36,8 +36,18 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const Layout = ({ children }) => {
+export const Layout = ({
+  children,
+  setIsLeftPanelOpen
+}: {
+  children
+  setIsLeftPanelOpen: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
   const classes = useStyles()
+
+  const handleClick = () => {
+    setIsLeftPanelOpen(prev => !prev)
+  }
 
   return (
     <MuiPickersUtilsProvider utils={DayjsUtils}>
@@ -49,7 +59,7 @@ export const Layout = ({ children }) => {
       <div className={classes.root}>
         <div className={classes.wrap}>
           <div className={classes.container}>
-            <Header />
+            <Header onClick={handleClick} />
             <div className={classes.main}>
               <div className={classes.mainPanel}>
                 {children}
