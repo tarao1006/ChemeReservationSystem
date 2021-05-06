@@ -23,6 +23,7 @@ module.exports = {
       '@components': path.resolve(__dirname, './src/components/index.ts'),
       '@config': path.resolve(__dirname, './src/config/index.ts'),
       '@contexts': path.resolve(__dirname, './src/contexts/index.ts'),
+      '@pages': path.resolve(__dirname, './src/pages/index.ts'),
       '@types': path.resolve(__dirname, './src/api/types.ts'),
     },
   },
