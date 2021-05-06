@@ -1,40 +1,42 @@
-import React, { useState } from 'react'
+import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { AuthProvider, FacilityProvider, ReservationProvider, UserProvider } from '@contexts'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DayjsUtils from '@date-io/dayjs'
 import { Header, LeftPanel } from '@components'
 import { headerHeight } from '@config'
 
-const useStyles = makeStyles(() => ({
-  root:{
-    height: '100%',
-    overflow: 'hidden',
-    display: 'flex',
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root:{
+      height: '100%',
+      overflow: 'hidden',
+      display: 'flex',
+    },
+    wrap: {
+      flex: '1 1 auto',
+      overflow: 'hidden',
+      height: '100%',
+    },
+    container: {
+      position: 'relative',
+      height: '100%',
+    },
+    main: {
+      position: 'relative',
+      width: '100%',
+      height: `calc(100vh - ${headerHeight}px)`,
+      display: 'flex',
+      boxSizing: 'border-box',
+    },
+    mainPanel: {
+      flex: '1 1 auto',
+      overflow: 'hidden',
+      position: 'relative',
+    },
   },
-  wrap: {
-    flex: '1 1 auto',
-    overflow: 'hidden',
-    height: '100%',
-  },
-  container: {
-    position: 'relative',
-    height: '100%',
-  },
-  main: {
-    position: 'relative',
-    width: '100%',
-    height: `calc(100vh - ${headerHeight}px)`,
-    display: 'flex',
-    boxSizing: 'border-box',
-  },
-  mainPanel: {
-    flex: '1 1 auto',
-    overflow: 'hidden',
-    position: 'relative',
-  },
-}));
+));
 
 export const Layout = ({
   children,
@@ -63,9 +65,7 @@ export const Layout = ({
           <div className={classes.container}>
             <Header onClick={handleClick} />
             <div className={classes.main}>
-              <LeftPanel
-                isOpen={isLeftPanelOpen}
-              />
+              <LeftPanel isOpen={isLeftPanelOpen} />
               <div className={classes.mainPanel}>
                 {children}
               </div>
