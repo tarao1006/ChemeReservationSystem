@@ -54,7 +54,7 @@ export const WeeklyCalendar = ({
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
   const { reservations, fetchedDateRange, setReservations, setFetchedDateRange } = useContext(ReservationContext)
-  const { facilities, setFacilities } = useContext(FacilityContext)
+  const { facilities, setFacilities, setChecked } = useContext(FacilityContext)
   const { users, setUsers } = useContext(UserContext)
   const [startOfCurrentWeek, setStartOfCurrentWeek] = useState<dayjs.Dayjs>(dayjs())
   const [dates, setDates] = useState<dayjs.Dayjs[]>([])
@@ -73,6 +73,7 @@ export const WeeklyCalendar = ({
         if (facilities.length === 0) {
           const f = await getAllFacilities()
           setFacilities(f)
+          setChecked(f.map(() => true))
         }
 
         if (users.length === 0) {
