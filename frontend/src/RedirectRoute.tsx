@@ -1,17 +1,33 @@
-import React, { createElement, useContext, useEffect, useState } from 'react'
+import React from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Route } from 'react-router-dom'
 import { Login, Loading } from '@components'
-import { AuthContext } from '@contexts'
-import { loginWithRememberToken as loginAPI, getMe } from '@api'
-
-interface LeftPanelIsOpenProps {
-  isLeftPanelOpen: boolean
-  setIsLeftPanelOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
+import {
+  AuthContext,
+  FacilityContext,
+  UserContext,
+} from '@contexts'
+import {
+  loginWithRememberToken as loginAPI,
+  getMe,
+  getAllFacilities,
+  getAllUsers,
+} from '@api'
 
 const RedirectComponent = ({ children }) => {
   const { currentUser, setCurrentUser } = useContext(AuthContext)
+  const { setFacilities, setChecked } = useContext(FacilityContext)
+  const { setUsers } = useContext(UserContext)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const getResources = async () => {
+    const f = await getAllFacilities()
+    setFacilities(f)
+    setChecked(f.map(() => true))
+
+    const u = await getAllUsers()
+    setUsers(u)
+  }
 
   useEffect(() => {
     const login = async () => {
@@ -20,11 +36,13 @@ const RedirectComponent = ({ children }) => {
         const me = await getMe()
         if (me) {
           setCurrentUser(me)
+          getResources()
         } else {
           const loginRes = await loginAPI()
           if (loginRes.code === 200) {
             const me = await getMe()
             setCurrentUser(me)
+            getResources()
           }
         }
       }
@@ -47,27 +65,17 @@ const RedirectComponent = ({ children }) => {
 export const RedirectRoute = ({
   path,
   exact,
-  component,
-  isLeftPanelOpen,
-  setIsLeftPanelOpen
+  component
 }: {
   path: string,
   exact: boolean
-  component: React.FunctionComponent<LeftPanelIsOpenProps>
-  isLeftPanelOpen: boolean
-  setIsLeftPanelOpen: React.Dispatch<React.SetStateAction<boolean>>
+  component: JSX.Element
 }) => {
 
   return (
     <Route path={path} exact={exact}>
       <RedirectComponent>
-        {createElement<LeftPanelIsOpenProps>(
-          component,
-          {
-            isLeftPanelOpen,
-            setIsLeftPanelOpen
-          }
-        )}
+        {component}
       </RedirectComponent>
     </Route>
   )

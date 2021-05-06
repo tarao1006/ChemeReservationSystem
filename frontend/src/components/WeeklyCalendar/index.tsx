@@ -6,8 +6,8 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { AuthContext, FacilityContext, ReservationContext, UserContext } from '@contexts'
-import { getAllFacilities, getAllReservationsInRange, getAllUsers } from '@api'
+import { AuthContext, ReservationContext } from '@contexts'
+import { getAllReservationsInRange } from '@api'
 import { inRange } from '@types'
 import { Head } from './Head'
 import { Body } from './Body'
@@ -44,18 +44,10 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const WeeklyCalendar = ({
-  isLeftPanelOpen,
-  setIsLeftPanelOpen
-}: {
-  isLeftPanelOpen: boolean
-  setIsLeftPanelOpen: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
+export const WeeklyCalendar = () => {
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
   const { reservations, fetchedDateRange, setReservations, setFetchedDateRange } = useContext(ReservationContext)
-  const { facilities, setFacilities, setChecked } = useContext(FacilityContext)
-  const { users, setUsers } = useContext(UserContext)
   const [startOfCurrentWeek, setStartOfCurrentWeek] = useState<dayjs.Dayjs>(dayjs())
   const [dates, setDates] = useState<dayjs.Dayjs[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -69,17 +61,6 @@ export const WeeklyCalendar = ({
         const s = d.add(-d.day(), 'day')
         setStartOfCurrentWeek(s)
         setDates(new Array<dayjs.Dayjs>(7).fill(s).map((d, i) => d.add(i, 'day')))
-
-        if (facilities.length === 0) {
-          const f = await getAllFacilities()
-          setFacilities(f)
-          setChecked(f.map(() => true))
-        }
-
-        if (users.length === 0) {
-          const u = await getAllUsers()
-          setUsers(u)
-        }
 
         if (reservations.length === 0 || !inRange(fetchedDateRange, d)) {
           if (reservations.length === 0) {

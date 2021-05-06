@@ -17,23 +17,17 @@ export const Routing = () => {
         <RedirectRoute
           path='/calendar/day/:date'
           exact
-          component={WeeklyCalendar}
-          isLeftPanelOpen={isLeftPanelOpen}
-          setIsLeftPanelOpen={setIsLeftPanelOpen}
+          component={<WeeklyCalendar />}
         />
         <RedirectRoute
           path='/calendar/week/:date'
           exact
-          component={WeeklyCalendar}
-          isLeftPanelOpen={isLeftPanelOpen}
-          setIsLeftPanelOpen={setIsLeftPanelOpen}
+          component={<WeeklyCalendar />}
         />
         <RedirectRoute
           path='/calendar/month/:date'
           exact
-          component={WeeklyCalendar}
-          isLeftPanelOpen={isLeftPanelOpen}
-          setIsLeftPanelOpen={setIsLeftPanelOpen}
+          component={<WeeklyCalendar />}
         />
       </Layout>
     </Router>
