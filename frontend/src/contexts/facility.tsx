@@ -4,8 +4,8 @@ import { Facility } from '@types'
 interface IFacilityContext {
   facilities: Facility[]
   setFacilities: React.Dispatch<React.SetStateAction<Facility[]>>
-  checked: boolean[]
-  setChecked: React.Dispatch<React.SetStateAction<boolean[]>>
+  checked: number[]
+  setChecked: React.Dispatch<React.SetStateAction<number[]>>
 }
 
 export const FacilityContext = createContext<IFacilityContext>({
@@ -17,7 +17,7 @@ export const FacilityContext = createContext<IFacilityContext>({
 
 export const FacilityProvider = ({ children }) => {
   const [facilities, setFacilities] = useState<Facility[]>([])
-  const [checked, setChecked] = useState<boolean[]>([])
+  const [checked, setChecked] = useState<number[]>([])
 
   return (
     <FacilityContext.Provider value={{ facilities, setFacilities, checked, setChecked }}>

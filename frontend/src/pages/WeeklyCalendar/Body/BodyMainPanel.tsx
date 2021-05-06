@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Reservation as ReservationModel, Plan, Facility, User } from '@types'
-import { AuthContext, ReservationContext } from '@contexts'
+import {
+  AuthContext,
+  FacilityContext,
+  ReservationContext
+} from '@contexts'
 import dayjs from 'dayjs'
 import { Reservation } from './Reservation'
 import { createReservation } from '@api'
@@ -92,6 +96,7 @@ const BodyMainPanelContentColumn = ({
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
   const { reservations, setReservations } = useContext(ReservationContext)
+  const { facilities, checked } = useContext(FacilityContext)
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const offsetY = e.nativeEvent.offsetY
@@ -161,20 +166,35 @@ const BodyMainPanelContentColumn = ({
     setReservations(reservations.map(r => (r.id === 0) ? res : r))
   }
 
+  const isIn = (places: Facility[]): boolean => {
+    for (const place of places) {
+      for (const c of checked) {
+        if (place.id === c) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
   return (
     <div className={classes.column}>
       <div className={classes.columnContent} onClick={handleClick} />
       <div className={classes.columnContentPresentation}>
-        {reservations.filter(reservation => reservation.startAt.isSame(date, 'day')).map(reservation => (
-          <Reservation
-            key={reservation.id}
-            reservation={reservation}
-            onClose={handleClose}
-            onSubmit={handleSubmit}
-            updateReservations={updateReservations}
-            replaceReservations={replaceReservations}
-          />
-        ))}
+        {reservations
+          .filter(reservation => reservation.startAt.isSame(date, 'day'))
+          .filter(reservation => isIn(reservation.places))
+          .map(reservation => (
+            <Reservation
+              key={reservation.id}
+              reservation={reservation}
+              onClose={handleClose}
+              onSubmit={handleSubmit}
+              updateReservations={updateReservations}
+              replaceReservations={replaceReservations}
+            />
+          )
+        )}
       </div>
     </div>
   )

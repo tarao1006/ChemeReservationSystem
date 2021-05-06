@@ -16,14 +16,14 @@ import {
 
 const RedirectComponent = ({ children }) => {
   const { currentUser, setCurrentUser } = useContext(AuthContext)
-  const { setFacilities, setChecked } = useContext(FacilityContext)
+  const { setFacilities, setChecked, checked } = useContext(FacilityContext)
   const { setUsers } = useContext(UserContext)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const getResources = async () => {
-    const f = await getAllFacilities()
-    setFacilities(f)
-    setChecked(f.map(() => true))
+    const allFacilities = await getAllFacilities()
+    setFacilities(allFacilities)
+    setChecked(allFacilities.map(f => f.id))
 
     const u = await getAllUsers()
     setUsers(u)

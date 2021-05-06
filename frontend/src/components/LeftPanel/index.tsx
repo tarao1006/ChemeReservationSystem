@@ -34,19 +34,17 @@ const useStyles = makeStyles(() =>
 
 const FacilityListItem = ({
   facility,
-  index,
   onClick,
   checked
 }: {
   facility: Facility
-  index: number
   onClick: (value: number) => void,
   checked: boolean
 }) => {
   const classes = useStyles()
 
   const handleClick = () => {
-    onClick(index)
+    onClick(facility.id)
   }
 
   return (
@@ -83,11 +81,17 @@ export const LeftPanel = ({
 }) => {
   const classes = useStyles()
   const { facilities, checked, setChecked } = useContext(FacilityContext)
-  const [] = useState<boolean[]>([])
 
-  const handleToggle = (index: number) => {
+  const handleToggle = (value: number) => {
+    const currentIndex = checked.indexOf(value)
     const newChecked = [...checked]
-    newChecked[index] = !newChecked[index]
+
+    if (currentIndex === -1) {
+      newChecked.push(value)
+    } else {
+      newChecked.splice(currentIndex, 1)
+    }
+
     setChecked(newChecked)
   }
 
@@ -100,13 +104,12 @@ export const LeftPanel = ({
     >
       <div>
         <List className={classes.list}>
-          {checked.length !== 0 && facilities.map((f, i) => (
+          {facilities.map((f, i) => (
             <FacilityListItem
               key={f.id}
               facility={f}
-              index={i}
               onClick={handleToggle}
-              checked={checked[i]}
+              checked={checked.indexOf(f.id) !== -1}
             />
           ))}
         </List>
