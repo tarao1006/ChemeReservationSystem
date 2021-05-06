@@ -1,9 +1,12 @@
 import React, { useEffect, useContext, useState } from 'react'
 import { makeStyles, createStyles } from '@material-ui/core/styles'
+import { green } from '@material-ui/core/colors'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import Checkbox from '@material-ui/core/Checkbox'
+import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox'
+import CheckBoxIcon from '@material-ui/icons/CheckBox'
+import IconButton from '@material-ui/core/IconButton'
 import { FacilityContext } from '@contexts'
 import { Facility } from '@types'
 
@@ -28,7 +31,10 @@ const useStyles = makeStyles(() =>
     listItemCheckbox: {
       transition: 'border-color .2s cubic-bezier(0.4,0,0.2,1)',
       flex: 'none',
-    }
+      '&:hover': {
+        backgroundColor: 'transparent',
+      }
+    },
   }),
 )
 
@@ -55,12 +61,17 @@ const FacilityListItem = ({
       dense
       disableRipple
       disableTouchRipple
-    >
+    > 
       <Checkbox
         className={classes.listItemCheckbox}
         edge="start"
         checked={checked}
-        size="small"
+        size="medium"
+        color="default"
+        style={{
+          color: facility.colorCode,
+        }}
+        disableRipple
       />
       <ListItemText
         disableTypography
