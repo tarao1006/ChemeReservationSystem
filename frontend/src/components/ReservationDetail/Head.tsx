@@ -39,15 +39,27 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 export const Head = ({
-  handleClose,
-  handleEdit,
-  handleDelete
+  onClose,
+  onEdit,
+  onDelete
 }: {
-  handleClose: () => void
-  handleEdit: () => void
-  handleDelete: () => void
+  onClose: () => void
+  onEdit: () => void
+  onDelete: () => void
 }) => {
   const classes = useStyles()
+
+  const handleClose = () => {
+    onClose()
+  }
+
+  const handleEdit = () => {
+    onEdit()
+  }
+
+  const handleDelete = () => {
+    onDelete()
+  }
 
   return (
     <div className={classes.root}>

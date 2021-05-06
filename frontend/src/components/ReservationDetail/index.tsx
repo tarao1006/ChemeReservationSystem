@@ -67,9 +67,9 @@ export const ReservationDetail = ({
     >
       <div className={classes.root}>
         <Head
-          handleClose={handleClose}
-          handleEdit={handleEdit}
-          handleDelete={handleDelete}
+          onClose={handleClose}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
         <Body reservation={reservation} />
       </div>

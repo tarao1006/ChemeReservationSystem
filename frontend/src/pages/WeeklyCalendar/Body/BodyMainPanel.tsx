@@ -7,7 +7,7 @@ import {
   ReservationContext
 } from '@contexts'
 import dayjs from 'dayjs'
-import { Reservation } from './Reservation'
+import { Reservation } from '../Reservation'
 import { createReservation } from '@api'
 
 const useStyles = makeStyles((theme: Theme) =>
