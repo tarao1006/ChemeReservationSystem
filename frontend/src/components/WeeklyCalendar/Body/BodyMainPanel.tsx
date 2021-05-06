@@ -92,7 +92,6 @@ const BodyMainPanelContentColumn = ({
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
   const { reservations, setReservations } = useContext(ReservationContext)
-  const [index, setIndex] = useState<number>(-1)
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const offsetY = e.nativeEvent.offsetY
@@ -104,148 +103,40 @@ const BodyMainPanelContentColumn = ({
     const plan = { id: 1, name: '会議' }
     const now = dayjs()
 
-    addReservations(new ReservationModel(0, currentUser, startAt, endAt, plan, '', now, now, [], []))
-  }
-
-  const handlePlanChange = (plan: Plan) => {
-    const reservation = reservations[index]
-    const newReservation = (new ReservationModel(
-      reservation.id,
-      reservation.creator,
-      reservation.startAt,
-      reservation.endAt,
-      plan,
-      reservation.planMemo,
-      reservation.createdAt,
-      reservation.updatedAt,
-      reservation.attendees,
-      reservation.places,
-    ))
-    updateReservations(newReservation)
-  }
-
-  const handlePlanMemoChange = (planMemo: string) => {
-    const reservation = reservations[index]
-    updateReservations(new ReservationModel(
-      reservation.id,
-      reservation.creator,
-      reservation.startAt,
-      reservation.endAt,
-      reservation.plan,
-      planMemo,
-      reservation.createdAt,
-      reservation.updatedAt,
-      reservation.attendees,
-      reservation.places,
-    ))
-  }
-
-  const handlePlacesChange = (places: Facility[]) => {
-    const reservation = reservations[index]
-    updateReservations(new ReservationModel(
-      reservation.id,
-      reservation.creator,
-      reservation.startAt,
-      reservation.endAt,
-      reservation.plan,
-      reservation.planMemo,
-      reservation.createdAt,
-      reservation.updatedAt,
-      reservation.attendees,
-      places,
-    ))
-  }
-
-  const handleAttendeesChange = (attendees: User[]) => {
-    const reservation = reservations[index]
-    updateReservations(new ReservationModel(
-      reservation.id,
-      reservation.creator,
-      reservation.startAt,
-      reservation.endAt,
-      reservation.plan,
-      reservation.planMemo,
-      reservation.createdAt,
-      reservation.updatedAt,
-      attendees,
-      reservation.places,
-    ))
-  }
-
-  const handleDateChange = (date: dayjs.Dayjs) => {
-    const reservation = reservations[index]
-    const newStartAt = date.hour(reservation.startAt.hour()).minute(reservation.startAt.minute())
-    const newEndAt = date.hour(reservation.endAt.hour()).minute(reservation.endAt.minute())
-    replaceReservations(new ReservationModel(
-      reservation.id,
-      reservation.creator,
-      newStartAt,
-      newEndAt,
-      reservation.plan,
-      reservation.planMemo,
-      reservation.createdAt,
-      reservation.updatedAt,
-      reservation.attendees,
-      reservation.places,
-    ))
-  }
-
-  const handleStartAtChange = (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => {
-    const reservation = reservations[index]
-    replaceReservations(new ReservationModel(
-      reservation.id,
-      reservation.creator,
+    addToReservations(new ReservationModel(
+      0,
+      currentUser,
       startAt,
       endAt,
-      reservation.plan,
-      reservation.planMemo,
-      reservation.createdAt,
-      reservation.updatedAt,
-      reservation.attendees,
-      reservation.places,
+      plan,
+      '',
+      now,
+      now,
+      [],
+      [],
     ))
   }
 
-  const handleEndAtChange = (endAt: dayjs.Dayjs) => {
-    const reservation = reservations[index]
-    replaceReservations(new ReservationModel(
-      reservation.id,
-      reservation.creator,
-      reservation.startAt,
-      endAt,
-      reservation.plan,
-      reservation.planMemo,
-      reservation.createdAt,
-      reservation.updatedAt,
-      reservation.attendees,
-      reservation.places,
-    ))
-  }
-
-  const addReservations = (newReservation: ReservationModel) => {
+  const addToReservations = (newReservation: ReservationModel) => {
     const newReservations = [...reservations]
-    let newIndex = 0
+    let index = 0
     for (let i = 0; i < newReservations.length; ++i) {
-      if (newReservations[i].startAt.isBefore(newReservation.startAt)) {
-        newIndex = i
+      if (newReservation.startAt.isBefore(newReservations[i].startAt)) {
+        index = i
         break
       }
     }
 
-    newReservations.splice(newIndex, 0, newReservation)
-    setIndex(newIndex)
+    newReservations.splice(index, 0, newReservation)
     setReservations(newReservations)
   }
 
   const updateReservations = (newReservation: ReservationModel) => {
-    const newReservations = [...reservations]
-    newReservations.splice(index, 1, newReservation)
-    setReservations(newReservations)
+    setReservations(reservations.map(r => (r.id === newReservation.id) ? newReservation : r))
   }
 
   const replaceReservations = (newReservation: ReservationModel) => {
-    const newReservations = [...reservations]
-    newReservations.splice(index, 1)
+    const newReservations = reservations.filter(r => r.id !== newReservation.id)
 
     let newIndex = 0
     for (let i = 0; i < newReservations.length; ++i) {
@@ -256,28 +147,18 @@ const BodyMainPanelContentColumn = ({
     }
 
     newReservations.splice(newIndex, 0, newReservation)
-    setIndex(newIndex)
     setReservations(newReservations)
   }
 
-  const handleClose = () => {
-    if (index >= 0) {
-      const newReservations = [...reservations]
-      newReservations.splice(index, 1)
-      setIndex(-1)
-      setReservations(newReservations)
+  const handleClose = (newReservation: ReservationModel) => {
+    if (newReservation.id === 0) {
+      setReservations(reservations.filter(r => r.id !== 0))
     }
   }
 
-  const handleSubmit = async () => {
-    const newReservations = [...reservations]
-    const newReservation = newReservations[index]
-
+  const handleSubmit = async (newReservation: ReservationModel) => {
     const res = await createReservation(newReservation)
-
-    newReservations.splice(index, 1, res)
-    setIndex(-1)
-    setReservations(newReservations)
+    setReservations(reservations.map(r => (r.id === 0) ? res : r))
   }
 
   return (
@@ -290,13 +171,8 @@ const BodyMainPanelContentColumn = ({
             reservation={reservation}
             onClose={handleClose}
             onSubmit={handleSubmit}
-            onPlanChange={handlePlanChange}
-            onPlanMemoChange={handlePlanMemoChange}
-            onDateChange={handleDateChange}
-            onStartAtChange={handleStartAtChange}
-            onEndAtChange={handleEndAtChange}
-            onPlacesChange={handlePlacesChange}
-            onAttendeesChange={handleAttendeesChange}
+            updateReservations={updateReservations}
+            replaceReservations={replaceReservations}
           />
         ))}
       </div>

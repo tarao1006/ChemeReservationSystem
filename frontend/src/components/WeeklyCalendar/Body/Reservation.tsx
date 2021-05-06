@@ -28,24 +28,14 @@ export const Reservation = ({
   reservation,
   onClose,
   onSubmit,
-  onPlanChange,
-  onPlanMemoChange,
-  onDateChange,
-  onStartAtChange,
-  onEndAtChange,
-  onPlacesChange,
-  onAttendeesChange,
+  updateReservations,
+  replaceReservations
 }: {
   reservation: ReservationModel
-  onClose: () => void
-  onSubmit: () => void
-  onPlanChange: (plan: Plan) => void
-  onPlanMemoChange: (planMemo: string) => void
-  onDateChange: (date: dayjs.Dayjs) => void
-  onStartAtChange: (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => void
-  onEndAtChange: (endAt: dayjs.Dayjs) => void
-  onPlacesChange: (places: Facility[]) => void
-  onAttendeesChange: (attendees: User[]) => void
+  onClose: (reservation: ReservationModel) => void
+  onSubmit: (reservation: ReservationModel) => Promise<void>
+  updateReservations: (newReservation: ReservationModel) => void
+  replaceReservations: (newReservation: ReservationModel) => void
 }) => {
   const classes = useStyles()
   const ref = useRef<HTMLDivElement>()
@@ -166,13 +156,120 @@ export const Reservation = ({
   }, [ref])
 
   const handleClose = () => {
-    onClose()
+    onClose(reservation)
     setAnchorEl(null)
   }
 
   const handleSubmit = () => {
-    onSubmit()
+    onSubmit(reservation)
     setAnchorEl(null)
+  }
+
+  const handlePlanChange = (plan: Plan) => {
+    updateReservations(new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      reservation.endAt,
+      plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+  }
+
+  const handlePlanMemoChange = (planMemo: string) => {
+    updateReservations(new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      reservation.endAt,
+      reservation.plan,
+      planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+  }
+
+  const handlePlacesChange = (places: Facility[]) => {
+    updateReservations(new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      reservation.endAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      places,
+    ))
+  }
+
+  const handleAttendeesChange = (attendees: User[]) => {
+    updateReservations(new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      reservation.endAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      attendees,
+      reservation.places,
+    ))
+  }
+
+  const handleDateChange = (date: dayjs.Dayjs) => {
+    const newStartAt = date.hour(reservation.startAt.hour()).minute(reservation.startAt.minute())
+    const newEndAt = date.hour(reservation.endAt.hour()).minute(reservation.endAt.minute())
+    replaceReservations(new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      newStartAt,
+      newEndAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+  }
+
+  const handleStartAtChange = (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => {
+    replaceReservations(new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      startAt,
+      endAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
+  }
+
+  const handleEndAtChange = (endAt: dayjs.Dayjs) => {
+    replaceReservations(new ReservationModel(
+      reservation.id,
+      reservation.creator,
+      reservation.startAt,
+      endAt,
+      reservation.plan,
+      reservation.planMemo,
+      reservation.createdAt,
+      reservation.updatedAt,
+      reservation.attendees,
+      reservation.places,
+    ))
   }
 
   return (
@@ -216,13 +313,13 @@ export const Reservation = ({
             anchorOrigin={anchorOrigin}
             transformOrigin={transformOrigin}
             margin={margin}
-            onPlanChange={onPlanChange}
-            onPlanMemoChange={onPlanMemoChange}
-            onDateChange={onDateChange}
-            onStartAtChange={onStartAtChange}
-            onEndAtChange={onEndAtChange}
-            onPlacesChange={onPlacesChange}
-            onAttendeesChange={onAttendeesChange}
+            onPlanChange={handlePlanChange}
+            onPlanMemoChange={handlePlanMemoChange}
+            onDateChange={handleDateChange}
+            onStartAtChange={handleStartAtChange}
+            onEndAtChange={handleEndAtChange}
+            onPlacesChange={handlePlacesChange}
+            onAttendeesChange={handleAttendeesChange}
           />
         ) : null
       ) : (
