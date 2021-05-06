@@ -69,7 +69,10 @@ export const Routing = () => {
 
   return (
     <Router>
-      <Layout setIsLeftPanelOpen={setIsLeftPanelOpen}>
+      <Layout
+        isLeftPanelOpen={isLeftPanelOpen}
+        setIsLeftPanelOpen={setIsLeftPanelOpen}
+      >
         <Route path="/" exact>
           <Redirect to={`/calendar/month/${dayjs().startOf('day').format('YYYY-MM-DD')}`} />
         </Route>

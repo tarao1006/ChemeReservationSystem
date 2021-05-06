@@ -54,8 +54,8 @@ export const WeeklyCalendar = ({
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
   const { reservations, fetchedDateRange, setReservations, setFetchedDateRange } = useContext(ReservationContext)
-  const { setFacilities } = useContext(FacilityContext)
-  const { setUsers } = useContext(UserContext)
+  const { facilities, setFacilities } = useContext(FacilityContext)
+  const { users, setUsers } = useContext(UserContext)
   const [startOfCurrentWeek, setStartOfCurrentWeek] = useState<dayjs.Dayjs>(dayjs())
   const [dates, setDates] = useState<dayjs.Dayjs[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -70,11 +70,15 @@ export const WeeklyCalendar = ({
         setStartOfCurrentWeek(s)
         setDates(new Array<dayjs.Dayjs>(7).fill(s).map((d, i) => d.add(i, 'day')))
 
-        const f = await getAllFacilities()
-        setFacilities(f)
+        if (facilities.length === 0) {
+          const f = await getAllFacilities()
+          setFacilities(f)
+        }
 
-        const u = await getAllUsers()
-        setUsers(u)
+        if (users.length === 0) {
+          const u = await getAllUsers()
+          setUsers(u)
+        }
 
         if (reservations.length === 0 || !inRange(fetchedDateRange, d)) {
           if (reservations.length === 0) {
