@@ -17,6 +17,7 @@
       "@components": ["src/components/index.ts"],
       "@config": ["src/config/index.ts"],
       "@contexts": ["src/contexts/index.ts"],
+      "@hooks": ["src/hooks/index.ts"],
       "@pages": ["src/pages/index.ts"],
       "@types": ["src/api/types.ts"],
     }
