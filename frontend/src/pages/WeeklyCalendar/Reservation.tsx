@@ -56,6 +56,10 @@ export const Reservation = ({
   })
   const { addReservation, updateReservation, replaceReservation, deleteReservation } = useReservations()
 
+  useEffect(() => {
+    (reservation.places.length !== 0) && setBackgroundColor(reservation.places[0].colorCode)
+  }, [reservation])
+
   const top = (reservation.startAt.hour() + reservation.startAt.minute() / 60.0) * 48 - 1
   const height = reservation.length >= 1 ? reservation.length * 48 - 2 : 22
 
