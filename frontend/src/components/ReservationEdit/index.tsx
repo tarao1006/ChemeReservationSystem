@@ -4,22 +4,24 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Dialog from '@material-ui/core/Dialog'
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
-import { ReservationContext, PlanContext, FacilityContext, UserContext } from '@contexts'
+import Container from '@material-ui/core/Container'
+import { PlanContext, FacilityContext, UserContext } from '@contexts'
 import { Reservation, User, Facility, Plan } from '@types'
 import { Body } from './Body'
+import { Head } from './Head'
 import dayjs from 'dayjs'
-import { getReservation, updateReservation } from '@api'
+import { getReservation } from '@api'
 import { Loading } from '@components'
 import { useReservations } from '@hooks'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      // position: 'absolute',
-      // top: 0,
-      // bottom: 0,
-      // left: 0,
-      // right: 0,
+    root: {},
+    wrap: {
+      // display: 'flex',
+      // flexDirection: 'column',
+      // alignItems: 'center',
+      // justifyContent: 'center',
     },
   }),
 )
@@ -63,7 +65,8 @@ export const ReservationEdit = () => {
     setIsOpen(false)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
     updateReservation(reservation, true)
     setIsOpen(false)
   }
@@ -178,22 +181,23 @@ export const ReservationEdit = () => {
   return (
     (plans.length !== 0 && facilities.length !== 0 && users.length !== 0) ? (
       <Dialog fullScreen open={isOpen} onClose={handleClose} className={classes.root} transitionDuration={200}>
-      <IconButton color="inherit" onClick={handleClose}>
-        <CloseIcon />
-      </IconButton>
-      {reservation && (
-        <Body
-          reservation={reservation}
-          onSubmit={handleSubmit}
-          onPlanChange={handlePlanChange}
-          onPlanMemoChange={handlePlanMemoChange}
-          onDateChange={handleDateChange}
-          onStartAtChange={handleStartAtChange}
-          onEndAtChange={handleEndAtChange}
-          onPlacesChange={handlePlacesChange}
-          onAttendeesChange={handleAttendeesChange}
-        />
-      )}
+        <Container component="main" maxWidth="sm">
+          <form onSubmit={handleSubmit}>
+            <Head onClose={handleClose} />
+            {reservation && (
+              <Body
+                reservation={reservation}
+                onPlanChange={handlePlanChange}
+                onPlanMemoChange={handlePlanMemoChange}
+                onDateChange={handleDateChange}
+                onStartAtChange={handleStartAtChange}
+                onEndAtChange={handleEndAtChange}
+                onPlacesChange={handlePlacesChange}
+                onAttendeesChange={handleAttendeesChange}
+              />
+            )}
+          </form>
+        </Container>
       </Dialog>
     ): <Loading />
   )

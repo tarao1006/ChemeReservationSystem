@@ -1,6 +1,5 @@
 import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { BottomPanel } from './BottomPanel'
 import { MainPanel } from './MainPanel'
 import { Reservation, Plan, Facility, User } from '@types'
 import dayjs from 'dayjs'
@@ -18,7 +17,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Body = ({
   reservation,
-  onSubmit,
   onPlanChange,
   onPlanMemoChange,
   onDateChange,
@@ -28,7 +26,6 @@ export const Body = ({
   onAttendeesChange
 }: {
   reservation: Reservation
-  onSubmit: () => void,
   onPlanChange: (plan: Plan) => void
   onPlanMemoChange: (planMemo: string) => void
   onDateChange: (date: dayjs.Dayjs) => void
@@ -39,26 +36,18 @@ export const Body = ({
 }) => {
   const classes = useStyles()
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit()
-  }
-
   return (
     <div className={classes.root}>
-      <form onSubmit={handleSubmit}>
-        <MainPanel
-          reservation={reservation}
-          onPlanChange={onPlanChange}
-          onPlanMemoChange={onPlanMemoChange}
-          onDateChange={onDateChange}
-          onStartAtChange={onStartAtChange}
-          onEndAtChange={onEndAtChange}
-          onPlacesChange={onPlacesChange}
-          onAttendeesChange={onAttendeesChange}
-        />
-        <BottomPanel />
-      </form>
+      <MainPanel
+        reservation={reservation}
+        onPlanChange={onPlanChange}
+        onPlanMemoChange={onPlanMemoChange}
+        onDateChange={onDateChange}
+        onStartAtChange={onStartAtChange}
+        onEndAtChange={onEndAtChange}
+        onPlacesChange={onPlacesChange}
+        onAttendeesChange={onAttendeesChange}
+      />
     </div>
   )
 }

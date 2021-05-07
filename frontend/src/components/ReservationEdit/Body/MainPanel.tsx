@@ -15,6 +15,8 @@ const useStyles = makeStyles((theme: Theme) =>
       overflowY: 'scroll',
       display: 'flex',
       flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     wrap: {
       display: 'block',
