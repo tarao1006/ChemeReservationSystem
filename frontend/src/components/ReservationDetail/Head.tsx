@@ -73,7 +73,7 @@ export const Head = ({
           <IconButton className={classes.closeButton} size='small' onClick={handleClose}>
             <CloseIcon />
           </IconButton>
-          {((currentUser.id === reservation.creator.id) || true) && (
+          {(currentUser.id === reservation.creator.id) && (
             <div className={classes.buttonGroup}>
               <IconButton size='small' onClick={handleEdit}>
                 <EditIcon />
