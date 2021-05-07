@@ -4,11 +4,12 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Dialog from '@material-ui/core/Dialog'
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
-import { ReservationContext } from '@contexts'
+import { ReservationContext, PlanContext, FacilityContext, UserContext } from '@contexts'
 import { Reservation, User, Facility, Plan } from '@types'
 import { Body } from './Body'
 import dayjs from 'dayjs'
 import { getReservation } from '@api'
+import { Loading } from '@components'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,6 +25,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const ReservationEdit = () => {
   const { reservations } = useContext(ReservationContext)
+  const { facilities } = useContext(FacilityContext)
+  const { plans } = useContext(PlanContext)
+  const { users } = useContext(UserContext)
   const [reservation, setReservation] = useState<Reservation>()
   const [isOpen, setIsOpen] = useState<boolean>(true)
   const classes = useStyles()
@@ -171,7 +175,8 @@ export const ReservationEdit = () => {
   }
 
   return (
-    <Dialog fullScreen open={isOpen} onClose={handleClose} className={classes.root} transitionDuration={200}>
+    (plans.length !== 0 && facilities.length !== 0 && users.length !== 0) ? (
+      <Dialog fullScreen open={isOpen} onClose={handleClose} className={classes.root} transitionDuration={200}>
       <IconButton color="inherit" onClick={handleClose}>
         <CloseIcon />
       </IconButton>
@@ -188,6 +193,7 @@ export const ReservationEdit = () => {
           onAttendeesChange={handleAttendeesChange}
         />
       )}
-    </Dialog>
+      </Dialog>
+    ): <Loading />
   )
 }

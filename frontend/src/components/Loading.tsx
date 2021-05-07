@@ -11,11 +11,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const Loading = ({ isLoading }) => {
+export const Loading = () => {
   const classes = useStyles()
 
   return (
-    <Backdrop classes={{ root: classes.root }} open={isLoading}>
+    <Backdrop
+      classes={{ root: classes.root }}
+      open={true}
+    >
       <CircularProgress color="inherit" />
     </Backdrop>
   )

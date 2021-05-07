@@ -79,18 +79,6 @@ export const WeeklyCalendar = () => {
     fetch()
   }, [params]);
 
-  const forwardDay = () => {
-    history.push(`/calendar/week/${startOfCurrentWeek.add(7, 'day').format('YYYY-MM-DD')}`)
-  }
-
-  const backDay = () => {
-    history.push(`/calendar/week/${startOfCurrentWeek.add(-7, 'day').format('YYYY-MM-DD')}`)
-  }
-
-  const goBackToday = () => {
-    history.push(`/calendar/week/${dayjs().format('YYYY-MM-DD')}`)
-  }
-
   return (
     <div className={classes.root}>
       <div className={classes.wrap}>

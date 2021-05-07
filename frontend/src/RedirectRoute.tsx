@@ -60,7 +60,7 @@ const RedirectComponent = ({ children }) => {
   return (
     <>
       {isLoading ? (
-       <Loading isLoading={isLoading} />
+       <Loading />
       ) : currentUser === undefined ? (
         <Login />
       ) : children}
