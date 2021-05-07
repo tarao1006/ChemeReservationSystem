@@ -3,7 +3,6 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { BottomPanel } from './BottomPanel'
 import { MainPanel } from './MainPanel'
 import { Reservation, Plan, Facility, User } from '@types'
-import { createReservation } from '@api'
 import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -29,7 +28,7 @@ export const Body = ({
   onAttendeesChange
 }: {
   reservation: Reservation
-  onSubmit: () => Promise<void>,
+  onSubmit: () => void,
   onPlanChange: (plan: Plan) => void
   onPlanMemoChange: (planMemo: string) => void
   onDateChange: (date: dayjs.Dayjs) => void

@@ -10,6 +10,7 @@ import { Body } from './Body'
 import dayjs from 'dayjs'
 import { getReservation, updateReservation } from '@api'
 import { Loading } from '@components'
+import { useReservations } from '@hooks'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 export const ReservationEdit = () => {
-  const { reservations, setReservations } = useContext(ReservationContext)
+  const { reservations, updateReservation } = useReservations()
   const { facilities } = useContext(FacilityContext)
   const { plans } = useContext(PlanContext)
   const { users } = useContext(UserContext)
@@ -62,22 +63,8 @@ export const ReservationEdit = () => {
     setIsOpen(false)
   }
 
-  const handleSubmit = async () => {
-    console.log(reservation)
-    const res = await updateReservation(reservation)
-    let newReservations = reservations.filter(r => r.id !== res.id)
-
-    let newIndex = 0
-    for (let i = 0; i < newReservations.length - 1; ++i) {
-      if (newReservations[i].startAt.isBefore(res.startAt)) {
-        newIndex = i
-        break
-      }
-    }
-
-    newReservations.splice(newIndex, 0, res)
-    setReservations(newReservations)
-
+  const handleSubmit = () => {
+    updateReservation(reservation, true)
     setIsOpen(false)
   }
 

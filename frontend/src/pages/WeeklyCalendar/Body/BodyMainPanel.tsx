@@ -4,12 +4,11 @@ import { Reservation as ReservationModel, Plan, Facility, User } from '@types'
 import {
   AuthContext,
   FacilityContext,
-  ReservationContext,
   PlanContext,
 } from '@contexts'
 import dayjs from 'dayjs'
 import { Reservation } from '../Reservation'
-import { createReservation } from '@api'
+import { useReservations } from '@hooks'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -96,7 +95,10 @@ const BodyMainPanelContentColumn = ({
 }) => {
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
-  const { reservations, setReservations } = useContext(ReservationContext)
+  const {
+    reservations,
+    addReservation
+  } = useReservations()
   const { checked } = useContext(FacilityContext)
   const { plans } = useContext(PlanContext)
 
@@ -109,7 +111,7 @@ const BodyMainPanelContentColumn = ({
     const endAt = date.hour(offsetHour).minute(offsetMinutes).add(1, 'hour')
     const now = dayjs()
 
-    addToReservations(new ReservationModel(
+    addReservation(new ReservationModel(
       0,
       currentUser,
       startAt,
@@ -120,51 +122,7 @@ const BodyMainPanelContentColumn = ({
       now,
       [],
       [],
-    ))
-  }
-
-  const addToReservations = (newReservation: ReservationModel) => {
-    const newReservations = [...reservations]
-    let index = 0
-    for (let i = 0; i < newReservations.length; ++i) {
-      if (newReservation.startAt.isBefore(newReservations[i].startAt)) {
-        index = i
-        break
-      }
-    }
-
-    newReservations.splice(index, 0, newReservation)
-    setReservations(newReservations)
-  }
-
-  const updateReservations = (newReservation: ReservationModel) => {
-    setReservations(reservations.map(r => (r.id === newReservation.id) ? newReservation : r))
-  }
-
-  const replaceReservations = (newReservation: ReservationModel) => {
-    const newReservations = reservations.filter(r => r.id !== newReservation.id)
-
-    let newIndex = 0
-    for (let i = 0; i < newReservations.length; ++i) {
-      if (newReservations[i].startAt.isBefore(newReservation.startAt)) {
-        newIndex = i
-        break
-      }
-    }
-
-    newReservations.splice(newIndex, 0, newReservation)
-    setReservations(newReservations)
-  }
-
-  const handleClose = (newReservation: ReservationModel) => {
-    if (newReservation.id === 0) {
-      setReservations(reservations.filter(r => r.id !== 0))
-    }
-  }
-
-  const handleSubmit = async (newReservation: ReservationModel) => {
-    const res = await createReservation(newReservation)
-    setReservations(reservations.map(r => (r.id === 0) ? res : r))
+    ), false)
   }
 
   const isIn = (places: Facility[]): boolean => {
@@ -189,31 +147,10 @@ const BodyMainPanelContentColumn = ({
             <Reservation
               key={reservation.id}
               reservation={reservation}
-              onClose={handleClose}
-              onSubmit={handleSubmit}
-              updateReservations={updateReservations}
-              replaceReservations={replaceReservations}
             />
           )
         )}
       </div>
-    </div>
-  )
-}
-
-const BodyMainPanelContent = ({ dates }: { dates: dayjs.Dayjs[] }) => {
-  const classes = useStyles()
-
-  return (
-    <div className={classes.wrap}>
-      <BodyMainPanelContentCell />
-      <div className={classes.gutter} />
-      {dates.map(date => (
-        <BodyMainPanelContentColumn
-          key={date.format()}
-          date={date}
-        />
-      ))}
     </div>
   )
 }
@@ -234,7 +171,16 @@ export const BodyMainPanel = ({
 
   return (
     <div className={classes.root} onScroll={handleScroll}>
-      <BodyMainPanelContent dates={dates} />
+      <div className={classes.wrap}>
+        <BodyMainPanelContentCell />
+        <div className={classes.gutter} />
+        {dates.map(date => (
+          <BodyMainPanelContentColumn
+            key={date.format()}
+            date={date}
+          />
+        ))}
+      </div>
     </div>
   )
 }

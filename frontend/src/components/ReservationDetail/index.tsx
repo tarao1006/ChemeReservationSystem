@@ -5,8 +5,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Head } from './Head'
 import { Body } from './Body'
 import { Reservation } from '@types'
-import { deleteReservation } from '@api'
-import { ReservationContext } from '@contexts'
+import { useReservations } from '@hooks'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,7 +40,7 @@ export const ReservationDetail = ({
   } 
 }) => {
   const classes = useStyles()
-  const { reservations, setReservations } = useContext(ReservationContext)
+  const { deleteReservation } = useReservations()
   const history = useHistory()
   const location = useLocation()
 
@@ -58,14 +57,8 @@ export const ReservationDetail = ({
     })
   }
 
-  const handleDelete = async () => {
-    const res = await deleteReservation(reservation)
-
-    if (res.code === 204) {
-      setReservations(reservations.filter(r => r.id !== reservation.id))
-    }
-
-    handleClose()
+  const handleDelete = () => {
+    deleteReservation(reservation, true)
   }
 
   return (

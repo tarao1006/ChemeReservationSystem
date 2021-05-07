@@ -49,7 +49,7 @@ export const Head = ({
   reservation: Reservation
   onClose: () => void
   onEdit: () => void
-  onDelete: () => Promise<void>
+  onDelete: () => void
 }) => {
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)

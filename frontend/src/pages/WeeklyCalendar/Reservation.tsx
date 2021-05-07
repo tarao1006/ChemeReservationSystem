@@ -5,6 +5,7 @@ import { PopoverOrigin } from '@material-ui/core/Popover'
 import Button from '@material-ui/core/Button'
 import { Reservation as ReservationModel, Plan, User, Facility } from '@types'
 import { ReservationDetail, ReservationNew } from '@components'
+import { useReservations } from '@hooks'
 import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -26,17 +27,9 @@ type Vertical = "center" | "top" | "bottom"
 type Horizontal = "center" | "left" | "right"
 
 export const Reservation = ({
-  reservation,
-  onClose,
-  onSubmit,
-  updateReservations,
-  replaceReservations
+  reservation
 }: {
   reservation: ReservationModel
-  onClose: (reservation: ReservationModel) => void
-  onSubmit: (reservation: ReservationModel) => Promise<void>
-  updateReservations: (newReservation: ReservationModel) => void
-  replaceReservations: (newReservation: ReservationModel) => void
 }) => {
   const classes = useStyles()
   const history = useHistory()
@@ -61,6 +54,7 @@ export const Reservation = ({
     top: "12px",
     left: "0px",
   })
+  const { addReservation, updateReservation, replaceReservation, deleteReservation } = useReservations()
 
   const top = (reservation.startAt.hour() + reservation.startAt.minute() / 60.0) * 48 - 1
   const height = reservation.length >= 1 ? reservation.length * 48 - 2 : 22
@@ -159,17 +153,17 @@ export const Reservation = ({
   }, [ref])
 
   const handleClose = () => {
-    onClose(reservation)
+    deleteReservation(reservation, false)
     setAnchorEl(null)
   }
 
   const handleSubmit = () => {
-    onSubmit(reservation)
+    addReservation(reservation, true)
     setAnchorEl(null)
   }
 
   const handlePlanChange = (plan: Plan) => {
-    updateReservations(new ReservationModel(
+    updateReservation(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
@@ -180,11 +174,11 @@ export const Reservation = ({
       reservation.updatedAt,
       reservation.attendees,
       reservation.places,
-    ))
+    ), false)
   }
 
   const handlePlanMemoChange = (planMemo: string) => {
-    updateReservations(new ReservationModel(
+    updateReservation(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
@@ -195,11 +189,11 @@ export const Reservation = ({
       reservation.updatedAt,
       reservation.attendees,
       reservation.places,
-    ))
+    ), false)
   }
 
   const handlePlacesChange = (places: Facility[]) => {
-    updateReservations(new ReservationModel(
+    updateReservation(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
@@ -210,11 +204,11 @@ export const Reservation = ({
       reservation.updatedAt,
       reservation.attendees,
       places,
-    ))
+    ), false)
   }
 
   const handleAttendeesChange = (attendees: User[]) => {
-    updateReservations(new ReservationModel(
+    updateReservation(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
@@ -225,13 +219,13 @@ export const Reservation = ({
       reservation.updatedAt,
       attendees,
       reservation.places,
-    ))
+    ), false)
   }
 
   const handleDateChange = (date: dayjs.Dayjs) => {
     const newStartAt = date.hour(reservation.startAt.hour()).minute(reservation.startAt.minute())
     const newEndAt = date.hour(reservation.endAt.hour()).minute(reservation.endAt.minute())
-    replaceReservations(new ReservationModel(
+    replaceReservation(new ReservationModel(
       reservation.id,
       reservation.creator,
       newStartAt,
@@ -248,7 +242,7 @@ export const Reservation = ({
   }
 
   const handleStartAtChange = (startAt: dayjs.Dayjs, endAt: dayjs.Dayjs) => {
-    replaceReservations(new ReservationModel(
+    replaceReservation(new ReservationModel(
       reservation.id,
       reservation.creator,
       startAt,
@@ -263,7 +257,7 @@ export const Reservation = ({
   }
 
   const handleEndAtChange = (endAt: dayjs.Dayjs) => {
-    replaceReservations(new ReservationModel(
+    replaceReservation(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
