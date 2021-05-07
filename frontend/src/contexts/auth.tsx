@@ -1,10 +1,10 @@
 import React, { createContext, useState } from "react"
 import { User } from '@types'
 
-type user = User | undefined
+type State = User | undefined
 
 interface IAuthContext {
-  currentUser: user
+  currentUser: State
   setCurrentUser: React.Dispatch<React.SetStateAction<User>>
 }
 
@@ -14,7 +14,7 @@ export const AuthContext = createContext<IAuthContext>({
 })
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<user>(undefined)
+  const [currentUser, setCurrentUser] = useState<State>(undefined)
 
   return (
     <AuthContext.Provider value={{ currentUser, setCurrentUser }}>
