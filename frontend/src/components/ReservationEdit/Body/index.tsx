@@ -29,7 +29,7 @@ export const Body = ({
   onAttendeesChange
 }: {
   reservation: Reservation
-  onSubmit: () => void,
+  onSubmit: () => Promise<void>,
   onPlanChange: (plan: Plan) => void
   onPlanMemoChange: (planMemo: string) => void
   onDateChange: (date: dayjs.Dayjs) => void
