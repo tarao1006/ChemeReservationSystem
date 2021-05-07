@@ -274,8 +274,25 @@ func (ReservationRepository) FindByID(db *sqlx.DB, id int64) (*model.Reservation
 	facilityIDs := []int64{}
 
 	for _, r := range reservations {
-		userIDs = append(userIDs, r.UserID.String)
-		facilityIDs = append(facilityIDs, r.FacilityID.Int64)
+		userIDExist := false
+		for _, userID := range userIDs {
+			if userID == r.UserID.String {
+				userIDExist = true
+			}
+		}
+		if !userIDExist {
+			userIDs = append(userIDs, r.UserID.String)
+		}
+
+		facilityIDExist := false
+		for _, facilityID := range facilityIDs {
+			if facilityID == r.FacilityID.Int64 {
+				facilityIDExist = true
+			}
+		}
+		if !facilityIDExist {
+			facilityIDs = append(facilityIDs, r.FacilityID.Int64)
+		}
 	}
 
 	users, err := userRepo.FindByIDs(db, userIDs)
@@ -302,9 +319,83 @@ func (ReservationRepository) FindByID(db *sqlx.DB, id int64) (*model.Reservation
 	}, nil
 }
 
+func (ReservationRepository) FindDTOWithStructSliceByID(db *sqlx.DB, id int64) (*model.ReservationDTOWithStructSlice, error) {
+	var reservations []model.ReservationDTOWithStruct
+	query := `
+		SELECT
+			r.id,
+			r.creator_id,
+			r.start_at,
+			r.end_at,
+			r.plan_id,
+			r.plan_memo,
+			r.created_at,
+			r.updated_at,
+			ru.user_id as user_id,
+			rf.facility_id as facility_id
+		FROM
+			reservation as r
+		LEFT OUTER JOIN
+			reservation_user as ru
+		ON
+			r.id = ru.reservation_id
+		LEFT OUTER JOIN
+			reservation_facility as rf
+		ON
+			r.id = rf.reservation_id
+		WHERE r.id = ?
+	`
+	if err := db.Select(&reservations, query, id); err != nil {
+		return nil, err
+	}
+
+	userIDs := []string{}
+	facilityIDs := []int64{}
+
+	for _, r := range reservations {
+		userIDExist := false
+		for _, userID := range userIDs {
+			if userID == r.UserID.String {
+				userIDExist = true
+			}
+		}
+		if !userIDExist {
+			userIDs = append(userIDs, r.UserID.String)
+		}
+
+		facilityIDExist := false
+		for _, facilityID := range facilityIDs {
+			if facilityID == r.FacilityID.Int64 {
+				facilityIDExist = true
+			}
+		}
+		if !facilityIDExist {
+			facilityIDs = append(facilityIDs, r.FacilityID.Int64)
+		}
+	}
+
+	return &model.ReservationDTOWithStructSlice{
+		ID:          reservations[0].ID,
+		CreatorID:   reservations[0].CreatorID,
+		StartAt:     reservations[0].StartAt,
+		EndAt:       reservations[0].EndAt,
+		PlanID:      reservations[0].PlanID,
+		PlanMemo:    reservations[0].PlanMemo,
+		CreatedAt:   reservations[0].CreatedAt,
+		UpdatedAt:   reservations[0].UpdatedAt,
+		UserIDs:     userIDs,
+		FacilityIDs: facilityIDs,
+	}, nil
+}
+
 func (ReservationRepository) Create(db *sqlx.Tx, param *model.ReservationDTO) (result sql.Result, err error) {
 	query := `INSERT INTO reservation (creator_id, start_at, end_at, plan_id, plan_memo) VALUES (?, ?, ?, ?, ?)`
 	return db.Exec(query, param.CreatorID, param.StartAt, param.EndAt, param.PlanID, param.PlanMemo)
+}
+
+func (ReservationRepository) Update(db *sqlx.Tx, id int64, param *model.ReservationDTO) (result sql.Result, err error) {
+	query := `UPDATE reservation SET creator_id = ?, start_at = ?, end_at = ?, plan_id = ?, plan_memo = ? WHERE id = ?`
+	return db.Exec(query, param.CreatorID, param.StartAt, param.EndAt, param.PlanID, param.PlanMemo, id)
 }
 
 func (ReservationRepository) UpdateStartAtByID(db *sqlx.Tx, id int64, s time.Time) (result sql.Result, err error) {

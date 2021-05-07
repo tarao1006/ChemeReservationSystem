@@ -53,6 +53,19 @@ type ReservationDTOWithStruct struct {
 	FacilityID sql.NullInt64  `db:"facility_id"`
 }
 
+type ReservationDTOWithStructSlice struct {
+	ID          int64     `db:"id"`
+	CreatorID   string    `db:"creator_id"`
+	StartAt     time.Time `db:"start_at"`
+	EndAt       time.Time `db:"end_at"`
+	PlanID      int64     `db:"plan_id"`
+	PlanMemo    string    `db:"plan_memo"`
+	CreatedAt   time.Time `db:"created_at"`
+	UpdatedAt   time.Time `db:"updated_at"`
+	UserIDs     []string  `db:"user_id"`
+	FacilityIDs []int64   `db:"facility_id"`
+}
+
 type RangeAPI struct {
 	From string `form:"from"`
 	To   string `form:"to"`

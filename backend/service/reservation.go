@@ -83,65 +83,126 @@ func (rs *ReservationService) Create(r *model.ReservationAPI) (*model.Reservatio
 }
 
 func (rs *ReservationService) UpdateByID(id int64, r *model.ReservationAPI) (*model.Reservation, error) {
-	reservaton, err := rs.repo.FindByID(rs.db, id)
+	reservaton, err := rs.repo.FindDTOWithStructSliceByID(rs.db, id)
 	if err != nil {
 		return nil, err
 	}
 
 	if err := db.TXHandler(rs.db, func(tx *sqlx.Tx) error {
-		var err error
-		if !r.StartAt.IsZero() {
-			_, err = rs.repo.UpdateStartAtByID(tx, id, r.StartAt)
-			if err != nil {
-				return err
-			}
+		if _, err := rs.repo.Update(tx, id, &model.ReservationDTO{
+			CreatorID: r.CreatorID,
+			StartAt:   r.StartAt,
+			EndAt:     r.EndAt,
+			PlanID:    r.PlanID,
+			PlanMemo:  r.PlanMemo,
+		}); err != nil {
+			return err
 		}
-		if !r.EndAt.IsZero() {
-			_, err = rs.repo.UpdateEndAtByID(tx, id, r.EndAt)
-			if err != nil {
-				return err
-			}
-		}
-		if r.PlanID != 0 {
-			_, err = rs.repo.UpdatePlanIDByID(tx, id, r.PlanID)
-			if err != nil {
-				return err
-			}
-		}
-		if r.UpdatePlanMemo || r.PlanMemo != "" {
-			_, err = rs.repo.UpdatePlanMemoByID(tx, id, r.PlanMemo)
-			if err != nil {
-				return err
-			}
-		}
-		if len(r.UserIDs) != 0 {
-			for _, user := range reservaton.Attendees {
-				_, err = rs.repo.RemoveUser(tx, id, user.ID)
-				if err != nil {
-					return err
-				}
-			}
-			for _, userID := range r.UserIDs {
-				_, err = rs.repo.AddUser(tx, id, userID)
-				if err != nil {
-					return err
+
+		var userIDAddSet = []string{}
+		var userIDRemoveSet = []string{}
+		var userIDIntersection = []string{}
+
+		if len(r.UserIDs) != 0 && len(reservaton.UserIDs) != 0 {
+			for _, u := range r.UserIDs {
+				for _, v := range reservaton.UserIDs {
+					if u == v {
+						userIDIntersection = append(userIDIntersection, u)
+					}
 				}
 			}
 		}
-		if len(r.FacilityIDs) != 0 {
-			for _, facility := range reservaton.Places {
-				_, err = rs.repo.RemoveFacility(tx, id, facility.ID)
-				if err != nil {
-					return err
+
+		for _, u := range r.UserIDs {
+			isSame := false
+			for _, v := range userIDIntersection {
+				if u == v {
+					isSame = true
+					break
 				}
 			}
-			for _, facilityID := range r.FacilityIDs {
-				_, err = rs.repo.AddFacility(tx, id, facilityID)
-				if err != nil {
-					return err
+			if !isSame {
+				userIDAddSet = append(userIDAddSet, u)
+			}
+		}
+
+		for _, u := range reservaton.UserIDs {
+			isSame := false
+			for _, v := range userIDIntersection {
+				if u == v {
+					isSame = true
+					break
+				}
+			}
+			if !isSame {
+				userIDRemoveSet = append(userIDRemoveSet, u)
+			}
+		}
+
+		var facilityIDAddSet = []int64{}
+		var facilityIDRemoveSet = []int64{}
+		var facilityIDIntersection = []int64{}
+
+		if len(r.FacilityIDs) != 0 && len(reservaton.FacilityIDs) != 0 {
+			for _, u := range r.FacilityIDs {
+				for _, v := range reservaton.FacilityIDs {
+					if u == v {
+						facilityIDIntersection = append(facilityIDIntersection, u)
+					}
 				}
 			}
 		}
+
+		for _, u := range r.FacilityIDs {
+			isSame := false
+			for _, v := range facilityIDIntersection {
+				if u == v {
+					isSame = true
+					break
+				}
+			}
+			if !isSame {
+				facilityIDAddSet = append(facilityIDAddSet, u)
+			}
+		}
+
+		for _, u := range reservaton.FacilityIDs {
+			isSame := false
+			for _, v := range facilityIDIntersection {
+				if u == v {
+					isSame = true
+					break
+				}
+			}
+			if !isSame {
+				facilityIDRemoveSet = append(facilityIDRemoveSet, u)
+			}
+		}
+
+		for _, userID := range userIDAddSet {
+			if _, err := rs.repo.AddUser(tx, id, userID); err != nil {
+				return err
+			}
+		}
+
+		for _, userID := range userIDRemoveSet {
+			if _, err := rs.repo.RemoveUser(tx, id, userID); err != nil {
+				return err
+			}
+		}
+
+		for _, facilityID := range facilityIDAddSet {
+			if _, err := rs.repo.AddFacility(tx, id, facilityID); err != nil {
+				return err
+			}
+		}
+
+		for _, facilityID := range facilityIDRemoveSet {
+			if _, err := rs.repo.RemoveFacility(tx, id, facilityID); err != nil {
+				return err
+			}
+		}
+
 		return nil
 	}); err != nil {
 		return nil, err
