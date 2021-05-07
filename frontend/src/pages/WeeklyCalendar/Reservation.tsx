@@ -27,9 +27,15 @@ type Vertical = "center" | "top" | "bottom"
 type Horizontal = "center" | "left" | "right"
 
 export const Reservation = ({
-  reservation
+  reservation,
+  left,
+  width,
+  zIndex
 }: {
   reservation: ReservationModel
+  left: number
+  width: number
+  zIndex: number
 }) => {
   const classes = useStyles()
   const history = useHistory()
@@ -37,7 +43,6 @@ export const Reservation = ({
   const ref = useRef<HTMLDivElement>()
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
   const isOpen = Boolean(anchorEl)
-  const [width, setWidth] = useState<number>(100)
   const [backgroundColor, setBackgroundColor] = useState<string>(reservation.places.length !== 0 ? reservation.places[0].colorCode : '#444')
   const [anchorOrigin, setAnchorOrigin] = useState<PopoverOrigin>({
     vertical: 'bottom',
@@ -57,7 +62,9 @@ export const Reservation = ({
   const { addReservation, updateReservation, replaceReservation, deleteReservation } = useReservations()
 
   useEffect(() => {
-    (reservation.places.length !== 0) && setBackgroundColor(reservation.places[0].colorCode)
+    if (reservation.places.length !== 0) {
+      setBackgroundColor(reservation.places[0].colorCode)
+    }
   }, [reservation])
 
   const top = (reservation.startAt.hour() + reservation.startAt.minute() / 60.0) * 48 - 1
@@ -289,18 +296,19 @@ export const Reservation = ({
         disableFocusRipple
         disableRipple
         style={{
-          width: `${width}%`,
+          left: `calc((100% - 0px) * ${left} + 0px)`,
+          width: `calc((100% - 0px) * ${width})`,
           top: `${top}px`,
           height: `${height}px`,
-          zIndex: 5,
+          zIndex: zIndex,
           backgroundColor: `${backgroundColor}`
         }}
       >
-        <div style={{ fontSize: '12px' }}>
+        <div style={{ fontSize: '12px', overflow: 'hidden' }}>
           {reservation.plan.name}
         </div>
         {reservation.length >= 1 && (
-          <div style={{ fontSize: '12px' }}>
+          <div style={{ fontSize: '12px', overflow: 'hidden' }}>
             {reservation.startAt.format('A h:mm')}～{reservation.endAt.format('h:mm')}
           </div>
         )}
