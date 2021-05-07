@@ -1,7 +1,8 @@
 import React from 'react'
 import { useContext, useEffect, useState } from 'react'
 import { Route } from 'react-router-dom'
-import { Login, Loading } from '@components'
+import { Loading } from '@components'
+import { Login } from '@pages'
 import {
   AuthContext,
   FacilityContext,

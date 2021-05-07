@@ -1,9 +1,7 @@
-export { Copyright } from './Copyright'
 export { Header } from './Header'
-export { Login } from './Login'
 export { Loading } from './Loading'
-export { LeftPanel } from './LeftPanel'
 
+export { LeftPanel } from './LeftPanel'
 export { ReservationDetail } from './ReservationDetail'
 export { ReservationNew } from './ReservationNew'
 export { ReservationEdit } from './ReservationEdit'
