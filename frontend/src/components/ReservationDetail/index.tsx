@@ -76,6 +76,7 @@ export const ReservationDetail = ({
     >
       <div className={classes.root}>
         <Head
+          reservation={reservation}
           onClose={handleClose}
           onEdit={handleEdit}
           onDelete={handleDelete}

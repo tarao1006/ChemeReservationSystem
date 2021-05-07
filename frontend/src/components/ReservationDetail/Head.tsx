@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
+import { AuthContext } from '@contexts'
+import { Reservation } from '@types'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,15 +41,18 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 export const Head = ({
+  reservation,
   onClose,
   onEdit,
   onDelete
 }: {
+  reservation: Reservation
   onClose: () => void
   onEdit: () => void
   onDelete: () => Promise<void>
 }) => {
   const classes = useStyles()
+  const { currentUser } = useContext(AuthContext)
 
   const handleClose = () => {
     onClose()
@@ -68,14 +73,16 @@ export const Head = ({
           <IconButton className={classes.closeButton} size='small' onClick={handleClose}>
             <CloseIcon />
           </IconButton>
-          <div className={classes.buttonGroup}>
-            <IconButton size='small' onClick={handleEdit}>
-              <EditIcon />
-            </IconButton>
-            <IconButton size='small' onClick={handleDelete}>
-              <DeleteIcon />
-            </IconButton>
-          </div>
+          {currentUser.id === reservation.creator.id && (
+            <div className={classes.buttonGroup}>
+              <IconButton size='small' onClick={handleEdit}>
+                <EditIcon />
+              </IconButton>
+              <IconButton size='small' onClick={handleDelete}>
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          )}
         </div>
       </div>
     </div>
