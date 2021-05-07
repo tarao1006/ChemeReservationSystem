@@ -1,4 +1,4 @@
-import { Reservation } from '@types'
+import { Reservation, DateRange } from '@types'
 
 const INIT_RESERVATION = "INIT_RESERVATION" as const
 const ADD_RESERVATION = "ADD_RESERVATION" as const
@@ -6,7 +6,7 @@ const DELETE_RESERVATION = "DELETE_RESERVATION" as const
 const UPDATE_RESERVATION = "UPDATE_RESERVATION" as const
 const REPLACE_RESERVATION = "REPLACE_RESERVATION" as const
 
-const initReservationAction = (reservations: Reservation[]) => {
+const initReservationAction = (reservations: Reservation[], dateRange: DateRange) => {
   return { type: INIT_RESERVATION, payload: reservations }
 }
 
@@ -41,14 +41,26 @@ export type ActionType =
   | ReturnType<typeof updateReservationAction>
   | ReturnType<typeof replaceReservationAction>
 
-export type State = Reservation[]
+export type State = {
+  reservations: Reservation[],
+  range: DateRange
+}
 
-export const initialState: State = []
+export const initialState: State = {
+  reservations: [],
+  range: {
+    from: '',
+    to: '',
+  }
+}
 
 export const reducer = (state: State, action: ActionType): State => {
   switch (action.type) {
     case INIT_RESERVATION:
-      return [...action.payload]
+      return {
+        ...state,
+        reservations: action.payload
+      }
     case ADD_RESERVATION:
       return addReservation(state, action)
     case DELETE_RESERVATION:
@@ -58,37 +70,46 @@ export const reducer = (state: State, action: ActionType): State => {
     case REPLACE_RESERVATION:
       return replaceReservation(state, action)
     default:
-      return [...state]
+      return {...state}
   }
 }
 
 const addReservation = (state: State, action: ActionType): State => {
   const reservation = action.payload as Reservation
-  const newState = [...state]
-  const index = getIndex(newState, reservation)
-  newState.splice(index, 0, reservation)
-  return newState
+  const newReservations = {...state}
+  const index = getIndex(newReservations.reservations, reservation)
+  newReservations.reservations.splice(index, 0, reservation)
+  return newReservations
 }
 
 const deleteReservation = (state: State, action: ActionType): State => {
-  return state.filter(r => r.id !== (action.payload as Reservation).id)
+  return {
+    ...state,
+    reservations: state.reservations.filter(r => r.id !== (action.payload as Reservation).id)
+  }
 }
 
 const updateReservation = (state: State, action: ActionType): State => {
-  return state.map(r => {
-    if (r.id === (action.payload as Reservation).id) {
-      return action.payload as Reservation
-    }
-    return r
-  })
+  return {
+    ...state,
+    reservations: state.reservations.map(r => {
+      if (r.id === (action.payload as Reservation).id) {
+        return action.payload as Reservation
+      }
+      return r
+    })
+  }
 }
 
 const replaceReservation = (state: State, action: ActionType): State => {
   const reservation = action.payload as Reservation
-  const newState = state.filter(r => r.id !== reservation.id)
-  const index = getIndex(newState, reservation)
-  newState.splice(index, 0, reservation)
-  return newState
+  const newReservations = state.reservations.filter(r => r.id !== reservation.id)
+  const index = getIndex(newReservations, reservation)
+  newReservations.splice(index, 0, reservation)
+  return {
+    ...state,
+    reservations: newReservations
+  }
 }
 
 const getIndex = (

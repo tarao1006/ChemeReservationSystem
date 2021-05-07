@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { AuthContext, ReservationContext } from '@contexts'
-import { getAllReservationsInRange } from '@api'
+import { AuthContext } from '@contexts'
 import { inRange } from '@types'
 import { useReservations } from '@hooks'
 import { Head } from './Head'
@@ -43,9 +42,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export const WeeklyCalendar = () => {
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
-  const { reservations, initReservations } = useReservations()
-  const { fetchedDateRange, setFetchedDateRange } = useContext(ReservationContext)
-  const [startOfCurrentWeek, setStartOfCurrentWeek] = useState<dayjs.Dayjs>(dayjs())
+  const { reservations, initReservations, fetchedDateRange } = useReservations()
   const [dates, setDates] = useState<dayjs.Dayjs[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const params = useParams()
@@ -56,20 +53,17 @@ export const WeeklyCalendar = () => {
       if (currentUser) {
         const d = dayjs(params["date"]).startOf('day')
         const s = d.add(-d.day(), 'day')
-        setStartOfCurrentWeek(s)
         setDates(new Array<dayjs.Dayjs>(7).fill(s).map((d, i) => d.add(i, 'day')))
 
         if (reservations.length === 0 || !inRange(fetchedDateRange, d)) {
           if (reservations.length === 0) {
             setIsLoading(true)
           }
-          const targetDateRange = {
+
+          await initReservations({
             from: d.add(-3, 'month').format('YYYY-MM-DD'),
             to: d.add(3, 'month').format('YYYY-MM-DD'),
-          }
-
-          setFetchedDateRange(targetDateRange)
-          await initReservations()
+          })
         }
       }
       setIsLoading(false)

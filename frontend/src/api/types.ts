@@ -157,11 +157,11 @@ export interface DateRange {
   to: string
 }
 
-export const inRange = (r: DateRange, d: dayjs.Dayjs): boolean => {
+export const inRange = (r: DateRange, d: dayjs.Dayjs, range: number = 4): boolean => {
   const f = dayjs(r.from)
   const t = dayjs(r.to)
-  const dateBefore = d.add(-2, 'month')
-  const dateAfter = d.add(2, 'month')
+  const dateBefore = d.add(-Math.ceil(range / 2), 'month')
+  const dateAfter = d.add(Math.ceil(range / 2), 'month')
 
   if (dateBefore.isBefore(f) || dateAfter.isAfter(t)) return false
   return true

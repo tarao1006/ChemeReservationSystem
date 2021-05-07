@@ -1,32 +1,35 @@
-import { useContext } from 'react'
-import { ReservationContext } from '@contexts'
-import { actions, State } from '../reducer/reservation'
+import React, { useContext } from 'react'
+import { ReservationContext, ReservationsContext, ReservationsDispatchContext } from '@contexts'
+import { actions } from '../reducer/reservation'
 import {
-  getAllReservations,
   getAllReservationsInRange,
   createReservation,
   deleteReservation as deleteReservationAPI,
   updateReservation as updateReservationAPI
 } from '@api'
-import { Reservation } from '@types'
+import { Reservation, DateRange } from '@types'
 
 export const useReservations = (): {
-  reservations: State,
-  initReservations: () => Promise<void>
+  reservations: Reservation[],
+  fetchedDateRange: DateRange
+  initReservations: (dateRange: DateRange) => Promise<void>
   addReservation: (reservation: Reservation, save: boolean) => Promise<void>
   deleteReservation: (reservation: Reservation, save: boolean) => Promise<void>
   updateReservation: (reservation: Reservation, save: boolean) => Promise<void>
   replaceReservation: (reservation: Reservation) => void
 } => {
-  const { reservations, dispatch } = useContext(ReservationContext)
+  const { reservations } = useContext(ReservationsContext)
+  const dispatch = useContext(ReservationsDispatchContext)
+  const { fetchedDateRange, setFetchedDateRange } = useContext(ReservationContext)
 
-  const initReservations = async () => {
-    const allReservations = await getAllReservations()
+  const initReservations = async (dateRange: DateRange) => {
+    const allReservations = await getAllReservationsInRange(dateRange)
     allReservations.sort((l, r) => {
       if (l.startAt.isAfter(r.startAt)) return 1
       else return -1
     })
-    dispatch(actions.initReservationAction(allReservations))
+    setFetchedDateRange(dateRange)
+    dispatch(actions.initReservationAction(allReservations, dateRange))
   }
 
   const addReservation = async (reservation: Reservation, save: boolean) => {
@@ -69,5 +72,5 @@ export const useReservations = (): {
     dispatch(actions.replaceReservationAction(reservation))
   }
 
-  return { reservations, initReservations, addReservation, deleteReservation, updateReservation, replaceReservation }
+  return { reservations, fetchedDateRange, initReservations, addReservation, deleteReservation, updateReservation, replaceReservation }
 }

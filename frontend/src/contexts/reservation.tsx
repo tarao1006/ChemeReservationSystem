@@ -8,15 +8,21 @@ import {
 } from '../reducer/reservation'
 
 interface IReservationContext {
-  reservations: State
-  dispatch: Dispatch<ActionType>
   fetchedDateRange: DateRange
   setFetchedDateRange: React.Dispatch<React.SetStateAction<DateRange>>
 }
 
-export const ReservationContext = createContext<IReservationContext>({
+export const ReservationsContext = createContext<State>({
   reservations: [],
-  dispatch: () => {},
+  range: {
+    from: '',
+    to: '',
+  }
+})
+
+export const ReservationsDispatchContext = createContext<Dispatch<ActionType>>(null)
+
+export const ReservationContext = createContext<IReservationContext>({
   fetchedDateRange: { from: "", to: "" },
   setFetchedDateRange: () => {}
 })
@@ -26,8 +32,12 @@ export const ReservationProvider = ({ children }) => {
   const [fetchedDateRange, setFetchedDateRange] = useState<DateRange>({ from: "", to: "" })
 
   return (
-    <ReservationContext.Provider value={{ reservations, dispatch, fetchedDateRange, setFetchedDateRange }}>
-      {children}
-    </ReservationContext.Provider>
+    <ReservationsContext.Provider value={reservations}>
+      <ReservationsDispatchContext.Provider value={dispatch}>
+          <ReservationContext.Provider value={{ fetchedDateRange, setFetchedDateRange }}>
+          {children}
+        </ReservationContext.Provider>
+      </ReservationsDispatchContext.Provider>
+    </ReservationsContext.Provider>
   )
 }
