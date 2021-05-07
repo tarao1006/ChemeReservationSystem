@@ -4,6 +4,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { AuthContext, ReservationContext } from '@contexts'
 import { getAllReservationsInRange } from '@api'
 import { inRange } from '@types'
+import { useReservations } from '@hooks'
 import { Head } from './Head'
 import { Body } from './Body'
 import dayjs from 'dayjs'
@@ -42,7 +43,8 @@ const useStyles = makeStyles((theme: Theme) =>
 export const WeeklyCalendar = () => {
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
-  const { reservations, fetchedDateRange, setReservations, setFetchedDateRange } = useContext(ReservationContext)
+  const { reservations, initReservations } = useReservations()
+  const { fetchedDateRange, setFetchedDateRange } = useContext(ReservationContext)
   const [startOfCurrentWeek, setStartOfCurrentWeek] = useState<dayjs.Dayjs>(dayjs())
   const [dates, setDates] = useState<dayjs.Dayjs[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -65,13 +67,9 @@ export const WeeklyCalendar = () => {
             from: d.add(-3, 'month').format('YYYY-MM-DD'),
             to: d.add(3, 'month').format('YYYY-MM-DD'),
           }
-          const r = await getAllReservationsInRange(targetDateRange)
+
           setFetchedDateRange(targetDateRange)
-          r.sort((l, r) => {
-            if (l.startAt.isAfter(r.startAt)) return 1
-            else return -1
-          })
-          setReservations(r)
+          await initReservations()
         }
       }
       setIsLoading(false)
