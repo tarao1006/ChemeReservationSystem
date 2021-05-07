@@ -110,36 +110,38 @@ const BodyMainPanelContentColumn = ({
   const [left, setLeft] = useState<number[]>([])
   const [width, setWidth] = useState<number[]>([])
   const [zIndex, setZIndex] = useState<number[]>([])
-  const [maxZIndex, setMaxZIndex] = useState<number>(5)
+  const [maxZIndex, setMaxZIndex] = useState<number>(BASE_ZINDEX)
 
   useEffect(() => {
     let newLeft = reservations.map(() => 0)
     let newWidth = reservations.map(() => 1)
     let newZIndex = reservations.map(() => BASE_ZINDEX)
 
-    let timeSchedule = new Array<number>(96).fill(-1.0)
+    let timeSchedule = new Array<number>(96).fill(0.0)
     let starts: number[] = []
     let ends: number[] = []
 
     reservations.forEach(r => {
-      const startIndex = getMinute(r.startAt) / 15.0
-      const endIndex = getMinute(r.endAt) / 15.0
-
-      starts.push(startIndex)
-      ends.push(endIndex)
-      for (let i = startIndex; i <= endIndex; ++i) {
-        timeSchedule[i]++
-      }
+      starts.push(getMinute(r.startAt) / 15.0)
+      ends.push(getMinute(r.endAt) / 15.0)
     })
+
+    reservations.forEach((_, i) => {
+      timeSchedule[starts[i]]++
+      timeSchedule[ends[i]]--
+    })
+
+    for (let i = 1; i < timeSchedule.length; ++i) {
+      timeSchedule[i] += timeSchedule[i - 1]
+    }
 
     let maxCounts: number[] = []
     reservations.forEach((r, idx) => {
       maxCounts[idx] = Math.max(...timeSchedule.slice(starts[idx], ends[idx] + 1))
     })
 
-
     reservations.forEach((_, i) => {
-      newZIndex[i] += timeSchedule[starts[i]]
+      newZIndex[i] += timeSchedule[starts[i]] - 1
     })
 
     reservations.forEach((r, i) => {
