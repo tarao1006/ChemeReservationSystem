@@ -7,7 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import IconButton from '@material-ui/core/IconButton'
-import { FacilityContext } from '@contexts'
+import { AuthContext, FacilityContext } from '@contexts'
 import { Facility } from '@types'
 
 const useStyles = makeStyles(() =>
@@ -92,6 +92,7 @@ export const LeftPanel = ({
 }) => {
   const classes = useStyles()
   const { facilities, checked, setChecked } = useContext(FacilityContext)
+  const { currentUser } = useContext(AuthContext)
 
   const handleToggle = (value: number) => {
     const currentIndex = checked.indexOf(value)
@@ -107,24 +108,28 @@ export const LeftPanel = ({
   }
 
   return (
-    <div
-      className={classes.root}
-      style={{
-        marginLeft: isOpen ? '20px' : '-200px',
-      }}
-    >
-      <div>
-        <List className={classes.list}>
-          {facilities.map((f, i) => (
-            <FacilityListItem
-              key={f.id}
-              facility={f}
-              onClick={handleToggle}
-              checked={checked.indexOf(f.id) !== -1}
-            />
-          ))}
-        </List>
-      </div>
-    </div>
+    <>
+      {currentUser !== undefined ? (
+        <div
+          className={classes.root}
+          style={{
+            marginLeft: (isOpen) ? '20px' : '-200px',
+          }}
+        >
+          <div>
+            <List className={classes.list}>
+              {facilities.map((f, i) => (
+                <FacilityListItem
+                  key={f.id}
+                  facility={f}
+                  onClick={handleToggle}
+                  checked={checked.indexOf(f.id) !== -1}
+                />
+              ))}
+            </List>
+          </div>
+        </div>
+      ): null}
+    </>
   )
 }

@@ -138,23 +138,27 @@ export const Header = ({ onClick }: { onClick: () => void }) => {
   return (
     <AppBar color="primary" position="static" elevation={0}>
       <Toolbar className={classes.toolbar}>
-        <IconButton onClick={handleMenuIconClick} className={classes.menuIcon} color="inherit">
-          <MenuIcon />
-        </IconButton>
+        {currentUser !== undefined && (
+          <IconButton onClick={handleMenuIconClick} className={classes.menuIcon} color="inherit">
+            <MenuIcon />
+          </IconButton>
+        )}
         <Typography variant="h6" noWrap>
           施設予約
         </Typography>
-        <div className={classes.buttons}>
-          <Button onClick={handleGoBackToday} variant="outlined" color="inherit">
-            今日
-          </Button>
-          <IconButton onClick={handleBackDay} size="medium" className={classes.button} color="inherit">
-            <ArrowBackIosIcon fontSize="small" />
-          </IconButton>
-          <IconButton onClick={handleForwardDay} size="medium" className={classes.button} color="inherit">
-            <ArrowForwardIosIcon fontSize="small" />
-          </IconButton>
-        </div>
+        {currentUser !== undefined && (
+          <div className={classes.buttons}>
+            <Button onClick={handleGoBackToday} variant="outlined" color="inherit">
+              今日
+            </Button>
+            <IconButton onClick={handleBackDay} size="medium" className={classes.button} color="inherit">
+              <ArrowBackIosIcon fontSize="small" />
+            </IconButton>
+            <IconButton onClick={handleForwardDay} size="medium" className={classes.button} color="inherit">
+              <ArrowForwardIosIcon fontSize="small" />
+            </IconButton>
+          </div>
+        )}
         <div className={classes.grow} />
         {currentUser !== undefined && (
           <ClickAwayListener onClickAway={handleClose}>
