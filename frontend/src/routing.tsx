@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom'
 import { WeeklyCalendar } from '@pages'
+import { ReservationEdit } from '@components'
 import { Layout } from './layout'
 import { RedirectRoute } from './RedirectRoute'
 import dayjs from 'dayjs'
@@ -28,6 +29,11 @@ export const Routing = () => {
           path='/calendar/month/:date'
           exact
           component={<WeeklyCalendar />}
+        />
+        <RedirectRoute
+          path='/calendar/reservationedit/:id'
+          exact
+          component={<ReservationEdit />}
         />
       </Layout>
     </Router>
