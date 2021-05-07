@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import Popover, { PopoverOrigin } from '@material-ui/core/Popover'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Head } from './Head'
@@ -43,13 +43,19 @@ export const ReservationDetail = ({
   const classes = useStyles()
   const { reservations, setReservations } = useContext(ReservationContext)
   const history = useHistory()
+  const location = useLocation()
 
   const handleClose = () => {
     onClose()
   }
 
   const handleEdit = () => {
-    history.push(`/calendar/reservationedit/${reservation.id}`)
+    history.push({
+      pathname: `/calendar/reservationedit/${reservation.id}`,
+      state: {
+        from: location.pathname,
+      }
+    })
   }
 
   const handleDelete = async () => {

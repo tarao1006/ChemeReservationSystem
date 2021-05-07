@@ -28,6 +28,17 @@ export const getAllReservationsInRange = async (r: DateRange): Promise<Reservati
   })
 }
 
+export const getReservation = async (id: string): Promise<Reservation> => {
+  return baseInstance.get<ReservationDTO>(`/reservation/${id}`).then(res => {
+    if (res.status === 200) {
+      return convertToReservation(res.data)
+    }
+    return null
+  }).catch(() => {
+    return null
+  })
+}
+
 export const createReservation = async (r: Reservation): Promise<Reservation> => {
   return baseInstance.post<ReservationDTO>('/reservation', {
     creator_id: r.creator.id,
