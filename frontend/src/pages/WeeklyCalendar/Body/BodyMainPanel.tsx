@@ -88,19 +88,73 @@ const BodyMainPanelContentCell = () => {
   )
 }
 
+const BASE_ZINDEX = 5 as const
+
+const getMinute = (day: dayjs.Dayjs): number => {
+  return day.hour() * 60 + day.minute()
+} 
+
 const BodyMainPanelContentColumn = ({
+  reservations,
   date
 }: {
+  reservations: ReservationModel[]
   date: dayjs.Dayjs
 }) => {
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
-  const {
-    reservations,
-    addReservation
-  } = useReservations()
+  const { addReservation } = useReservations()
   const { checked } = useContext(FacilityContext)
   const { plans } = useContext(PlanContext)
+
+  const [left, setLeft] = useState<number[]>([])
+  const [width, setWidth] = useState<number[]>([])
+  const [zIndex, setZIndex] = useState<number[]>([])
+  const [maxZIndex, setMaxZIndex] = useState<number>(5)
+
+  useEffect(() => {
+    let newLeft = reservations.map(() => 0)
+    let newWidth = reservations.map(() => 1)
+    let newZIndex = reservations.map(() => BASE_ZINDEX)
+
+    let timeSchedule = new Array<number>(96).fill(-1.0)
+    let starts: number[] = []
+    let ends: number[] = []
+
+    reservations.forEach(r => {
+      const startIndex = getMinute(r.startAt) / 15.0
+      const endIndex = getMinute(r.endAt) / 15.0
+
+      starts.push(startIndex)
+      ends.push(endIndex)
+      for (let i = startIndex; i <= endIndex; ++i) {
+        timeSchedule[i]++
+      }
+    })
+
+    let maxCounts: number[] = []
+    reservations.forEach((r, idx) => {
+      maxCounts[idx] = Math.max(...timeSchedule.slice(starts[idx], ends[idx] + 1))
+    })
+
+
+    reservations.forEach((_, i) => {
+      newZIndex[i] += timeSchedule[starts[i]]
+    })
+
+    reservations.forEach((r, i) => {
+      const zIndex = newZIndex[i]
+      const maxCount = maxCounts[i]
+
+      newWidth[i] -= (maxCount - 1) * 0.05
+      newLeft[i] += (zIndex - BASE_ZINDEX) * 0.05
+    })
+
+    setMaxZIndex(BASE_ZINDEX + Math.max(...timeSchedule))
+    setLeft(newLeft)
+    setWidth(newWidth)
+    setZIndex(newZIndex)
+  }, [reservations])
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const offsetY = e.nativeEvent.offsetY
@@ -141,12 +195,15 @@ const BodyMainPanelContentColumn = ({
       <div className={classes.columnContent} onClick={handleClick} />
       <div className={classes.columnContentPresentation}>
         {reservations
-          .filter(reservation => reservation.startAt.isSame(date, 'day'))
           .filter(reservation => (reservation.id === 0) || (reservation.places.length === 0) || isIn(reservation.places))
-          .map(reservation => (
+          .map((reservation, i) => (
             <Reservation
               key={reservation.id}
               reservation={reservation}
+              left={left[i]}
+              width={width[i]}
+              zIndex={zIndex[i]}
+              maxZIndex={maxZIndex}
             />
           )
         )}
@@ -163,7 +220,7 @@ export const BodyMainPanel = ({
   setScrollTop(scrollTop: number): void
 }) => {
   const classes = useStyles()
-
+  const { reservations } = useReservations()
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const top = (e.target as HTMLDivElement).scrollTop
     setScrollTop(top)
@@ -177,6 +234,7 @@ export const BodyMainPanel = ({
         {dates.map(date => (
           <BodyMainPanelContentColumn
             key={date.format()}
+            reservations={reservations.filter(r => r.startAt.isSame(date, 'day'))}
             date={date}
           />
         ))}

@@ -30,12 +30,14 @@ export const Reservation = ({
   reservation,
   left,
   width,
-  zIndex
+  zIndex,
+  maxZIndex
 }: {
   reservation: ReservationModel
   left: number
   width: number
   zIndex: number
+  maxZIndex: number
 }) => {
   const classes = useStyles()
   const history = useHistory()
@@ -300,7 +302,7 @@ export const Reservation = ({
           width: `calc((100% - 0px) * ${width})`,
           top: `${top}px`,
           height: `${height}px`,
-          zIndex: zIndex,
+          zIndex: (reservation.id === 0) ? maxZIndex + 1 : zIndex,
           backgroundColor: `${backgroundColor}`
         }}
       >
