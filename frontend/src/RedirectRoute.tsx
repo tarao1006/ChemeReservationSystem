@@ -1,13 +1,12 @@
 import React from 'react'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Route } from 'react-router-dom'
 import { Loading } from '@components'
 import { Login } from '@pages'
 import { Layout } from './Layout'
 import {
   loginWithRememberToken as loginAPI,
-  getMe,
-  getAllFacilities,
+  getMe
 } from '@api'
 import { useAuth, useUsers, usePlans, useFacilities } from '@hooks'
 
@@ -19,7 +18,6 @@ const RedirectComponent = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const getResources = async () => {
-    const allFacilities = await getAllFacilities()
     initFacilities()
     initUsers()
     initPlans()
