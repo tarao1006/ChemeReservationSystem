@@ -49,7 +49,6 @@ export const WeeklyCalendar = () => {
   const history = useHistory()
 
   useEffect(() => {
-    console.log('render')
     const fetch = async () => {
       if (currentUser) {
         const d = dayjs(params["date"]).startOf('day')
