@@ -1,9 +1,6 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Dialog from '@material-ui/core/Dialog'
-import IconButton from '@material-ui/core/IconButton'
-import CloseIcon from '@material-ui/icons/Close'
 import Container from '@material-ui/core/Container'
 import { Reservation, User, Facility, Plan } from '@types'
 import { Body } from './Body'
@@ -13,18 +10,6 @@ import { getReservation } from '@api'
 import { Loading } from '@components'
 import { useReservations, useUsers, usePlans, useFacilities } from '@hooks'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {},
-    wrap: {
-      // display: 'flex',
-      // flexDirection: 'column',
-      // alignItems: 'center',
-      // justifyContent: 'center',
-    },
-  }),
-)
-
 export const ReservationEdit = () => {
   const { reservations, updateReservation } = useReservations()
   const { facilities } = useFacilities()
@@ -32,7 +17,6 @@ export const ReservationEdit = () => {
   const { users } = useUsers()
   const [reservation, setReservation] = useState<Reservation>()
   const [isOpen, setIsOpen] = useState<boolean>(true)
-  const classes = useStyles()
   const history = useHistory()
   const location = useLocation()
 
@@ -179,7 +163,7 @@ export const ReservationEdit = () => {
 
   return (
     (plans.length !== 0 && facilities.length !== 0 && users.length !== 0) ? (
-      <Dialog fullScreen open={isOpen} onClose={handleClose} className={classes.root} transitionDuration={200}>
+      <Dialog fullScreen open={isOpen} onClose={handleClose} transitionDuration={200}>
         <Container component="main" maxWidth="sm">
           <form onSubmit={handleSubmit}>
             <Head onClose={handleClose} />
