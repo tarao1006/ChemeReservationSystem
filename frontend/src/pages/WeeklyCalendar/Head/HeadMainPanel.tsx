@@ -92,6 +92,14 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: '#1967d2',
       }
     },
+    rightGutter: {
+      overflow: 'scroll',
+      visibility: 'hidden',
+      flex: 'none',
+      '&::-webkit-scrollbar': {
+        width: '8px',
+      }
+    },
   }),
 )
 
@@ -117,6 +125,7 @@ const HeadDay = ({ dates }: { dates: dayjs.Dayjs[] }) => {
           </div>
         ))}
       </div>
+      <div className={classes.rightGutter}></div>
     </div>
   )
 }
@@ -127,7 +136,6 @@ export const HeadMainPanel = ({ dates }: { dates: dayjs.Dayjs[] }) => {
   return (
     <div className={classes.root}>
       <HeadDay dates={dates} />
-      <div></div> {/* sZR1Lb  */}
     </div>
   )
 }
