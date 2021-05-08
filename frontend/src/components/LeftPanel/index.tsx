@@ -1,12 +1,9 @@
-import React, { useEffect, useContext, useState } from 'react'
+import React from 'react'
 import { makeStyles, createStyles } from '@material-ui/core/styles'
-import { green } from '@material-ui/core/colors'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox'
-import CheckBoxIcon from '@material-ui/icons/CheckBox'
-import IconButton from '@material-ui/core/IconButton'
+import Checkbox from '@material-ui/core/Checkbox'
 import { useAuth, useFacilities } from '@hooks'
 import { Facility } from '@types'
 
@@ -85,24 +82,35 @@ const FacilityListItem = ({
   )
 }
 
+const FacilityList = () => {
+  const classes = useStyles()
+  const { facilities, checked, addCheck, deleteCheck } = useFacilities()
+
+  const handleToggle = (id: number) => {
+    checked.indexOf(id) === -1 ? addCheck(id) : deleteCheck(id)
+  }
+
+  return (
+    <List className={classes.list}>
+      {facilities.map(f => (
+        <FacilityListItem
+          key={f.id}
+          facility={f}
+          onClick={handleToggle}
+          checked={checked.indexOf(f.id) !== -1}
+        />
+      ))}
+    </List>
+  )
+}
+
 export const LeftPanel = ({
   isOpen
 }: {
   isOpen: boolean
 }) => {
   const classes = useStyles()
-  const { facilities, checked, addCheck, deleteCheck } = useFacilities()
   const { currentUser } = useAuth()
-
-  const handleToggle = (value: number) => {
-    const currentIndex = checked.indexOf(value)
-
-    if (currentIndex === -1) {
-      addCheck(value)
-    } else {
-      deleteCheck(value)
-    }
-  }
 
   return (
     <>
@@ -113,18 +121,7 @@ export const LeftPanel = ({
             marginLeft: (isOpen) ? '20px' : '-200px',
           }}
         >
-          <div>
-            <List className={classes.list}>
-              {facilities.map((f, i) => (
-                <FacilityListItem
-                  key={f.id}
-                  facility={f}
-                  onClick={handleToggle}
-                  checked={checked.indexOf(f.id) !== -1}
-                />
-              ))}
-            </List>
-          </div>
+          <FacilityList />
         </div>
       ): null}
     </>
