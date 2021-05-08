@@ -6,14 +6,7 @@ import {
   ActionType,
 } from '../reducer/reservation'
 
-export const ReservationsContext = createContext<State>({
-  reservations: [],
-  fetchedDateRange: {
-    from: '',
-    to: '',
-  }
-})
-
+export const ReservationsContext = createContext<State | undefined>(undefined)
 export const ReservationsDispatchContext = createContext<Dispatch<ActionType>>(null)
 
 export const ReservationProvider = ({ children }) => {

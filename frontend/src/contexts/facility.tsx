@@ -6,13 +6,8 @@ import {
   ActionType,
 } from '../reducer/facility'
 
-export const FacilitiesContext = createContext<State>({
-  facilities: [],
-  checked: [],
-})
-
+export const FacilitiesContext = createContext<State | undefined>(undefined)
 export const FacilitiesDispatchContext = createContext<Dispatch<ActionType>>(null)
-
 
 export const FacilityProvider = ({ children }) => {
   const [facilities, dispatch] = useReducer(reducer, initialState)

@@ -2,9 +2,7 @@ import React, { createContext, SetStateAction, useEffect, useState, Dispatch } f
 import { Plan } from '@types'
 
 export const PlanContext = createContext<Plan[]>([])
-
-export const PlanSetContext = createContext<Dispatch<SetStateAction<Plan[]>>>(() => {})
-
+export const PlanSetContext = createContext<Dispatch<SetStateAction<Plan[]>>>(null)
 
 export const PlanProvider = ({ children }) => {
   const [plans, setPlans] = useState<Plan[]>([])
