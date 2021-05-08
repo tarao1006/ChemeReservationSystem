@@ -1,17 +1,22 @@
-import React, { createContext, useState, Dispatch, SetStateAction } from "react"
-import { User } from '@types'
+import React, { createContext, useReducer, Dispatch } from "react"
+import {
+  initialState,
+  reducer,
+  State,
+  ActionType,
+} from '../reducer/user'
 
-export const UserContext = createContext<User[]>([])
-export const UserSetContext = createContext<Dispatch<SetStateAction<User[]>>>(null)
+export const UsersContext = createContext<State | undefined>(undefined)
+export const UsersDispatchContext = createContext<Dispatch<ActionType>>(null)
 
 export const UserProvider = ({ children }) => {
-  const [users, setUsers] = useState<User[]>([])
+  const [users, dispatch] = useReducer(reducer, initialState)
 
   return (
-    <UserContext.Provider value={users}>
-      <UserSetContext.Provider value={setUsers}>
+    <UsersContext.Provider value={users}>
+      <UsersDispatchContext.Provider value={dispatch}>
         {children}
-      </UserSetContext.Provider>
-    </UserContext.Provider>
+      </UsersDispatchContext.Provider>
+    </UsersContext.Provider>
   )
 }

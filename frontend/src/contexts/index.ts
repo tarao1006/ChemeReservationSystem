@@ -14,8 +14,8 @@ export {
   ReservationProvider
 } from './reservation'
 export {
-  UserContext,
-  UserSetContext,
+  UsersContext,
+  UsersDispatchContext,
   UserProvider
 } from './user'
 export {
