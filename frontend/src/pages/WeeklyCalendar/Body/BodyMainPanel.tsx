@@ -1,12 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Reservation as ReservationModel, Facility, } from '@types'
-import {
-  FacilityContext,
-} from '@contexts'
 import dayjs from 'dayjs'
 import { Reservation } from '../Reservation'
-import { useReservations, useAuth, usePlans } from '@hooks'
+import { useReservations, useAuth, usePlans, useFacilities } from '@hooks'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -208,7 +205,7 @@ export const BodyMainPanel = ({
 }) => {
   const classes = useStyles()
   const { reservations } = useReservations()
-  const { checked } = useContext(FacilityContext)
+  const { checked } = useFacilities()
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const top = (e.target as HTMLDivElement).scrollTop

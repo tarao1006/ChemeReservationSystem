@@ -5,26 +5,22 @@ import { Loading } from '@components'
 import { Login } from '@pages'
 import { Layout } from './Layout'
 import {
-  FacilityContext,
-} from '@contexts'
-import {
   loginWithRememberToken as loginAPI,
   getMe,
   getAllFacilities,
 } from '@api'
-import { useAuth, useUsers, usePlans } from '@hooks'
+import { useAuth, useUsers, usePlans, useFacilities } from '@hooks'
 
 const RedirectComponent = ({ children }) => {
   const { currentUser, setCurrentUser } = useAuth()
-  const { setFacilities, setChecked } = useContext(FacilityContext)
+  const { initFacilities } = useFacilities()
   const { initUsers } = useUsers()
   const { initPlans } = usePlans()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const getResources = async () => {
     const allFacilities = await getAllFacilities()
-    setFacilities(allFacilities)
-    setChecked(allFacilities.map(f => f.id))
+    initFacilities()
     initUsers()
     initPlans()
   }

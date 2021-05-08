@@ -4,7 +4,11 @@ export {
   AuthProvider,
   State as AuthState
 } from './auth'
-export { FacilityContext, FacilityProvider } from './facility'
+export {
+  FacilitiesContext,
+  FacilitiesDispatchContext,
+  FacilityProvider
+} from './facility'
 export {
   ReservationsContext,
   ReservationsDispatchContext,

@@ -5,14 +5,13 @@ import Dialog from '@material-ui/core/Dialog'
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
 import Container from '@material-ui/core/Container'
-import { FacilityContext } from '@contexts'
 import { Reservation, User, Facility, Plan } from '@types'
 import { Body } from './Body'
 import { Head } from './Head'
 import dayjs from 'dayjs'
 import { getReservation } from '@api'
 import { Loading } from '@components'
-import { useReservations, useUsers, usePlans } from '@hooks'
+import { useReservations, useUsers, usePlans, useFacilities } from '@hooks'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -28,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const ReservationEdit = () => {
   const { reservations, updateReservation } = useReservations()
-  const { facilities } = useContext(FacilityContext)
+  const { facilities } = useFacilities()
   const { plans } = usePlans()
   const { users } = useUsers()
   const [reservation, setReservation] = useState<Reservation>()

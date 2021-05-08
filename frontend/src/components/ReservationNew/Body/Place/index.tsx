@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField'
 import Chip from '@material-ui/core/Chip'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import { Facility } from '@types'
-import { FacilityContext } from '@contexts'
+import { useFacilities } from '@hooks'
 export { PlaceIcon } from './PlaceIcon'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -63,7 +63,7 @@ export const Place = ({
 }) => {
   const classes = useStyles()
   const [inputValue, setInputValue] = useState<string>('')
-  const { facilities } = useContext(FacilityContext)
+  const { facilities } = useFacilities()
 
   const handleChange = (event: object, value: Facility, reason: string) => {
     if (reason === 'select-option') {

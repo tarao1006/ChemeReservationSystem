@@ -1,27 +1,27 @@
-import React, { createContext, useEffect, useState } from "react"
-import { Facility } from '@types'
+import React, { createContext, useReducer, Dispatch } from "react"
+import {
+  initialState,
+  reducer,
+  State,
+  ActionType,
+} from '../reducer/facility'
 
-interface IFacilityContext {
-  facilities: Facility[]
-  setFacilities: React.Dispatch<React.SetStateAction<Facility[]>>
-  checked: number[]
-  setChecked: React.Dispatch<React.SetStateAction<number[]>>
-}
-
-export const FacilityContext = createContext<IFacilityContext>({
+export const FacilitiesContext = createContext<State>({
   facilities: [],
-  setFacilities: () => {},
   checked: [],
-  setChecked: () => {}
 })
 
+export const FacilitiesDispatchContext = createContext<Dispatch<ActionType>>(null)
+
+
 export const FacilityProvider = ({ children }) => {
-  const [facilities, setFacilities] = useState<Facility[]>([])
-  const [checked, setChecked] = useState<number[]>([])
+  const [facilities, dispatch] = useReducer(reducer, initialState)
 
   return (
-    <FacilityContext.Provider value={{ facilities, setFacilities, checked, setChecked }}>
-      {children}
-    </FacilityContext.Provider>
+    <FacilitiesContext.Provider value={facilities}>
+      <FacilitiesDispatchContext.Provider value={dispatch}>
+        {children}
+      </FacilitiesDispatchContext.Provider>
+    </FacilitiesContext.Provider>
   )
 }

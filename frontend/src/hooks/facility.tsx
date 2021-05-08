@@ -1,22 +1,37 @@
 import { useContext } from 'react'
-import { PlanContext, PlanSetContext } from '@contexts'
-import { Plan } from '@types'
-import { getAllPlans } from '@api'
+import { FacilitiesContext, FacilitiesDispatchContext } from '@contexts'
+import { Facility } from '@types'
+import { getAllFacilities } from '@api'
+import { actions } from '../reducer/facility'
 
-export const usePlans = (): {
-  plans: Plan[]
-  initPlans: () => Promise<void>
+export const useFacilities = (): {
+  facilities: Facility[]
+  checked: number[]
+  initFacilities: () => Promise<void>
+  addCheck: (id: number) => void
+  deleteCheck: (id: number) => void
 } => {
-  const plans = useContext(PlanContext)
-  const setPlans = useContext(PlanSetContext)
+  const { facilities, checked } = useContext(FacilitiesContext)
+  const dispatch = useContext(FacilitiesDispatchContext)
 
-  const initPlans = async () => {
-    const p = await getAllPlans()
-    setPlans(p)
+  const initFacilities = async () => {
+    const f = await getAllFacilities()
+    dispatch(actions.initFacilityAction(f))
+  }
+
+  const addCheck = (id: number) => {
+    dispatch(actions.addCheckAction(id))
+  }
+
+  const deleteCheck = (id: number) => {
+    dispatch(actions.deleteCheckAction(id))
   }
 
   return {
-    plans,
-    initPlans
+    facilities,
+    checked,
+    initFacilities,
+    addCheck,
+    deleteCheck
   }
 }

@@ -5,10 +5,7 @@ import { inRange } from '@types'
 import { useReservations } from '@hooks'
 import { Head } from './Head'
 import { Body } from './Body'
-import { useAuth, useUsers, usePlans } from '@hooks'
-import {
-  FacilityContext,
-} from '@contexts'
+import { useAuth, useUsers, usePlans, useFacilities } from '@hooks'
 import {
   getAllFacilities
 } from '@api'
@@ -53,14 +50,13 @@ export const WeeklyCalendar = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const params = useParams()
   const history = useHistory()
-  const { setFacilities, setChecked } = useContext(FacilityContext)
+  const { initFacilities } = useFacilities()
   const { initUsers } = useUsers()
   const { initPlans } = usePlans()
 
   const getResources = async () => {
     const allFacilities = await getAllFacilities()
-    setFacilities(allFacilities)
-    setChecked(allFacilities.map(f => f.id))
+    initFacilities()
     initUsers()
     initPlans()
   }
