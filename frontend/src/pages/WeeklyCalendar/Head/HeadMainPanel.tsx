@@ -62,13 +62,35 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 500,
       letterSpacing: '.8px',
       marginLeft: 0,
-      marginTop: '8px',
+      marginTop: 0,
+      textIndent: '.8px',
+      textTransform: 'uppercase',
+    },
+    textToday: {
+      lineHeight: '32px',
+      position: 'relative',
+      zIndex: 2,
+      color: '#1a73e8',
+      fontSize: '11px',
+      fontWeight: 500,
+      letterSpacing: '.8px',
+      marginLeft: 0,
+      marginTop: 0,
       textIndent: '.8px',
       textTransform: 'uppercase',
     },
     button: {
       height: '46px',
       width: '46px',
+    },
+    buttonToday: {
+      height: '46px',
+      width: '46px',
+      backgroundColor: '#1a73e8',
+      color: 'white',
+      '&:hover': {
+        backgroundColor: '#1967d2',
+      }
     },
   }),
 )
@@ -85,10 +107,10 @@ const HeadDay = ({ dates }: { dates: dayjs.Dayjs[] }) => {
           <div key={i} className={classes.cell}>
             <div className={classes.cellBorder} />
             <h2 className={classes.cellContent}>
-              <div className={classes.text}>
+              <div className={date.isSame(dayjs(), 'day') ? classes.textToday : classes.text}>
                 {days[i]}
               </div>
-              <IconButton className={classes.button}>
+              <IconButton className={date.isSame(dayjs(), 'day') ? classes.buttonToday : classes.button}>
                 {date.date()}
               </IconButton>
             </h2>
