@@ -90,8 +90,12 @@ func (FacilityTypeController) Delete(c *gin.Context) {
 	}
 
 	if err := s.DeleteByID(id); err != nil {
+		if err == model.ErrBelongToFacilityType {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msssage": "deleted"})
 }

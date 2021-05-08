@@ -45,3 +45,13 @@ func (UserTypeRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, err 
 	query := `DELETE FROM user_type WHERE id = ?`
 	return db.Exec(query, id)
 }
+
+func (UserTypeRepository) Count(db *sqlx.DB, id int64) (int, error) {
+	var c int
+	query := `SELECT COUNT(*) FROM user_group WHERE user_type_id = ?`
+	if err := db.Get(&c, query, id); err != nil {
+		return 0, err
+	}
+
+	return c, nil
+}

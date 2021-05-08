@@ -65,6 +65,15 @@ func (uts *UserTypeService) UpdateByID(id int64, ut *model.UserType) (*model.Use
 }
 
 func (uts *UserTypeService) DeleteByID(id int64) error {
+	count, err := uts.repo.Count(uts.db, id)
+	if err != nil {
+		return err
+	}
+
+	if count != 0 {
+		return model.ErrBelongToUserType
+	}
+
 	if err := db.TXHandler(uts.db, func(tx *sqlx.Tx) error {
 		if _, err := uts.repo.Delete(tx, id); err != nil {
 			return err

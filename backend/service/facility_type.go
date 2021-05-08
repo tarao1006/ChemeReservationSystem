@@ -65,6 +65,15 @@ func (fts *FacilityTypeService) UpdateByID(id int64, ft *model.FacilityType) (*m
 }
 
 func (fts *FacilityTypeService) DeleteByID(id int64) error {
+	count, err := fts.repo.Count(fts.db, id)
+	if err != nil {
+		return err
+	}
+
+	if count != 0 {
+		return model.ErrBelongToFacilityType
+	}
+
 	if err := db.TXHandler(fts.db, func(tx *sqlx.Tx) error {
 		if _, err := fts.repo.Delete(tx, id); err != nil {
 			return err

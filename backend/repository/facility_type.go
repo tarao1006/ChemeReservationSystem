@@ -45,3 +45,13 @@ func (FacilityTypeRepository) Delete(db *sqlx.Tx, id int64) (result sql.Result, 
 	query := `DELETE FROM facility_type WHERE id = ?`
 	return db.Exec(query, id)
 }
+
+func (FacilityTypeRepository) Count(db *sqlx.DB, id int64) (int, error) {
+	var c int
+	query := `SELECT COUNT(*) FROM facility_group WHERE facility_type_id = ?`
+	if err := db.Get(&c, query, id); err != nil {
+		return 0, err
+	}
+
+	return c, nil
+}

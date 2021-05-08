@@ -27,4 +27,6 @@ var (
 	ErrWrongFormatOfExp          = errors.New("exp must be float64 format")
 	ErrInvalidAuthHeader         = errors.New("auth header is invalid")
 	ErrInvalidSigningAlgorithm   = errors.New("invalid signing algorithm")
+	ErrBelongToUserType          = errors.New("some users belong this type")
+	ErrBelongToFacilityType      = errors.New("some facilities belong this type")
 )
