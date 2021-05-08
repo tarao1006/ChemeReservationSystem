@@ -72,5 +72,13 @@ export const useReservations = (): {
     dispatch(actions.replaceReservationAction(reservation))
   }
 
-  return { reservations, fetchedDateRange, initReservations, addReservation, deleteReservation, updateReservation, replaceReservation }
+  return {
+    reservations,
+    fetchedDateRange,
+    initReservations,
+    addReservation,
+    deleteReservation,
+    updateReservation,
+    replaceReservation
+  }
 }
