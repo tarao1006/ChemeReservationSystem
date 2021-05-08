@@ -112,7 +112,6 @@ const BodyMainPanelContentColumn = ({
   const [maxZIndex, setMaxZIndex] = useState<number>(BASE_ZINDEX)
 
   useEffect(() => {
-    console.log(('change'))
     let newLeft = reservations.map(() => 0)
     let newWidth = reservations.map(() => 1)
     let newZIndex = reservations.map(() => BASE_ZINDEX)
@@ -135,14 +134,10 @@ const BodyMainPanelContentColumn = ({
       timeSchedule[i] += timeSchedule[i - 1]
     }
 
-    console.log(timeSchedule)
-
     let maxCounts: number[] = []
     reservations.forEach((r, idx) => {
       maxCounts[idx] = Math.max(...timeSchedule.slice(starts[idx], ends[idx] + 1))
     })
-
-    console.log(maxCounts)
 
     reservations.forEach((_, i) => {
       newZIndex[i] += timeSchedule[starts[i]] - 1

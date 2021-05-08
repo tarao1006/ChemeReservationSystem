@@ -47,7 +47,6 @@ export const useReservations = (): {
     if (save) {
       const res = await deleteReservationAPI(reservation)
       if (res.code === 204) {
-        console.log('delete')
         dispatch(actions.deleteReservationAction(reservation))
       }
     } else {

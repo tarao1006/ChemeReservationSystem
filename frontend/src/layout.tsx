@@ -1,12 +1,17 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { AuthProvider, FacilityProvider, ReservationProvider, UserProvider, PlanProvider } from '@contexts'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DayjsUtils from '@date-io/dayjs'
+import {
+  AuthProvider,
+  FacilityProvider,
+  PlanProvider,
+  ReservationProvider,
+  UserProvider
+} from '@contexts'
 import { Header, LeftPanel } from '@components'
 import { headerHeight } from '@config'
-import { AuthContext } from '@contexts'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
