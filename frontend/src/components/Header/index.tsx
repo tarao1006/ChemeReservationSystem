@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -77,6 +77,10 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: 'none',
       margin: theme.spacing(1.0),
     },
+    periodText: {
+      lineHeight: '28px',
+      fontSize: '22px',
+    }
   }),
 )
 
@@ -86,6 +90,25 @@ export const Header = ({ onClick }: { onClick: () => void }) => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const history = useHistory()
   const location = useLocation()
+  const [period, setPeriod] = useState<string>('')
+
+  useEffect(() => {
+    const elms = location.pathname.split('/')
+    const urlDate = dayjs(elms[elms.length - 1])
+    const startDateOfThisWeek = urlDate.startOf('week')
+    const endDateOfThisWeek = urlDate.endOf('week')
+
+    if (startDateOfThisWeek.year() != endDateOfThisWeek.year()) {
+      setPeriod(`${startDateOfThisWeek.format('YYYY[年] M[月]')} 〜 ${endDateOfThisWeek.format('YYYY[年] M[月]')}`)
+    } else {
+      if (startDateOfThisWeek.month() != endDateOfThisWeek.month()) {
+        setPeriod(`${startDateOfThisWeek.format('YYYY[年] M[月]')} 〜 ${endDateOfThisWeek.format('M[月]')}`)
+      } else {
+        setPeriod(`${startDateOfThisWeek.format('YYYY[年] M[月]')}`)
+      }
+    }
+
+  }, [location])
 
   const handleClick = () => {
     setIsDialogOpen(prev => !prev)
@@ -155,6 +178,9 @@ export const Header = ({ onClick }: { onClick: () => void }) => {
             </IconButton>
           </div>
         )}
+        <span className={classes.periodText}>
+          {period}
+        </span>
         <div className={classes.grow} />
         {currentUser !== undefined && (
           <ClickAwayListener onClickAway={handleClose}>
