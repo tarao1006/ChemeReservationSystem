@@ -1,14 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { Reservation as ReservationModel, Plan, Facility, User } from '@types'
+import { Reservation as ReservationModel, Facility, } from '@types'
 import {
-  AuthContext,
   FacilityContext,
-  PlanContext,
 } from '@contexts'
 import dayjs from 'dayjs'
 import { Reservation } from '../Reservation'
-import { useReservations, useAuth } from '@hooks'
+import { useReservations, useAuth, usePlans } from '@hooks'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -104,7 +102,7 @@ const BodyMainPanelContentColumn = ({
   const classes = useStyles()
   const { currentUser } = useAuth()
   const { addReservation } = useReservations()
-  const { plans } = useContext(PlanContext)
+  const { plans } = usePlans()
 
   const [left, setLeft] = useState<number[]>([])
   const [width, setWidth] = useState<number[]>([])

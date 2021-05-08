@@ -1,22 +1,19 @@
-import React, { createContext, useEffect, useState } from "react"
+import React, { createContext, SetStateAction, useEffect, useState, Dispatch } from "react"
 import { Plan } from '@types'
 
-interface IPlanContext {
-  plans: Plan[]
-  setPlans: React.Dispatch<React.SetStateAction<Plan[]>>
-}
+export const PlanContext = createContext<Plan[]>([])
 
-export const PlanContext = createContext<IPlanContext>({
-  plans: [],
-  setPlans: () => {}
-})
+export const PlanSetContext = createContext<Dispatch<SetStateAction<Plan[]>>>(() => {})
+
 
 export const PlanProvider = ({ children }) => {
   const [plans, setPlans] = useState<Plan[]>([])
 
   return (
-    <PlanContext.Provider value={{ plans, setPlans }}>
-      {children}
+    <PlanContext.Provider value={plans}>
+      <PlanSetContext.Provider value={setPlans}>
+        {children}
+      </PlanSetContext.Provider>
     </PlanContext.Provider>
   )
 }

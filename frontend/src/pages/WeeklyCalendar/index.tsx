@@ -5,16 +5,12 @@ import { inRange } from '@types'
 import { useReservations } from '@hooks'
 import { Head } from './Head'
 import { Body } from './Body'
-import { useAuth } from '@hooks'
+import { useAuth, useUsers, usePlans } from '@hooks'
 import {
   FacilityContext,
-  PlanContext,
-  UserContext,
 } from '@contexts'
 import {
-  getAllFacilities,
-  getAllUsers,
-  getAllPlans,
+  getAllFacilities
 } from '@api'
 import dayjs from 'dayjs'
 
@@ -58,19 +54,15 @@ export const WeeklyCalendar = () => {
   const params = useParams()
   const history = useHistory()
   const { setFacilities, setChecked } = useContext(FacilityContext)
-  const { setUsers } = useContext(UserContext)
-  const { setPlans } = useContext(PlanContext)
+  const { initUsers } = useUsers()
+  const { initPlans } = usePlans()
 
   const getResources = async () => {
     const allFacilities = await getAllFacilities()
     setFacilities(allFacilities)
     setChecked(allFacilities.map(f => f.id))
-
-    const u = await getAllUsers()
-    setUsers(u)
-
-    const p = await getAllPlans()
-    setPlans(p)
+    initUsers()
+    initPlans()
   }
 
   useEffect(() => {

@@ -1,9 +1,9 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
 import { Plan } from '@types'
-import { PlanContext } from '@contexts'
+import { usePlans } from '@hooks'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,7 +20,7 @@ export const PlanSelect = ({
   onPlanChange: (plan: Plan) => void
 }) => {
   const classes = useStyles()
-  const { plans } = useContext(PlanContext)
+  const { plans } = usePlans()
 
   const handleChange = (e: React.ChangeEvent<{ value: unknown }>) => {
     onPlanChange(plans.find(p => p.name === e.target.value as string))

@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Chip from '@material-ui/core/Chip'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import { User } from '@types'
-import { UserContext } from '@contexts'
+import { useUsers } from '@hooks'
 export { AttendeeIcon } from './AttendeeIcon'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -63,7 +63,7 @@ export const Attendee = ({
 }) => {
   const classes = useStyles()
   const [inputValue, setInputValue] = useState<string>('')
-  const { users } = useContext(UserContext)
+  const { users } = useUsers()
 
   const handleChange = (event: object, value: User, reason: string) => {
     if (reason === 'select-option') {

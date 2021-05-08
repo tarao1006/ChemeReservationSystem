@@ -6,35 +6,27 @@ import { Login } from '@pages'
 import { Layout } from './Layout'
 import {
   FacilityContext,
-  PlanContext,
-  UserContext,
 } from '@contexts'
 import {
   loginWithRememberToken as loginAPI,
   getMe,
   getAllFacilities,
-  getAllUsers,
-  getAllPlans,
 } from '@api'
-import { useAuth } from '@hooks'
+import { useAuth, useUsers, usePlans } from '@hooks'
 
 const RedirectComponent = ({ children }) => {
   const { currentUser, setCurrentUser } = useAuth()
   const { setFacilities, setChecked } = useContext(FacilityContext)
-  const { setUsers } = useContext(UserContext)
-  const { setPlans } = useContext(PlanContext)
+  const { initUsers } = useUsers()
+  const { initPlans } = usePlans()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const getResources = async () => {
     const allFacilities = await getAllFacilities()
     setFacilities(allFacilities)
     setChecked(allFacilities.map(f => f.id))
-
-    const u = await getAllUsers()
-    setUsers(u)
-
-    const p = await getAllPlans()
-    setPlans(p)
+    initUsers()
+    initPlans()
   }
 
   useEffect(() => {
