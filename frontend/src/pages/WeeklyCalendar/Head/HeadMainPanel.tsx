@@ -80,12 +80,12 @@ const useStyles = makeStyles((theme: Theme) =>
       textTransform: 'uppercase',
     },
     button: {
-      height: '46px',
-      width: '46px',
+      height: '40px',
+      width: '40px',
     },
     buttonToday: {
-      height: '46px',
-      width: '46px',
+      height: '40px',
+      width: '40px',
       backgroundColor: '#1a73e8',
       color: 'white',
       '&:hover': {
