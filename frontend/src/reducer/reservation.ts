@@ -48,7 +48,7 @@ export type ActionType =
   | ReturnType<typeof updateReservationAction>
   | ReturnType<typeof replaceReservationAction>
 
-export type StatusType = 
+export type StatusType =
   | ''
   | 'added'
   | 'created'
