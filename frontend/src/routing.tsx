@@ -13,23 +13,53 @@ import {
 } from '@contexts'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DayjsUtils from '@date-io/dayjs'
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
+
+const theme = createMuiTheme({
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        html: {
+          WebkitFontSmoothing: 'auto',
+        },
+        body: {
+          overflow: 'hidden',
+        },
+        '*::-webkit-scrollbar': {
+          background: "transparent",
+          height: "8px",
+          width: "8px",
+        },
+        '*::-webkit-scrollbar-thumb': {
+          border: "none",
+          boxShadow: "none",
+          background: "#dadce0",
+          borderRadius: "8px",
+          minHeight: "40px"
+        },
+      },
+    },
+  },
+})
 
 const Provider = ({ children }) => {
 
   return (
-    <MuiPickersUtilsProvider utils={DayjsUtils}>
-      <AuthProvider>
-        <FacilityProvider>
-          <ReservationProvider>
-            <UserProvider>
-              <PlanProvider>
-                {children}
-              </PlanProvider>
-            </UserProvider>
-          </ReservationProvider>
-        </FacilityProvider>
-      </AuthProvider>
-    </MuiPickersUtilsProvider>
+    <ThemeProvider theme={theme}>
+      <MuiPickersUtilsProvider utils={DayjsUtils}>
+        <AuthProvider>
+          <FacilityProvider>
+            <ReservationProvider>
+              <UserProvider>
+                <PlanProvider>
+                  {children}
+                </PlanProvider>
+              </UserProvider>
+            </ReservationProvider>
+          </FacilityProvider>
+        </AuthProvider>
+      </MuiPickersUtilsProvider>
+    </ThemeProvider>
   )
 }
 
