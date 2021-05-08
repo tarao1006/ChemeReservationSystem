@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { makeStyles, createStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Checkbox from '@material-ui/core/Checkbox'
+import Collapse from '@material-ui/core/Collapse'
+import ExpandLess from '@material-ui/icons/ExpandLess'
+import ExpandMore from '@material-ui/icons/ExpandMore'
 import { useAuth, useFacilities } from '@hooks'
 import { Facility } from '@types'
 
@@ -85,21 +88,34 @@ const FacilityListItem = ({
 const FacilityList = () => {
   const classes = useStyles()
   const { facilities, checked, addCheck, deleteCheck } = useFacilities()
+  const [open, setOpen] = useState(true)
+
+  const handleClick = () => {
+    setOpen(prev => !prev)
+  }
 
   const handleToggle = (id: number) => {
     checked.indexOf(id) === -1 ? addCheck(id) : deleteCheck(id)
   }
 
   return (
-    <List className={classes.list}>
-      {facilities.map(f => (
-        <FacilityListItem
-          key={f.id}
-          facility={f}
-          onClick={handleToggle}
-          checked={checked.indexOf(f.id) !== -1}
-        />
-      ))}
+    <List>
+      <ListItem onClick={handleClick} button>
+        <ListItemText disableTypography primary="施設" />
+        {open ? <ExpandLess /> : <ExpandMore />}
+      </ListItem>
+      <Collapse in={open}>
+        <List className={classes.list}>
+          {facilities.map(f => (
+            <FacilityListItem
+              key={f.id}
+              facility={f}
+              onClick={handleToggle}
+              checked={checked.indexOf(f.id) !== -1}
+            />
+          ))}
+        </List>
+      </Collapse>
     </List>
   )
 }
@@ -118,7 +134,7 @@ export const LeftPanel = ({
         <div
           className={classes.root}
           style={{
-            marginLeft: (isOpen) ? '20px' : '-200px',
+            marginLeft: (isOpen) ? '0px' : '-200px',
           }}
         >
           <FacilityList />
