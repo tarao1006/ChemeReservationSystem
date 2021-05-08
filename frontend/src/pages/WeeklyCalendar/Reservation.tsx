@@ -66,6 +66,8 @@ export const Reservation = ({
   useEffect(() => {
     if (reservation.places.length !== 0) {
       setBackgroundColor(reservation.places[0].colorCode)
+    } else {
+      setBackgroundColor('#444')
     }
   }, [reservation])
 
