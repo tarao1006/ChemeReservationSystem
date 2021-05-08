@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { inRange } from '@types'
@@ -6,6 +6,16 @@ import { useReservations } from '@hooks'
 import { Head } from './Head'
 import { Body } from './Body'
 import { useAuth } from '@hooks'
+import {
+  FacilityContext,
+  PlanContext,
+  UserContext,
+} from '@contexts'
+import {
+  getAllFacilities,
+  getAllUsers,
+  getAllPlans,
+} from '@api'
 import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -47,6 +57,21 @@ export const WeeklyCalendar = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const params = useParams()
   const history = useHistory()
+  const { setFacilities, setChecked } = useContext(FacilityContext)
+  const { setUsers } = useContext(UserContext)
+  const { setPlans } = useContext(PlanContext)
+
+  const getResources = async () => {
+    const allFacilities = await getAllFacilities()
+    setFacilities(allFacilities)
+    setChecked(allFacilities.map(f => f.id))
+
+    const u = await getAllUsers()
+    setUsers(u)
+
+    const p = await getAllPlans()
+    setPlans(p)
+  }
 
   useEffect(() => {
     const fetch = async () => {
@@ -54,6 +79,8 @@ export const WeeklyCalendar = () => {
         const d = dayjs(params["date"]).startOf('day')
         const s = d.add(-d.day(), 'day')
         setDates(new Array<dayjs.Dayjs>(7).fill(s).map((d, i) => d.add(i, 'day')))
+
+        getResources()
 
         if (reservations.length === 0 || !inRange(fetchedDateRange, d)) {
           if (reservations.length === 0) {
@@ -69,7 +96,7 @@ export const WeeklyCalendar = () => {
       setIsLoading(false)
     }
     fetch()
-  }, [params]);
+  }, [params, currentUser]);
 
   return (
     <div className={classes.root}>

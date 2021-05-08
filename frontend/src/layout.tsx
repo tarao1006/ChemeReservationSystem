@@ -1,15 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { MuiPickersUtilsProvider } from '@material-ui/pickers'
-import DayjsUtils from '@date-io/dayjs'
-import {
-  AuthProvider,
-  FacilityProvider,
-  PlanProvider,
-  ReservationProvider,
-  UserProvider
-} from '@contexts'
 import { Header, LeftPanel } from '@components'
 import { headerHeight } from '@config'
 
@@ -45,27 +36,19 @@ const useStyles = makeStyles((theme: Theme) =>
 ));
 
 export const Layout = ({
-  children,
-  isLeftPanelOpen,
-  setIsLeftPanelOpen
+  children
 }: {
   children: React.ReactNode
-  isLeftPanelOpen: boolean
-  setIsLeftPanelOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const classes = useStyles()
+  const [isLeftPanelOpen, setIsLeftPanelOpen] = useState<boolean>(true)
 
   const handleClick = () => {
     setIsLeftPanelOpen(prev => !prev)
   }
 
   return (
-    <MuiPickersUtilsProvider utils={DayjsUtils}>
-    <AuthProvider>
-    <FacilityProvider>
-    <ReservationProvider>
-    <UserProvider>
-    <PlanProvider>
+    <>
       <CssBaseline />
       <div className={classes.root}>
         <div className={classes.wrap}>
@@ -80,11 +63,6 @@ export const Layout = ({
           </div>
         </div>
       </div>
-    </PlanProvider>
-    </UserProvider>
-    </ReservationProvider>
-    </FacilityProvider>
-    </AuthProvider>
-    </MuiPickersUtilsProvider>
+    </>
   )
 }

@@ -3,8 +3,8 @@ import { useContext, useEffect, useState } from 'react'
 import { Route } from 'react-router-dom'
 import { Loading } from '@components'
 import { Login } from '@pages'
+import { Layout } from './Layout'
 import {
-  AuthContext,
   FacilityContext,
   PlanContext,
   UserContext,
@@ -82,9 +82,11 @@ export const RedirectRoute = ({
 
   return (
     <Route path={path} exact={exact}>
-      <RedirectComponent>
-        {component}
-      </RedirectComponent>
+      <Layout>
+        <RedirectComponent>
+          {component}
+        </RedirectComponent>
+     </Layout>
     </Route>
   )
 }

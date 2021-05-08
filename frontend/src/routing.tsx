@@ -1,17 +1,43 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom'
 import { WeeklyCalendar } from '@pages'
 import { ReservationEdit } from '@components'
-import { Layout } from './layout'
 import { RedirectRoute } from './RedirectRoute'
 import dayjs from 'dayjs'
+import {
+  AuthProvider,
+  FacilityProvider,
+  PlanProvider,
+  ReservationProvider,
+  UserProvider
+} from '@contexts'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import DayjsUtils from '@date-io/dayjs'
 
-export const Routing = () => {
-  const [isLeftPanelOpen, setIsLeftPanelOpen] = useState<boolean>(true)
+const Provider = ({ children }) => {
 
   return (
-    <Router>
-      <Layout isLeftPanelOpen={isLeftPanelOpen} setIsLeftPanelOpen={setIsLeftPanelOpen}>
+    <MuiPickersUtilsProvider utils={DayjsUtils}>
+      <AuthProvider>
+        <FacilityProvider>
+          <ReservationProvider>
+            <UserProvider>
+              <PlanProvider>
+                {children}
+              </PlanProvider>
+            </UserProvider>
+          </ReservationProvider>
+        </FacilityProvider>
+      </AuthProvider>
+    </MuiPickersUtilsProvider>
+  )
+}
+
+export const Routing = () => {
+
+  return (
+    <Provider>
+      <Router>
         <Route path="/" exact>
           <Redirect to={`/calendar/month/${dayjs().startOf('day').format('YYYY-MM-DD')}`} />
         </Route>
@@ -35,7 +61,7 @@ export const Routing = () => {
           exact
           component={<ReservationEdit />}
         />
-      </Layout>
-    </Router>
+      </Router>
+    </Provider>
   )
 }
