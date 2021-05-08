@@ -52,9 +52,10 @@ export type StatusType =
   | ''
   | 'added'
   | 'created'
-  | 'deleted'
   | 'removed'
+  | 'deleted'
   | 'edited'
+  | 'updated'
 
 export type State = {
   reservations: Reservation[],
