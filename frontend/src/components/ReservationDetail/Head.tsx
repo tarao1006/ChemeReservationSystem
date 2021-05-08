@@ -1,10 +1,10 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
-import { AuthContext } from '@contexts'
+import { useAuth } from '@hooks'
 import { Reservation } from '@types'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -52,7 +52,7 @@ export const Head = ({
   onDelete: () => void
 }) => {
   const classes = useStyles()
-  const { currentUser } = useContext(AuthContext)
+  const { currentUser } = useAuth()
 
   const handleClose = () => {
     onClose()

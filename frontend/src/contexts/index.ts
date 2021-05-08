@@ -1,4 +1,9 @@
-export { AuthContext, AuthProvider } from './auth'
+export {
+  AuthContext,
+  AuthSetContext,
+  AuthProvider,
+  State as AuthState
+} from './auth'
 export { FacilityContext, FacilityProvider } from './facility'
 export {
   ReservationsContext,

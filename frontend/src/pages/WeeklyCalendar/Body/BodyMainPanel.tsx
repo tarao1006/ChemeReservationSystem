@@ -8,7 +8,7 @@ import {
 } from '@contexts'
 import dayjs from 'dayjs'
 import { Reservation } from '../Reservation'
-import { useReservations } from '@hooks'
+import { useReservations, useAuth } from '@hooks'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -102,7 +102,7 @@ const BodyMainPanelContentColumn = ({
   date: dayjs.Dayjs
 }) => {
   const classes = useStyles()
-  const { currentUser } = useContext(AuthContext)
+  const { currentUser } = useAuth()
   const { addReservation } = useReservations()
   const { plans } = useContext(PlanContext)
 

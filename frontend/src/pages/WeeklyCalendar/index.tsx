@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { AuthContext } from '@contexts'
 import { inRange } from '@types'
 import { useReservations } from '@hooks'
 import { Head } from './Head'
 import { Body } from './Body'
+import { useAuth } from '@hooks'
 import dayjs from 'dayjs'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const WeeklyCalendar = () => {
   const classes = useStyles()
-  const { currentUser } = useContext(AuthContext)
+  const { currentUser } = useAuth()
   const { reservations, initReservations, fetchedDateRange } = useReservations()
   const [dates, setDates] = useState<dayjs.Dayjs[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)

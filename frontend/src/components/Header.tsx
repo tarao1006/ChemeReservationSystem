@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -19,8 +19,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import EventNoteIcon from '@material-ui/icons/EventNote'
 import MenuIcon from '@material-ui/icons/Menu'
-import { AuthContext } from '@contexts'
 import { logout } from '@api'
+import { useAuth } from '@hooks'
 import { headerHeight } from '@config'
 import dayjs from 'dayjs'
 
@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Header = ({ onClick }: { onClick: () => void }) => {
   const classes = useStyles()
-  const { currentUser, setCurrentUser } = useContext(AuthContext)
+  const { currentUser, setCurrentUser } = useAuth()
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const history = useHistory()
   const location = useLocation()

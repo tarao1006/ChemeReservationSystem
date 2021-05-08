@@ -16,9 +16,10 @@ import {
   getAllUsers,
   getAllPlans,
 } from '@api'
+import { useAuth } from '@hooks'
 
 const RedirectComponent = ({ children }) => {
-  const { currentUser, setCurrentUser } = useContext(AuthContext)
+  const { currentUser, setCurrentUser } = useAuth()
   const { setFacilities, setChecked } = useContext(FacilityContext)
   const { setUsers } = useContext(UserContext)
   const { setPlans } = useContext(PlanContext)

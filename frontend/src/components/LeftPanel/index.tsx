@@ -7,7 +7,8 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import IconButton from '@material-ui/core/IconButton'
-import { AuthContext, FacilityContext } from '@contexts'
+import { FacilityContext } from '@contexts'
+import { useAuth } from '@hooks'
 import { Facility } from '@types'
 
 const useStyles = makeStyles(() =>
@@ -92,7 +93,7 @@ export const LeftPanel = ({
 }) => {
   const classes = useStyles()
   const { facilities, checked, setChecked } = useContext(FacilityContext)
-  const { currentUser } = useContext(AuthContext)
+  const { currentUser } = useAuth()
 
   const handleToggle = (value: number) => {
     const currentIndex = checked.indexOf(value)

@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import Avatar from '@material-ui/core/Avatar'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -14,7 +14,7 @@ import Fade from '@material-ui/core/Fade'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import { getMe, login as loginAPI, validate as validateAPI } from '@api'
-import { AuthContext } from '@contexts'
+import { useAuth } from '@hooks'
 
 const useStyles = makeStyles((theme) => ({
   userIdTextFieldBefore: {
@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const Login = () => {
   const classes = useStyles()
-  const { setCurrentUser } = useContext(AuthContext)
+  const { setCurrentUser } = useAuth()
   const passwordInputEl = useRef(null)
   const [userId, setUserId] = useState<string>("")
   const [password, setPassword] = useState<string>("")
