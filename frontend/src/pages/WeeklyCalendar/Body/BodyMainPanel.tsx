@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
+import Snackbar from '@material-ui/core/Snackbar'
 import { Reservation as ReservationModel, Facility, } from '@types'
 import dayjs from 'dayjs'
 import { Reservation } from '../Reservation'
@@ -172,7 +173,7 @@ const BodyMainPanelContentColumn = ({
       now,
       [],
       [],
-    ), false)
+    ))
   }
 
   return (
@@ -204,7 +205,7 @@ export const BodyMainPanel = ({
   setScrollTop(scrollTop: number): void
 }) => {
   const classes = useStyles()
-  const { reservations } = useReservations()
+  const { reservations, status } = useReservations()
   const { checked } = useFacilities()
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -224,25 +225,32 @@ export const BodyMainPanel = ({
   }
 
   return (
-    <div className={classes.root} onScroll={handleScroll}>
-      <div className={classes.wrap}>
-        <BodyMainPanelContentCell />
-        <div className={classes.gutter} />
-        {dates.map(date => (
-          <BodyMainPanelContentColumn
-            key={date.format()}
-            reservations={
-              reservations
-                .filter(r => r.startAt.isSame(date, 'day'))
-                .filter(reservation => 
-                  (reservation.id === 0) ||
-                  (reservation.places.length === 0) ||
-                  isIn(reservation.places))
-            }
-            date={date}
-          />
-        ))}
+    <>
+      <div className={classes.root} onScroll={handleScroll}>
+        <div className={classes.wrap}>
+          <BodyMainPanelContentCell />
+          <div className={classes.gutter} />
+          {dates.map(date => (
+            <BodyMainPanelContentColumn
+              key={date.format()}
+              reservations={
+                reservations
+                  .filter(r => r.startAt.isSame(date, 'day'))
+                  .filter(reservation => 
+                    (reservation.id === 0) ||
+                    (reservation.places.length === 0) ||
+                    isIn(reservation.places))
+              }
+              date={date}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+      <Snackbar
+        open={status === 'created'}
+        message={"予定を作成しました"}
+        autoHideDuration={200}
+      />
+    </>
   )
 }

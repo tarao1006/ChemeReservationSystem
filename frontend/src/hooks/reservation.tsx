@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
 import { ReservationsContext, ReservationsDispatchContext } from '@contexts'
-import { actions } from '../reducer/reservation'
+import { actions, StatusType } from '../reducer/reservation'
 import {
   getAllReservationsInRange,
-  createReservation,
+  createReservation as createReservationAPI,
   deleteReservation as deleteReservationAPI,
   updateReservation as updateReservationAPI
 } from '@api'
@@ -11,14 +11,16 @@ import { Reservation, DateRange } from '@types'
 
 export const useReservations = (): {
   reservations: Reservation[],
-  fetchedDateRange: DateRange
+  fetchedDateRange: DateRange,
+  status: StatusType
   initReservations: (dateRange: DateRange) => Promise<void>
-  addReservation: (reservation: Reservation, save: boolean) => Promise<void>
+  addReservation: (reservation: Reservation) => void
+  createReservation: (reservation: Reservation) => Promise<void>
   deleteReservation: (reservation: Reservation, save: boolean) => Promise<void>
   updateReservation: (reservation: Reservation, save: boolean) => Promise<void>
   replaceReservation: (reservation: Reservation) => void
 } => {
-  const { reservations, fetchedDateRange } = useContext(ReservationsContext)
+  const { reservations, fetchedDateRange, status } = useContext(ReservationsContext)
   const dispatch = useContext(ReservationsDispatchContext)
 
   const initReservations = async (dateRange: DateRange) => {
@@ -30,14 +32,14 @@ export const useReservations = (): {
     dispatch(actions.initReservationAction(allReservations, dateRange))
   }
 
-  const addReservation = async (reservation: Reservation, save: boolean) => {
-    if (save) {
-      const newReservation = await createReservation(reservation)
-      if (newReservation) {
-        dispatch(actions.addReservationAction(newReservation))
-      }
-    } else {
-      dispatch(actions.addReservationAction(reservation))
+  const addReservation = (reservation: Reservation) => {
+    dispatch(actions.addReservationAction(reservation))
+  }
+
+  const createReservation = async (reservation: Reservation) => {
+    const newReservation = await createReservationAPI(reservation)
+    if (newReservation) {
+      dispatch(actions.createReservationAction(newReservation))
     }
   }
 
@@ -72,8 +74,10 @@ export const useReservations = (): {
   return {
     reservations,
     fetchedDateRange,
+    status,
     initReservations,
     addReservation,
+    createReservation,
     deleteReservation,
     updateReservation,
     replaceReservation

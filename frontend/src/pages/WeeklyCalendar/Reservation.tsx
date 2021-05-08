@@ -61,7 +61,7 @@ export const Reservation = ({
     top: "12px",
     left: "0px",
   })
-  const { addReservation, updateReservation, replaceReservation, deleteReservation } = useReservations()
+  const { addReservation, createReservation, updateReservation, replaceReservation, deleteReservation } = useReservations()
 
   useEffect(() => {
     if (reservation.places.length !== 0) {
@@ -171,7 +171,7 @@ export const Reservation = ({
   }
 
   const handleSubmit = () => {
-    addReservation(reservation, true)
+    createReservation(reservation)
     setAnchorEl(null)
   }
 

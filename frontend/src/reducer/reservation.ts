@@ -2,6 +2,7 @@ import { Reservation, DateRange } from '@types'
 
 const INIT_RESERVATION = "INIT_RESERVATION" as const
 const ADD_RESERVATION = "ADD_RESERVATION" as const
+const CREATE_RESERVATION = "CREATE_RESERVATION" as const
 const DELETE_RESERVATION = "DELETE_RESERVATION" as const
 const UPDATE_RESERVATION = "UPDATE_RESERVATION" as const
 const REPLACE_RESERVATION = "REPLACE_RESERVATION" as const
@@ -12,6 +13,10 @@ const initReservationAction = (reservations: Reservation[], dateRange: DateRange
 
 const addReservationAction = (reservation: Reservation) => {
   return { type: ADD_RESERVATION, payload: reservation }
+}
+
+const createReservationAction = (reservation: Reservation) => {
+  return { type: CREATE_RESERVATION, payload: reservation }
 }
 
 const deleteReservationAction = (reservation: Reservation) => {
@@ -29,6 +34,7 @@ const replaceReservationAction = (reservation: Reservation) => {
 export const actions = {
   initReservationAction,
   addReservationAction,
+  createReservationAction,
   deleteReservationAction,
   updateReservationAction,
   replaceReservationAction
@@ -37,13 +43,23 @@ export const actions = {
 export type ActionType =
   | ReturnType<typeof initReservationAction>
   | ReturnType<typeof addReservationAction>
+  | ReturnType<typeof createReservationAction>
   | ReturnType<typeof deleteReservationAction>
   | ReturnType<typeof updateReservationAction>
   | ReturnType<typeof replaceReservationAction>
 
+export type StatusType = 
+  | ''
+  | 'added'
+  | 'created'
+  | 'deleted'
+  | 'removed'
+  | 'edited'
+
 export type State = {
   reservations: Reservation[],
-  fetchedDateRange: DateRange
+  fetchedDateRange: DateRange,
+  status: StatusType
 }
 
 export const initialState: State = {
@@ -51,7 +67,8 @@ export const initialState: State = {
   fetchedDateRange: {
     from: '',
     to: '',
-  }
+  },
+  status: '',
 }
 
 export const reducer = (state: State, action: ActionType): State => {
@@ -64,6 +81,8 @@ export const reducer = (state: State, action: ActionType): State => {
       }
     case ADD_RESERVATION:
       return addReservation(state, action)
+    case CREATE_RESERVATION:
+      return createdReservation(state, action)
     case DELETE_RESERVATION:
       return deleteReservation(state, action)
     case UPDATE_RESERVATION:
@@ -81,12 +100,22 @@ const addReservation = (state: State, action: ActionType): State => {
   newState.reservations = newState.reservations.filter(r => r.id !== 0)
   const index = getIndex(newState.reservations, reservation)
   newState.reservations.splice(index, 0, reservation)
-  return newState
+  return {...newState, status: 'added'}
+}
+
+const createdReservation = (state: State, action: ActionType): State => {
+  const reservation = action.payload as Reservation
+  const newState = {...state}
+  newState.reservations = newState.reservations.filter(r => r.id !== 0)
+  const index = getIndex(newState.reservations, reservation)
+  newState.reservations.splice(index, 0, reservation)
+  return {...newState, status: 'created'}
 }
 
 const deleteReservation = (state: State, action: ActionType): State => {
   return {
     ...state,
+    status: 'deleted',
     reservations: state.reservations.filter(r => r.id !== (action.payload as Reservation).id)
   }
 }
@@ -94,6 +123,7 @@ const deleteReservation = (state: State, action: ActionType): State => {
 const updateReservation = (state: State, action: ActionType): State => {
   return {
     ...state,
+    status: 'edited',
     reservations: state.reservations.map(r => {
       if (r.id === (action.payload as Reservation).id) {
         return action.payload as Reservation
@@ -110,6 +140,7 @@ const replaceReservation = (state: State, action: ActionType): State => {
   newReservations.splice(index, 0, reservation)
   return {
     ...state,
+    status: '',
     reservations: newReservations
   }
 }
