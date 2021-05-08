@@ -7,7 +7,7 @@ const UPDATE_RESERVATION = "UPDATE_RESERVATION" as const
 const REPLACE_RESERVATION = "REPLACE_RESERVATION" as const
 
 const initReservationAction = (reservations: Reservation[], dateRange: DateRange) => {
-  return { type: INIT_RESERVATION, payload: reservations }
+  return { type: INIT_RESERVATION, payload: { reservations, dateRange } }
 }
 
 const addReservationAction = (reservation: Reservation) => {
@@ -43,12 +43,12 @@ export type ActionType =
 
 export type State = {
   reservations: Reservation[],
-  range: DateRange
+  fetchedDateRange: DateRange
 }
 
 export const initialState: State = {
   reservations: [],
-  range: {
+  fetchedDateRange: {
     from: '',
     to: '',
   }
@@ -59,7 +59,8 @@ export const reducer = (state: State, action: ActionType): State => {
     case INIT_RESERVATION:
       return {
         ...state,
-        reservations: action.payload
+        reservations: action.payload.reservations,
+        fetchedDateRange: action.payload.dateRange
       }
     case ADD_RESERVATION:
       return addReservation(state, action)

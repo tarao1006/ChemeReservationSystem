@@ -12,7 +12,6 @@ export {
 export {
   ReservationsContext,
   ReservationsDispatchContext,
-  ReservationContext,
   ReservationProvider
 } from './reservation'
 export {

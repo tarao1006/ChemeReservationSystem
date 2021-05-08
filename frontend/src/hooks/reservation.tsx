@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { ReservationContext, ReservationsContext, ReservationsDispatchContext } from '@contexts'
+import { ReservationsContext, ReservationsDispatchContext } from '@contexts'
 import { actions } from '../reducer/reservation'
 import {
   getAllReservationsInRange,
@@ -18,9 +18,8 @@ export const useReservations = (): {
   updateReservation: (reservation: Reservation, save: boolean) => Promise<void>
   replaceReservation: (reservation: Reservation) => void
 } => {
-  const { reservations } = useContext(ReservationsContext)
+  const { reservations, fetchedDateRange } = useContext(ReservationsContext)
   const dispatch = useContext(ReservationsDispatchContext)
-  const { fetchedDateRange, setFetchedDateRange } = useContext(ReservationContext)
 
   const initReservations = async (dateRange: DateRange) => {
     const allReservations = await getAllReservationsInRange(dateRange)
@@ -28,7 +27,6 @@ export const useReservations = (): {
       if (l.startAt.isAfter(r.startAt)) return 1
       else return -1
     })
-    setFetchedDateRange(dateRange)
     dispatch(actions.initReservationAction(allReservations, dateRange))
   }
 
