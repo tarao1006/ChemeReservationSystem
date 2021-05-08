@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { ReservationsContext, ReservationsDispatchContext } from '@contexts'
 import { actions, StatusType } from '../reducer/reservation'
 import {
@@ -14,11 +14,14 @@ export const useReservations = (): {
   fetchedDateRange: DateRange,
   status: StatusType
   initReservations: (dateRange: DateRange) => Promise<void>
+  resetStatus: () => void
   addReservation: (reservation: Reservation) => void
-  createReservation: (reservation: Reservation) => Promise<void>
-  deleteReservation: (reservation: Reservation, save: boolean) => Promise<void>
-  updateReservation: (reservation: Reservation, save: boolean) => Promise<void>
+  removeReservation: (reservation: Reservation) => void
+  editReservation: (reservation: Reservation) => void
   replaceReservation: (reservation: Reservation) => void
+  createReservation: (reservation: Reservation) => Promise<void>
+  deleteReservation: (reservation: Reservation) => Promise<void>
+  updateReservation: (reservation: Reservation) => Promise<void>
 } => {
   const { reservations, fetchedDateRange, status } = useContext(ReservationsContext)
   const dispatch = useContext(ReservationsDispatchContext)
@@ -32,8 +35,26 @@ export const useReservations = (): {
     dispatch(actions.initReservationAction(allReservations, dateRange))
   }
 
+  const resetStatus = () => {
+    dispatch(actions.resetStatusAction())
+  }
+
   const addReservation = (reservation: Reservation) => {
     dispatch(actions.addReservationAction(reservation))
+  }
+
+  const removeReservation = (reservation: Reservation) => {
+    if (reservation.id === 0) {
+      dispatch(actions.removeReservationAction(reservation))
+    }
+  }
+
+  const editReservation = (reservation: Reservation) => {
+    dispatch(actions.editReservationAction(reservation))
+  }
+
+  const replaceReservation = (reservation: Reservation) => {
+    dispatch(actions.replaceReservationAction(reservation))
   }
 
   const createReservation = async (reservation: Reservation) => {
@@ -43,32 +64,18 @@ export const useReservations = (): {
     }
   }
 
-  const deleteReservation = async (reservation: Reservation, save: boolean) => {
-    if (save) {
-      const res = await deleteReservationAPI(reservation)
-      if (res.code === 204) {
-        dispatch(actions.deleteReservationAction(reservation))
-      }
-    } else {
-      if (reservation.id === 0) {
-        dispatch(actions.deleteReservationAction(reservation))
-      }
+  const deleteReservation = async (reservation: Reservation) => {
+    const res = await deleteReservationAPI(reservation)
+    if (res.code === 204) {
+      dispatch(actions.deleteReservationAction(reservation))
     }
   }
 
-  const updateReservation = async (reservation: Reservation, save: boolean) => {
-    if (save) {
-      const newReservation = await updateReservationAPI(reservation)
-      if (newReservation) {
-        dispatch(actions.updateReservationAction(newReservation))
-      }
-    } else {
-      dispatch(actions.updateReservationAction(reservation))
+  const updateReservation = async (reservation: Reservation) => {
+    const newReservation = await updateReservationAPI(reservation)
+    if (newReservation) {
+      dispatch(actions.updateReservationAction(newReservation))
     }
-  }
-
-  const replaceReservation = (reservation: Reservation) => {
-    dispatch(actions.replaceReservationAction(reservation))
   }
 
   return {
@@ -76,7 +83,10 @@ export const useReservations = (): {
     fetchedDateRange,
     status,
     initReservations,
+    resetStatus,
     addReservation,
+    removeReservation,
+    editReservation,
     createReservation,
     deleteReservation,
     updateReservation,

@@ -58,7 +58,7 @@ export const ReservationDetail = ({
   }
 
   const handleDelete = () => {
-    deleteReservation(reservation, true)
+    deleteReservation(reservation)
   }
 
   return (

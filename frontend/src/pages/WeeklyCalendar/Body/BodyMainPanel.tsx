@@ -5,6 +5,8 @@ import { Reservation as ReservationModel, Facility, } from '@types'
 import dayjs from 'dayjs'
 import { Reservation } from '../Reservation'
 import { useReservations, useAuth, usePlans, useFacilities } from '@hooks'
+import IconButton from '@material-ui/core/IconButton'
+import CloseIcon from '@material-ui/icons/Close'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -205,8 +207,32 @@ export const BodyMainPanel = ({
   setScrollTop(scrollTop: number): void
 }) => {
   const classes = useStyles()
-  const { reservations, status } = useReservations()
+  const { reservations, status, resetStatus } = useReservations()
   const { checked } = useFacilities()
+
+  const [savedSnackbarOpen, setSavedSnackbarOpen] = useState<boolean>(false)
+  const [deletedSnackbarOpen, setDeletedSnackbarOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    setSavedSnackbarOpen(status === 'created' || status === 'updated')
+    setDeletedSnackbarOpen(status === 'deleted')
+  }, [status])
+
+  const handleSavedSnackbarClose = (event: React.SyntheticEvent | React.MouseEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSavedSnackbarOpen(false)
+    resetStatus()
+  }
+
+  const handleDeletedSnackbarClose = (event: React.SyntheticEvent | React.MouseEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setDeletedSnackbarOpen(false)
+    resetStatus()
+  }
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const top = (e.target as HTMLDivElement).scrollTop
@@ -247,9 +273,26 @@ export const BodyMainPanel = ({
         </div>
       </div>
       <Snackbar
-        open={status === 'created'}
-        message={"予定を作成しました"}
-        autoHideDuration={200}
+        open={savedSnackbarOpen}
+        message={"予定を保存しました"}
+        autoHideDuration={6000}
+        onClose={handleSavedSnackbarClose}
+        action={
+          <IconButton size="small" onClick={handleSavedSnackbarClose} color="inherit">
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
+      <Snackbar
+        open={deletedSnackbarOpen}
+        message={"予定を削除しました"}
+        autoHideDuration={6000}
+        onClose={handleDeletedSnackbarClose}
+        action={
+          <IconButton size="small" onClick={handleDeletedSnackbarClose} color="inherit">
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
       />
     </>
   )

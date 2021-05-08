@@ -50,7 +50,7 @@ export const ReservationEdit = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    updateReservation(reservation, true)
+    updateReservation(reservation)
     setIsOpen(false)
   }
 

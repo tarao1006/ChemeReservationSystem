@@ -61,7 +61,7 @@ export const Reservation = ({
     top: "12px",
     left: "0px",
   })
-  const { addReservation, createReservation, updateReservation, replaceReservation, deleteReservation } = useReservations()
+  const { createReservation, replaceReservation, removeReservation, editReservation } = useReservations()
 
   useEffect(() => {
     if (reservation.places.length !== 0) {
@@ -166,7 +166,7 @@ export const Reservation = ({
   }, [ref])
 
   const handleClose = () => {
-    deleteReservation(reservation, false)
+    removeReservation(reservation)
     setAnchorEl(null)
   }
 
@@ -176,7 +176,7 @@ export const Reservation = ({
   }
 
   const handlePlanChange = (plan: Plan) => {
-    updateReservation(new ReservationModel(
+    editReservation(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
@@ -187,11 +187,11 @@ export const Reservation = ({
       reservation.updatedAt,
       reservation.attendees,
       reservation.places,
-    ), false)
+    ))
   }
 
   const handlePlanMemoChange = (planMemo: string) => {
-    updateReservation(new ReservationModel(
+    editReservation(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
@@ -202,11 +202,11 @@ export const Reservation = ({
       reservation.updatedAt,
       reservation.attendees,
       reservation.places,
-    ), false)
+    ))
   }
 
   const handlePlacesChange = (places: Facility[]) => {
-    updateReservation(new ReservationModel(
+    editReservation(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
@@ -217,11 +217,11 @@ export const Reservation = ({
       reservation.updatedAt,
       reservation.attendees,
       places,
-    ), false)
+    ))
   }
 
   const handleAttendeesChange = (attendees: User[]) => {
-    updateReservation(new ReservationModel(
+    editReservation(new ReservationModel(
       reservation.id,
       reservation.creator,
       reservation.startAt,
@@ -232,7 +232,7 @@ export const Reservation = ({
       reservation.updatedAt,
       attendees,
       reservation.places,
-    ), false)
+    ))
   }
 
   const handleDateChange = (date: dayjs.Dayjs) => {
