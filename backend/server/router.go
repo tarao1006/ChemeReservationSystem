@@ -82,7 +82,7 @@ func NewRouter() *gin.Engine {
 			u.PUT("/:id/password", c.UpdatePassword)
 		}
 
-		ut := v1.Group("/user-type")
+		ut := v1.Group("/usertype")
 		{
 			c := controller.NewUserTypeController()
 			ut.GET("", c.Index)
@@ -102,7 +102,7 @@ func NewRouter() *gin.Engine {
 			f.DELETE("/:id", c.Delete)
 		}
 
-		ft := v1.Group("/facility-type")
+		ft := v1.Group("/facilitytype")
 		{
 			c := controller.NewFacilityTypeController()
 			ft.GET("", c.Index)
