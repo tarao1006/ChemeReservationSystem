@@ -13,7 +13,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Fade from '@material-ui/core/Fade'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
-import { getMe, login as loginAPI, validate as validateAPI } from '@api'
+import { validate as validateAPI } from '@api'
 import { useAuth } from '@hooks'
 
 const useStyles = makeStyles((theme) => ({
@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const Login = () => {
   const classes = useStyles()
-  const { setCurrentUser } = useAuth()
+  const { setCurrentUser, authLogin } = useAuth()
   const passwordInputEl = useRef(null)
   const [userId, setUserId] = useState<string>("")
   const [password, setPassword] = useState<string>("")
@@ -86,10 +86,8 @@ export const Login = () => {
 
   const login = async (userId: string, password: string, rememberMe: boolean): Promise<void> => {
     setIsLoading(true)
-    const res = await loginAPI(userId, password, rememberMe)
-    if (res.code === 200) {
-      const me = await getMe()
-      setCurrentUser(me)
+    const res = await authLogin(userId, password, rememberMe)
+    if (res) {
       setIsInvalidPassword(false)
       setIsLoading(false)
       history.push(location.pathname)

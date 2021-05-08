@@ -7,7 +7,6 @@ import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
 import Fade from '@material-ui/core/Fade'
@@ -17,9 +16,7 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
-import EventNoteIcon from '@material-ui/icons/EventNote'
 import MenuIcon from '@material-ui/icons/Menu'
-import { logout } from '@api'
 import { useAuth } from '@hooks'
 import { headerHeight } from '@config'
 import dayjs from 'dayjs'
@@ -85,7 +82,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Header = ({ onClick }: { onClick: () => void }) => {
   const classes = useStyles()
-  const { currentUser, setCurrentUser } = useAuth()
+  const { currentUser, authLogout } = useAuth()
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const history = useHistory()
   const location = useLocation()
@@ -94,7 +91,7 @@ export const Header = ({ onClick }: { onClick: () => void }) => {
     setIsDialogOpen(prev => !prev)
   }
 
-  const handleMenuIconClick = () => {
+  const handleSideMenuIconClick = () => {
     onClick()
   }
 
@@ -103,8 +100,7 @@ export const Header = ({ onClick }: { onClick: () => void }) => {
   }
 
   const handleLogout = async () => {
-    await logout()
-    setCurrentUser(undefined)
+    authLogout()
     handleClose()
   }
 
@@ -139,7 +135,7 @@ export const Header = ({ onClick }: { onClick: () => void }) => {
     <AppBar color="primary" position="static" elevation={0}>
       <Toolbar className={classes.toolbar}>
         {currentUser !== undefined && (
-          <IconButton onClick={handleMenuIconClick} className={classes.menuIcon} color="inherit">
+          <IconButton onClick={handleSideMenuIconClick} className={classes.menuIcon} color="inherit">
             <MenuIcon />
           </IconButton>
         )}
@@ -180,29 +176,3 @@ export const Header = ({ onClick }: { onClick: () => void }) => {
     </AppBar>
   );
 }
-
-
-// ワイン: #AD1457
-// ミカン: #F4511E
-// レモン: #E4C441
-// バジル: #0B8043
-// ブルーベリー: #3F51B5
-// ブドウ: #8E24AA
-// ローズ: #D81B60
-// カボチャ: #EF6C00
-// アボカド: #C0CA33
-// ユーカリ: #009688
-// ラベンダー: #7986CB
-// ココア: #795548
-// トマト: #D50000
-// マンゴー: #F09300
-// ピスタチオ: #7CB342
-// ピーコーック: #039BE5
-// ライラック: #B39DDB
-// グラファイト: ##616161
-// フラミンゴ: #E67C73
-// バナナ: #F6BF26
-// セージ: #33B679
-// コバルト: #4285F4
-// アメジスト: #9E69AF
-// シラカバ: #A79B8E
