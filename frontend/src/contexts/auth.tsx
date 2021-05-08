@@ -1,7 +1,6 @@
 import React, { createContext, useState, Dispatch, SetStateAction } from "react"
 import { User } from '@types'
-
-export type State = User | undefined
+import { State } from '../reducer/auth'
 
 export const AuthContext = createContext<State>(undefined)
 

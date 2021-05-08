@@ -1,9 +1,10 @@
 import { useContext, Dispatch, SetStateAction } from 'react'
-import { AuthContext, AuthSetContext, AuthState } from '@contexts'
+import { AuthContext, AuthSetContext } from '@contexts'
+import { State } from '../reducer/auth'
 import { User } from '@types'
 
 export const useAuth = (): {
-  currentUser: AuthState
+  currentUser: State
   setCurrentUser: Dispatch<SetStateAction<User>>
 } => {
   const currentUser = useContext(AuthContext)

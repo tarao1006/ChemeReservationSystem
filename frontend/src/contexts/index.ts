@@ -1,8 +1,7 @@
 export {
   AuthContext,
   AuthSetContext,
-  AuthProvider,
-  State as AuthState
+  AuthProvider
 } from './auth'
 export {
   FacilitiesContext,
