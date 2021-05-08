@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Snackbar from '@material-ui/core/Snackbar'
-import { Reservation as ReservationModel, Facility, } from '@types'
+import { Reservation as ReservationModel, Facility, User } from '@types'
 import dayjs from 'dayjs'
 import { Reservation } from '../Reservation'
-import { useReservations, useAuth, usePlans, useFacilities } from '@hooks'
+import { useReservations, useAuth, usePlans, useFacilities, useUsers } from '@hooks'
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
 
@@ -208,7 +208,10 @@ export const BodyMainPanel = ({
 }) => {
   const classes = useStyles()
   const { reservations, status, resetStatus } = useReservations()
-  const { checked } = useFacilities()
+  const facilitiesState = useFacilities()
+  const facilitiesChecked = facilitiesState.checked
+  const usersState = useUsers()
+  const usersChecked = usersState.checked
 
   const [savedSnackbarOpen, setSavedSnackbarOpen] = useState<boolean>(false)
   const [deletedSnackbarOpen, setDeletedSnackbarOpen] = useState<boolean>(false)
@@ -239,10 +242,21 @@ export const BodyMainPanel = ({
     setScrollTop(top)
   }
 
-  const isIn = (places: Facility[]): boolean => {
+  const isInFacility = (places: Facility[]): boolean => {
     for (const place of places) {
-      for (const c of checked) {
+      for (const c of facilitiesChecked) {
         if (place.id === c) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  const isInUser = (attendees: User[]): boolean => {
+    for (const attendee of attendees) {
+      for (const c of usersChecked) {
+        if (attendee.id === c) {
           return true
         }
       }
@@ -265,7 +279,11 @@ export const BodyMainPanel = ({
                   .filter(reservation => 
                     (reservation.id === 0) ||
                     (reservation.places.length === 0) ||
-                    isIn(reservation.places))
+                    isInFacility(reservation.places))
+                  .filter(reservation => 
+                    (reservation.id === 0) ||
+                    (reservation.attendees.length === 0) ||
+                    isInUser(reservation.attendees))
               }
               date={date}
             />
