@@ -76,10 +76,11 @@ export const reducer = (state: State, action: ActionType): State => {
 
 const addReservation = (state: State, action: ActionType): State => {
   const reservation = action.payload as Reservation
-  const newReservations = {...state}
-  const index = getIndex(newReservations.reservations, reservation)
-  newReservations.reservations.splice(index, 0, reservation)
-  return newReservations
+  const newState = {...state}
+  newState.reservations = newState.reservations.filter(r => r.id !== 0)
+  const index = getIndex(newState.reservations, reservation)
+  newState.reservations.splice(index, 0, reservation)
+  return newState
 }
 
 const deleteReservation = (state: State, action: ActionType): State => {

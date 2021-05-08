@@ -104,7 +104,6 @@ const BodyMainPanelContentColumn = ({
   const classes = useStyles()
   const { currentUser } = useContext(AuthContext)
   const { addReservation } = useReservations()
-  const { checked } = useContext(FacilityContext)
   const { plans } = useContext(PlanContext)
 
   const [left, setLeft] = useState<number[]>([])
@@ -113,6 +112,7 @@ const BodyMainPanelContentColumn = ({
   const [maxZIndex, setMaxZIndex] = useState<number>(BASE_ZINDEX)
 
   useEffect(() => {
+    console.log(('change'))
     let newLeft = reservations.map(() => 0)
     let newWidth = reservations.map(() => 1)
     let newZIndex = reservations.map(() => BASE_ZINDEX)
@@ -135,10 +135,14 @@ const BodyMainPanelContentColumn = ({
       timeSchedule[i] += timeSchedule[i - 1]
     }
 
+    console.log(timeSchedule)
+
     let maxCounts: number[] = []
     reservations.forEach((r, idx) => {
       maxCounts[idx] = Math.max(...timeSchedule.slice(starts[idx], ends[idx] + 1))
     })
+
+    console.log(maxCounts)
 
     reservations.forEach((_, i) => {
       newZIndex[i] += timeSchedule[starts[i]] - 1
@@ -181,23 +185,11 @@ const BodyMainPanelContentColumn = ({
     ), false)
   }
 
-  const isIn = (places: Facility[]): boolean => {
-    for (const place of places) {
-      for (const c of checked) {
-        if (place.id === c) {
-          return true
-        }
-      }
-    }
-    return false
-  }
-
   return (
     <div className={classes.column}>
       <div className={classes.columnContent} onClick={handleClick} />
       <div className={classes.columnContentPresentation}>
         {reservations
-          .filter(reservation => (reservation.id === 0) || (reservation.places.length === 0) || isIn(reservation.places))
           .map((reservation, i) => (
             <Reservation
               key={reservation.id}
@@ -223,9 +215,22 @@ export const BodyMainPanel = ({
 }) => {
   const classes = useStyles()
   const { reservations } = useReservations()
+  const { checked } = useContext(FacilityContext)
+
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const top = (e.target as HTMLDivElement).scrollTop
     setScrollTop(top)
+  }
+
+  const isIn = (places: Facility[]): boolean => {
+    for (const place of places) {
+      for (const c of checked) {
+        if (place.id === c) {
+          return true
+        }
+      }
+    }
+    return false
   }
 
   return (
@@ -236,7 +241,14 @@ export const BodyMainPanel = ({
         {dates.map(date => (
           <BodyMainPanelContentColumn
             key={date.format()}
-            reservations={reservations.filter(r => r.startAt.isSame(date, 'day'))}
+            reservations={
+              reservations
+                .filter(r => r.startAt.isSame(date, 'day'))
+                .filter(reservation => 
+                  (reservation.id === 0) ||
+                  (reservation.places.length === 0) ||
+                  isIn(reservation.places))
+            }
             date={date}
           />
         ))}

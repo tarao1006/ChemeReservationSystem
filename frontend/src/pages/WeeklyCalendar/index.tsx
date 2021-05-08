@@ -61,8 +61,8 @@ export const WeeklyCalendar = () => {
           }
 
           await initReservations({
-            from: d.add(-3, 'month').format('YYYY-MM-DD'),
-            to: d.add(3, 'month').format('YYYY-MM-DD'),
+            from: d.add(-6, 'day').format('YYYY-MM-DD'),
+            to: d.add(-5, 'day').format('YYYY-MM-DD'),
           })
         }
       }
