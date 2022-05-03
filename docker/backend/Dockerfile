@@ -1,6 +1,6 @@
 FROM golang:latest AS build-air
 
-RUN go get -u github.com/cosmtrek/air
+RUN go install github.com/cosmtrek/air@latest
 
 FROM golang:latest
 COPY --from=build-air /go/bin/air /go/bin/air

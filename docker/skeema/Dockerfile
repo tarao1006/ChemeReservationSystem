@@ -1,6 +1,6 @@
 FROM golang:latest AS build-skeema
 
-RUN go get -u github.com/skeema/skeema
+RUN go install github.com/skeema/skeema@latest
 
 FROM golang:latest
 COPY --from=build-skeema /go/bin/skeema /go/bin/skeema
